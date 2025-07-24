@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Regras de Aposentadoria – Mirassol‑Previ</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    .voltar {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #014c85;
+      font-weight: bold;
+    }
+
+    .accordion {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .accordion-item {
+      background: #fff;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .accordion-header {
+      background-color: #014c85;
+      color: #fff;
+      padding: 15px 20px;
+      cursor: pointer;
+      position: relative;
+      font-weight: bold;
+    }
+
+    .accordion-header::after {
+      content: "+";
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .accordion-header.active::after {
+      transform: translateY(-50%) rotate(45deg);
+    }
+
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+      padding: 0 20px;
+      background: #fafafa;
+    }
+
+    .accordion-content p, .accordion-content table {
+      margin: 15px 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .accordion-content table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .accordion-content th, .accordion-content td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<header style="background-color: #014c85; color: white; padding: 15px 10px; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center;">
+  <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap;">
+    <img src="IMAGENS/brasao.png" alt="Brasão de Mirassol D'Oeste" style="height: 60px; margin-right: 15px;">
+    <div>
+      <h1 style="margin: 0; font-size: 28px;">Mirassol Previ</h1>
+      <p style="margin: 0; font-size: 14px;">Fundo Municipal de Previdência Social dos Servidores de Mirassol D'Oeste - MT</p>
+    </div>
+  </div>
+</header>
+
+<h1>Regras de Aposentadoria</h1>
+
+<div class="accordion">
+  <!-- Regra 1 -->
+  <div class="accordion-item">
+    <div class="accordion-header">1ª Regra – Idade e Tempo de Contribuição</div>
+    <div class="accordion-content">
+      <p><strong>Aplicável:</strong> Servidores ingressados após 31/12/2003, ou que não optaram pelas regras de transição.</p>
+      <p><strong>Regra permanente (Art. 40, §1º, III, a):</strong></p>
+      <table>
+        <tr><th>Requisito</th><th>Homem</th><th>Mulher</th></tr>
+        <tr><td>Tempo contribuição</td><td>35 anos</td><td>30 anos</td></tr>
+        <tr><td>Idade mínima</td><td>60 anos</td><td>55 anos</td></tr>
+        <tr><td>Tempo no serviço</td><td>10 anos</td><td>10 anos</td></tr>
+        <tr><td>Tempo no cargo</td><td>5 anos</td><td>5 anos</td></tr>
+      </table>
+      <p><strong>Cálculo do benefício:</strong> média da Lei 10.887/2004, teto = remuneração do cargo efetivo, sem paridade.</p>
+      <p><strong>Reajuste:</strong> NÃO TEM PARIDADE. OS PROVENTOS DEVERÃO SER REAJUSTADOS NA MESMA DATA E ÍNDICE ADOTADOS PARA O REAJUSTE DOS BENEFÍCIOS DO REGIME GERAL DE PREVIDÊNCIA SOCIAL.</p>
+    </div>
+  </div>
+
+  <!-- Regra 2 -->
+  <div class="accordion-item">
+    <div class="accordion-header">2ª Regra – Direito Adquirido</div>
+    <div class="accordion-content">
+      <p>Para quem cumpriu todos os requisitos exigidos para aposentadoria até 31/12/2003, mantém-se o direito às regras anteriores à EC nº 41/2003, inclusive com paridade e integralidade. É necessário comprovar que os requisitos foram preenchidos até essa data.</p>
+    </div>
+  </div>
+
+  <!-- Regra 3 -->
+  <div class="accordion-item">
+    <div class="accordion-header">3ª Regra – Transição EC 41/2003</div>
+    <div class="accordion-content">
+      <p>Para os servidores que ingressaram até 31/12/2003 e não preencheram os requisitos até essa data. Necessário preencher os requisitos com redução de idade, desde que se atenda ao pedágio de 20% sobre o tempo que faltava para se aposentar em 31/12/2003. Garante paridade e integralidade.</p>
+    </div>
+  </div>
+
+  <!-- Regra 4 -->
+  <div class="accordion-item">
+    <div class="accordion-header">4ª Regra – Aposentadoria Compulsória</div>
+    <div class="accordion-content">
+      <p><strong>Base legal:</strong> LC nº 152/2015 - Art. 40, §1º, CF</p>
+      <p><strong>Idade mínima:</strong> 75 anos</p>
+      <p><strong>Cálculo:</strong> Proventos proporcionais ao tempo de contribuição. Aplicação da média aritmética simples das contribuições efetuadas a partir de julho de 1994.</p>
+      <p><strong>Reajuste:</strong> Não tem paridade.</p>
+    </div>
+  </div>
+</div>
+
+<a class="voltar" href="index.html">&larr; Voltar à página inicial</a>
+
+<script>
+  document.querySelectorAll('.accordion-header').forEach(header => {
+    header.addEventListener('click', () => {
+      const content = header.nextElementSibling;
+      header.classList.toggle('active');
+      if (content.style.maxHeight) {
+        content.style.maxHeight = null;
+      } else {
+        content.style.maxHeight = content.scrollHeight + 'px';
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
