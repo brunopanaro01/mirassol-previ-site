@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel Pró-Gestão RPPS | Mirassol-Previ</title>
+<style>
+:root{ --prim:#014c85; --borda:#e5e7eb; --muted:#64748b;}
+*{box-sizing:border-box;margin:0;padding:0}
+html, body{height:100%; overflow:hidden; font-family:Arial, Helvetica, sans-serif; color:#0f172a; background:#fff;}
+header{background:var(--prim);color:#fff;text-align:center;padding:12px 8px;flex:0 0 auto}
+header img{height:56px}
+.app{display:flex;flex-direction:column;height:100%}
+.main{display:grid;grid-template-columns:280px 1fr;gap:0;flex:1 1 auto;min-height:0}
+.sidebar{border-right:1px solid var(--borda);background:#f9fafb;display:flex;flex-direction:column;min-height:0}
+.sidebar-header{padding:10px 14px;font-size:17px;color:#014c85;background:#eef6ff;border-bottom:1px solid var(--borda);flex:0 0 auto}
+.sidebar-note{padding:6px 14px;font-size:12px;color:#334155;background:#f6f7fb;border-bottom:1px solid #eaeef3}
+.sidebar-scroll{overflow:auto;flex:1 1 auto;padding:6px 0}
+.acc-item{margin-bottom:6px}
+.acc-btn{width:100%;text-align:left;border:none;background:#fff;padding:9px 12px;font-size:14px;font-weight:bold;cursor:pointer;border-top:1px solid var(--borda)}
+.acc-links{display:none;padding:6px 0;background:#fff;border-top:1px dashed #e2e8f0}
+.acc-links a{display:block;padding:6px 14px;font-size:13px;text-decoration:none;color:#0f172a}
+.acc-links a:hover{background:#eef2f7}
+.content{display:flex;flex-direction:column;min-width:0;min-height:0}
+.toolbar{padding:8px 12px;border-bottom:1px solid var(--borda);background:#f8fafc;color:#014c85;font-weight:bold;font-size:14px;flex:0 0 auto}
+.viewer{flex:1 1 auto;min-height:0;display:flex;align-items:flex-start;justify-content:center;color:#0f172a;font-size:14px;padding:16px;overflow:auto}
+.footer{flex:0 0 auto;border-top:1px solid var(--borda);padding:10px 0;background:#fff}
+.back-btn{display:block;margin:0 auto;padding:8px 14px;background:#014c85;color:white;border-radius:6px;text-decoration:none;width:fit-content}
+.back-btn:hover{background:#003f6d}
+/* Cronograma UI */
+.section{max-width:980px;margin:0 auto;width:100%}
+h2{color:#014c85;margin-bottom:8px}
+.muted{color:#64748b;font-size:13px;margin-bottom:12px}
+.years{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 16px}
+.year-btn{padding:8px 12px;border:1px solid var(--borda);border-radius:8px;background:#fff;cursor:pointer;font-size:14px}
+.year-btn.active{background:#014c85;color:#fff;border-color:#014c85}
+.dates{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:16px}
+.date-card{border:1px solid var(--borda);border-radius:8px;padding:10px;background:#fff;cursor:pointer}
+.date-card h4{margin:0 0 6px;font-size:14px;color:#0f172a}
+.date-card .tag{font-size:12px;color:#475569}
+.detail{border:1px solid var(--borda);border-radius:10px;padding:14px;background:#fff}
+.detail h3{margin:0 0 8px;color:#0f172a}
+.detail-item{margin-bottom:6px}
+.empty{padding:16px;border:1px dashed #cbd5e1;border-radius:10px;background:#fafafa;color:#64748b}
+.list{margin:8px 0 0 18px}
+@media (max-width: 900px){ .main{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <img src="brasao.png" alt="Brasão">
+    <h1 style="font-size:22px;">Mirassol-Previ</h1>
+    <p style="font-size:13px;">Fundo Municipal de Previdência Social</p>
+  </header>
+
+  <div class="main">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">Pró-Gestão</div>
+      <div class="sidebar-note">Obs.: Por orientação de LGPD, documentos e sistemas externos abrirão em <strong>nova aba</strong>.</div>
+      <div class="sidebar-scroll">
+
+        <div class="acc-item">
+          <button class="acc-btn">Conselho Previdenciário</button>
+          <div class="acc-links">
+            <a href="https://mirassolprevi.com.br/composicao.html" target="_blank" rel="noopener">Composição (nova aba)</a>
+            <a href="https://scpimirassoldoeste.fassilcloud.net:879/transparenciaiprem/?AcessoIndividual=lnkConselhoMunicipal" target="_blank" rel="noopener">Atas (nova aba)</a>
+            <a href="docs/resolucoes-conselho.pdf" target="_blank" rel="noopener">Resoluções (nova aba)</a>
+            <a href="#" data-cronograma="conselho">Cronograma de Reuniões (abrir aqui)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Comitê de Investimentos</button>
+          <div class="acc-links">
+            <a href="https://mirassolprevi.com.br/composicao.html" target="_blank" rel="noopener">Composição (nova aba)</a>
+            <a href="https://scpimirassoldoeste.fassilcloud.net:879/transparenciaiprem/?AcessoIndividual=lnkConselhoMunicipal" target="_blank" rel="noopener">Atas (nova aba)</a>
+            <a href="docs/resolucoes-comite.pdf" target="_blank" rel="noopener">Resoluções (nova aba)</a>
+            <a href="#" data-cronograma="comite">Cronograma de Reuniões (abrir aqui)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Reavaliação Atuarial</button>
+          <div class="acc-links">
+            <a href="https://www.consultatransparencia.com.br/mirassoldoestenovo/Transparencia/Documentos?tipo=81&Pag=CertificadosDemonstrativos&Pag2=CertificadosDemonstrativosDRAA" target="_blank" rel="noopener">Visualizar (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Plano de Custeio</button>
+          <div class="acc-links">
+            <a href="https://www.consultatransparencia.com.br/mirassoldoestenovo/Transparencia/Documentos?tipo=81&Pag=CertificadosDemonstrativos&Pag2=CertificadosDemonstrativosDRAA" target="_blank" rel="noopener">Visualizar (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Política Anual de Investimento</button>
+          <div class="acc-links">
+            <a href="https://www.consultatransparencia.com.br/mirassoldoestenovo/Transparencia/Documentos?tipo=7&Pag=CompostoGestaoCarteiraRpps" target="_blank" rel="noopener">Visualizar (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Investimentos</button>
+          <div class="acc-links">
+            <a href="https://www.consultatransparencia.com.br/mirassoldoestenovo/Transparencia/PortifolioInvestimento" target="_blank" rel="noopener">Portfólio (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Certidões</button>
+          <div class="acc-links">
+            <a href="certidoes.html" target="_blank" rel="noopener">Visualizar Certidões (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Educação Previdenciária</button>
+          <div class="acc-links">
+            <a href="docs/educacao-previdenciaria-materiais.pdf" target="_blank" rel="noopener">Materiais e Ações (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Código de Ética</button>
+          <div class="acc-links">
+            <a href="https://drive.google.com/file/d/1L6lEL6Yijihv4GcEvy3sMsrpkpqRcZ--/view?usp=sharing" target="_blank" rel="noopener">Abrir Código de Ética (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Política de Informação</button>
+          <div class="acc-links">
+            <a href="docs/politica-informacao.pdf" target="_blank" rel="noopener">Abrir Política de Informação (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Plano de Ação</button>
+          <div class="acc-links">
+            <a href="docs/plano-acao.pdf" target="_blank" rel="noopener">Abrir Plano de Ação (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Relatório de Governança</button>
+          <div class="acc-links">
+            <a href="docs/relatorio-governanca-2024.pdf" target="_blank" rel="noopener">2024 (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Consulta CRP</button>
+          <div class="acc-links">
+            <a href="https://cadprev.previdencia.gov.br/Cadprev/pages/publico/crp/pesquisarEnteCrp.xhtml" target="_blank" rel="noopener">Abrir Consulta CRP (nova aba)</a>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Content -->
+    <main class="content">
+      <div class="toolbar" id="viewTitle">Selecione um item</div>
+      <div class="viewer">
+        <div class="section" id="contentArea">
+          Os documentos abrem em nova aba (LGPD). Para ver o cronograma, escolha "Cronograma de Reuniões" no Conselho ou no Comitê.
+        </div>
+      </div>
+      <div class="footer">
+        <a href="index.html" class="back-btn">← Voltar</a>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+// Estado
+let CRONO = null; // dados do cronograma.json serão carregados sob demanda
+const titleEl = document.getElementById('viewTitle');
+const contentArea = document.getElementById('contentArea');
+
+// Acordeão
+document.querySelectorAll('.acc-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const panel = btn.nextElementSibling;
+    const open = panel.style.display === 'block';
+    document.querySelectorAll('.acc-links').forEach(el => el.style.display = 'none');
+    panel.style.display = open ? 'none' : 'block';
+  });
+});
+
+// Handler para "Cronograma de Reuniões"
+document.querySelectorAll('[data-cronograma]').forEach(a=>{
+  a.addEventListener('click', async (e)=>{
+    e.preventDefault();
+    const entidade = a.getAttribute('data-cronograma'); // conselho | comite
+    titleEl.textContent = 'Cronograma — ' + (entidade === 'conselho' ? 'Conselho Previdenciário' : 'Comitê de Investimentos');
+    // Carrega JSON se ainda não carregado
+    if(!CRONO){
+      try{
+        const res = await fetch('cronograma.json', {cache:'no-store'});
+        if(!res.ok) throw new Error('Falha ao carregar cronograma.json');
+        CRONO = await res.json();
+      }catch(err){
+        contentArea.innerHTML = '<div class="empty">Não foi possível carregar o cronograma.json. Verifique se o arquivo está na mesma pasta desta página.</div>';
+        return;
+      }
+    }
+    renderYears(entidade);
+  });
+});
+
+// Renderizações
+function renderYears(entidade){
+  const years = Object.keys(CRONO[entidade] || {}).sort();
+  if(years.length === 0){
+    contentArea.innerHTML = `<div class="empty">Não há anos cadastrados ainda para ${entidade}.</div>`;
+    return;
+  }
+  const last = years[years.length-1];
+  contentArea.innerHTML = `
+    <h2>Selecione o ano</h2>
+    <div class="muted">Clique no ano e depois na <strong>data</strong> para ver a pauta e o previsto.</div>
+    <div class="years">
+      ${years.map(y=>`<button class="year-btn" data-year="${y}">${y}</button>`).join('')}
+    </div>
+    <div id="datesWrap"></div>
+    <div id="detailWrap" style="margin-top:14px;"></div>
+  `;
+  contentArea.querySelectorAll('.year-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      contentArea.querySelectorAll('.year-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      renderDates(entidade, btn.dataset.year);
+    });
+  });
+  // auto selecionar último ano
+  const lastBtn = contentArea.querySelector(`.year-btn[data-year="${last}"]`);
+  if(lastBtn) lastBtn.click();
+}
+
+function renderDates(entidade, ano){
+  const wrap = document.getElementById('datesWrap');
+  const list = (CRONO[entidade] && CRONO[entidade][ano]) ? CRONO[entidade][ano] : [];
+  if(list.length === 0){
+    wrap.innerHTML = `<div class="empty">Nenhuma reunião cadastrada em ${ano}.</div>`;
+    document.getElementById('detailWrap').innerHTML = '';
+    return;
+  }
+  wrap.innerHTML = `
+    <h2>Datas de ${ano}</h2>
+    <div class="dates">
+      ${list.map((item,idx)=>`
+        <div class="date-card" data-idx="${idx}" data-ano="${ano}" data-ent="${entidade}">
+          <h4>${formatDateISO(item.data)}</h4>
+          <div class="tag">${item.previsto ? ('Previsto: ' + item.previsto) : ''}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  wrap.querySelectorAll('.date-card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      const idx = Number(card.dataset.idx);
+      renderDetail(entidade, ano, idx);
+    });
+  });
+  document.getElementById('detailWrap').innerHTML = '';
+}
+
+function renderDetail(entidade, ano, idx){
+  const item = CRONO[entidade][ano][idx];
+  const det = document.getElementById('detailWrap');
+  const itens = (item.pauta || '').split(';').map(s => s.trim()).filter(Boolean);
+  const lista = itens.length ? `<ul class="list">${itens.map(i=>`<li>${i.replace(/\.$/, '')}</li>`).join('')}</ul>` : '<div class="detail-item">Pauta: —</div>';
+  det.innerHTML = `
+    <div class="detail">
+      <h3>${formatDateISO(item.data)} — Pauta</h3>
+      ${lista}
+      <div class="detail-item"><strong>Previsto:</strong> ${item.previsto || '—'}</div>
+      <div class="muted" style="margin-top:8px">Observação: em atenção à LGPD, documentos (se houver) são disponibilizados separadamente.</div>
+    </div>
+  `;
+}
+
+// Util
+function formatDateISO(iso){
+  if(!iso) return "";
+  const d = new Date(iso + "T00:00:00");
+  const pad = (n)=> String(n).padStart(2,'0');
+  return pad(d.getDate()) + "/" + pad(d.getMonth()+1) + "/" + d.getFullYear();
+}
+
+// Atualiza título quando clicar em qualquer link (feedback)
+document.querySelectorAll('.acc-links a[target="_blank"]').forEach(a => {
+  a.addEventListener('click', () => {
+    titleEl.textContent = a.textContent.replace('(nova aba)','').trim();
+  });
+});
+</script>
+
+</body>
+</html>

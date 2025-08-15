@@ -1,0 +1,40 @@
+{
+  "conselho": {
+    "2025": [
+      {
+        "data": "2025-03-28",
+        "pauta": "Abertura; Verificação de quórum; Aprovação da pauta; Alteração na Direção Executiva; Substituição de membros (nomeações e suplência); Aprovação do Jeton (LC 285/2025); Aquisição de lote para construção da sede; Encerramento (assuntos gerais e palavra livre).",
+        "previsto": "Deliberação sobre aquisição do lote e aprovação do Jeton."
+      },
+      {
+        "data": "2025-08-13",
+        "pauta": "Abertura; Verificação de quórum; Aprovação da pauta; Substituição de membros conforme Regimento Interno; Elaboração do Regimento Interno do Comitê de Investimentos; Atualização do Regimento Interno do Conselho Previdenciário; Doação de área da Prefeitura ao Mirassol-Previ para construção da sede; Encerramento.",
+        "previsto": "Aprovação da atualização do Regimento Interno do Conselho e aprovação do Regimento Interno do Comitê."
+      },
+      {
+        "data": "2025-10-08",
+        "pauta": "Reunião ordinária de outubro (pauta a ser publicada).",
+        "previsto": "Realização da 3ª reunião ordinária do ano."
+      }
+    ]
+  },
+  "comite": {
+    "2025": [
+      {
+        "data": "2025-03-28",
+        "pauta": "Abertura; Verificação de quórum; Aprovação da pauta; Alteração na Direção Executiva; Substituição de membros; Aprovação do Jeton (LC 285/2025); Aquisição de lote para construção da sede; Encerramento.",
+        "previsto": "Análise e encaminhamentos relativos às matérias conjuntas."
+      },
+      {
+        "data": "2025-08-13",
+        "pauta": "Abertura; Verificação de quórum; Aprovação da pauta; Elaboração e aprovação do Regimento Interno do Comitê de Investimentos; Atualização do Regimento Interno do Conselho Previdenciário; Doação de área para construção da sede; Encerramento.",
+        "previsto": "Aprovação do Regimento Interno do Comitê e ciência das atualizações do Conselho."
+      },
+      {
+        "data": "2025-10-08",
+        "pauta": "Reunião ordinária de outubro (pauta a ser publicada).",
+        "previsto": "3ª reunião ordinária do ano."
+      }
+    ]
+  }
+}
