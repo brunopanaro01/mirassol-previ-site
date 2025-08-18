@@ -5,16 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Painel Pró-Gestão RPPS | Mirassol-Previ</title>
 <style>
-:root{ --prim:#014c85; --borda:#e5e7eb; --muted:#64748b; --bg:#ffffff; --sidebar:#f9fafb; }
+:root{ --prim:#014c85; --borda:#e5e7eb; --muted:#64748b;}
 *{box-sizing:border-box;margin:0;padding:0}
-html, body{height:100%; overflow:hidden; font-family:Arial, Helvetica, sans-serif; color:#0f172a; background:var(--bg);}
+html, body{height:100%; overflow:hidden; font-family:Arial, Helvetica, sans-serif; color:#0f172a; background:#fff;}
 header{background:var(--prim);color:#fff;text-align:center;padding:12px 8px;flex:0 0 auto}
 header img{height:56px}
 .app{display:flex;flex-direction:column;height:100%}
 .main{display:grid;grid-template-columns:280px 1fr;gap:0;flex:1 1 auto;min-height:0}
-/* Sidebar */
-.sidebar{border-right:1px solid var(--borda);background:var(--sidebar);display:flex;flex-direction:column;min-height:0}
-.sidebar-header{padding:10px 14px;font-size:17px;color:var(--prim);background:#eef6ff;border-bottom:1px solid var(--borda);flex:0 0 auto}
+.sidebar{border-right:1px solid var(--borda);background:#f9fafb;display:flex;flex-direction:column;min-height:0}
+.sidebar-header{padding:10px 14px;font-size:17px;color:#014c85;background:#eef6ff;border-bottom:1px solid var(--borda);flex:0 0 auto}
 .sidebar-note{padding:6px 14px;font-size:12px;color:#334155;background:#f6f7fb;border-bottom:1px solid #eaeef3}
 .sidebar-scroll{overflow:auto;flex:1 1 auto;padding:6px 0}
 .acc-item{margin-bottom:6px}
@@ -22,51 +21,28 @@ header img{height:56px}
 .acc-links{display:none;padding:6px 0;background:#fff;border-top:1px dashed #e2e8f0}
 .acc-links a{display:block;padding:6px 14px;font-size:13px;text-decoration:none;color:#0f172a}
 .acc-links a:hover{background:#eef2f7}
-/* Content */
 .content{display:flex;flex-direction:column;min-width:0;min-height:0}
-.toolbar{padding:8px 12px;border-bottom:1px solid var(--borda);background:#f8fafc;color:#014c85;font-weight:bold;font-size:14px;flex:0 0 auto;display:flex;gap:8px;align-items:center;justify-content:space-between}
-.viewer{flex:1 1 auto;min-height:0;overflow:auto;padding:16px}
-.section{max-width:1100px;margin:0 auto}
-.card{ background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,.06); overflow:hidden; border:1px solid var(--borda) }
-.card-pad{ padding:16px }
-.muted{color:#64748b;font-size:13px}
-h2{color:#014c85;margin-bottom:8px}
-.notice{padding:12px;border:1px dashed #cbd5e1;border-radius:8px;background:#fafafa;color:#475569}
-.link-out{color:#014c85;text-decoration:none;font-weight:bold}
-.link-out:hover{text-decoration:underline}
-/* GRID de membros (tipo planilha) */
-.grid-wrap{margin-top:8px}
-.membros-grid{
-  display:grid;
-  grid-template-columns: 110px 1.1fr 1fr;
-  gap:10px 14px;
-  align-items:center;
-}
-.membros-grid .head{
-  font-weight:bold; color:#0f172a; background:#f3f6fb; border:1px solid var(--borda);
-  padding:10px; border-radius:8px;
-}
-.membros-grid .cell{
-  border:1px solid var(--borda); border-radius:8px; padding:10px; background:#fff;
-}
-.membros-grid .foto{
-  display:flex; align-items:center; justify-content:center;
-}
-.membros-grid img{
-  width:84px; height:84px; object-fit:cover; border-radius:8px; display:block;
-}
-.membros-grid .nome{ font-weight:bold; }
-.membros-grid .cargo{ color:#475569; }
-@media (max-width: 900px){
-  .main{grid-template-columns:1fr}
-  .membros-grid{ grid-template-columns: 80px 1fr; }
-  .membros-grid .head:nth-child(3),
-  .membros-grid .cell.cargo{ grid-column: 1 / span 2; }
-}
-/* Footer */
+.toolbar{padding:8px 12px;border-bottom:1px solid var(--borda);background:#f8fafc;color:#014c85;font-weight:bold;font-size:14px;flex:0 0 auto}
+.viewer{flex:1 1 auto;min-height:0;display:flex;align-items:flex-start;justify-content:center;color:#0f172a;font-size:14px;padding:16px;overflow:auto}
 .footer{flex:0 0 auto;border-top:1px solid var(--borda);padding:10px 0;background:#fff}
 .back-btn{display:block;margin:0 auto;padding:8px 14px;background:#014c85;color:white;border-radius:6px;text-decoration:none;width:fit-content}
 .back-btn:hover{background:#003f6d}
+/* Cronograma UI */
+.section{max-width:980px;margin:0 auto;width:100%}
+h2{color:#014c85;margin-bottom:8px}
+.muted{color:#64748b;font-size:13px;margin-bottom:12px}
+.years{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 16px}
+.year-btn{padding:8px 12px;border:1px solid var(--borda);border-radius:8px;background:#fff;cursor:pointer;font-size:14px}
+.year-btn.active{background:#014c85;color:#fff;border-color:#014c85}
+.dates{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:16px}
+.date-card{border:1px solid var(--borda);border-radius:8px;padding:10px;background:#fff;cursor:pointer}
+.date-card h4{margin:0 0 6px;font-size:14px;color:#0f172a}
+.date-card .tag{font-size:12px;color:#475569}
+.detail{border:1px solid var(--borda);border-radius:10px;padding:14px;background:#fff}
+.detail h3{margin:0 0 8px;color:#0f172a}
+.detail-item{margin-bottom:6px}
+.empty{padding:16px;border:1px dashed #cbd5e1;border-radius:10px;background:#fafafa;color:#64748b}
+.list{margin:8px 0 0 18px}
 @media (max-width: 900px){ .main{grid-template-columns:1fr} }
 </style>
 </head>
@@ -82,13 +58,13 @@ h2{color:#014c85;margin-bottom:8px}
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">Pró-Gestão</div>
-      <div class="sidebar-note">Obs.: Documentos externos abrem em nova aba. <b>Composição</b> abrirá aqui no painel.</div>
+      <div class="sidebar-note">Obs.: Documentos e sistemas externos abrirão em <strong>nova aba</strong>.</div>
       <div class="sidebar-scroll">
 
         <div class="acc-item">
           <button class="acc-btn">Conselho Previdenciário</button>
           <div class="acc-links">
-            <a href="#" data-compose="conselho">Composição (abrir aqui)</a>
+            <a href="https://mirassolprevi.com.br/composicao.html" target="_blank" rel="noopener">Composição (nova aba)</a>
             <a href="https://scpimirassoldoeste.fassilcloud.net:879/transparenciaiprem/?AcessoIndividual=lnkConselhoMunicipal" target="_blank" rel="noopener">Atas (nova aba)</a>
             <a href="docs/resolucoes-conselho.pdf" target="_blank" rel="noopener">Resoluções (nova aba)</a>
             <a href="#" data-cronograma="conselho">Cronograma de Reuniões (abrir aqui)</a>
@@ -98,10 +74,87 @@ h2{color:#014c85;margin-bottom:8px}
         <div class="acc-item">
           <button class="acc-btn">Comitê de Investimentos</button>
           <div class="acc-links">
-            <a href="#" data-compose="comite">Composição (abrir aqui)</a>
+            <a href="https://mirassolprevi.com.br/composicao.html" target="_blank" rel="noopener">Composição (nova aba)</a>
             <a href="https://scpimirassoldoeste.fassilcloud.net:879/transparenciaiprem/?AcessoIndividual=lnkConselhoMunicipal" target="_blank" rel="noopener">Atas (nova aba)</a>
             <a href="docs/resolucoes-comite.pdf" target="_blank" rel="noopener">Resoluções (nova aba)</a>
             <a href="#" data-cronograma="comite">Cronograma de Reuniões (abrir aqui)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Reavaliação Atuarial</button>
+          <div class="acc-links">
+            <a href="https://www.consultatransparencia.com.br/mirassoldoestenovo/Transparencia/Documentos?tipo=81&Pag=CertificadosDemonstrativos&Pag2=CertificadosDemonstrativosDRAA" target="_blank" rel="noopener">Visualizar (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Plano de Custeio</button>
+          <div class="acc-links">
+            <a href="https://www.consultatransparencia.com.br/mirassoldoestenovo/Transparencia/Documentos?tipo=81&Pag=CertificadosDemonstrativos&Pag2=CertificadosDemonstrativosDRAA" target="_blank" rel="noopener">Visualizar (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Política Anual de Investimento</button>
+          <div class="acc-links">
+            <a href="https://www.consultatransparencia.com.br/mirassoldoestenovo/Transparencia/Documentos?tipo=7&Pag=CompostoGestaoCarteiraRpps" target="_blank" rel="noopener">Visualizar (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Investimentos</button>
+          <div class="acc-links">
+            <a href="https://www.consultatransparencia.com.br/mirassoldoestenovo/Transparencia/PortifolioInvestimento" target="_blank" rel="noopener">Portfólio (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Certidões</button>
+          <div class="acc-links">
+            <a href="certidoes.html" target="_blank" rel="noopener">Visualizar Certidões (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Educação Previdenciária</button>
+          <div class="acc-links">
+            <a href="docs/educacao-previdenciaria-materiais.pdf" target="_blank" rel="noopener">Materiais e Ações (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Código de Ética</button>
+          <div class="acc-links">
+            <a href="https://drive.google.com/file/d/1L6lEL6Yijihv4GcEvy3sMsrpkpqRcZ--/view?usp=sharing" target="_blank" rel="noopener">Abrir Código de Ética (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Política de Informação</button>
+          <div class="acc-links">
+            <a href="https://drive.google.com/file/d/1m7K5CDBqZG6PbbXwNrKYy40ffFiy2Mgb/view?usp=sharing" target="_blank" rel="noopener">Abrir Política de Informação (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Plano de Ação</button>
+          <div class="acc-links">
+            <a href="https://drive.google.com/file/d/1DnJ78soHjMrI03-29yslVQImRqkcdr23/view?usp=sharing" target="_blank" rel="noopener">Abrir Plano de Ação (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Relatório de Governança</button>
+          <div class="acc-links">
+            <a href="https://drive.google.com/file/d/1sspbaEYcivlzJz9cD9xFZ6HvOuXq6MeC/view?usp=sharing" target="_blank" rel="noopener">2024 (nova aba)</a>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-btn">Cartilha Previdenciária</button>
+          <div class="acc-links">
+            <a href="https://drive.google.com/file/d/1xHL5V9AfRJgKgvvgDUT6zSetc9FkhNUi/view?usp=sharing" target="_blank" rel="noopener">Abrir Cartilha Previdenciária (nova aba)</a>
           </div>
         </div>
 
@@ -117,12 +170,10 @@ h2{color:#014c85;margin-bottom:8px}
 
     <!-- Content -->
     <main class="content">
-      <div class="toolbar" id="viewTitle">
-        <span>Selecione um item</span>
-      </div>
+      <div class="toolbar" id="viewTitle">Selecione um item</div>
       <div class="viewer">
         <div class="section" id="contentArea">
-          <div class="notice">Clique em <b>Composição</b> para ver os membros aqui no painel. Eu vou deixar tudo alinhado (foto • nome • cargo) com visual agradável.</div>
+          Os documentos abrem em nova aba (LGPD). Para ver o cronograma, escolha "Cronograma de Reuniões" no Conselho ou no Comitê.
         </div>
       </div>
       <div class="footer">
@@ -134,7 +185,12 @@ h2{color:#014c85;margin-bottom:8px}
 </div>
 
 <script>
-// Accordion
+// Estado
+let CRONO = null; // dados do cronograma.json serão carregados sob demanda
+const titleEl = document.getElementById('viewTitle');
+const contentArea = document.getElementById('contentArea');
+
+// Acordeão
 document.querySelectorAll('.acc-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const panel = btn.nextElementSibling;
@@ -144,158 +200,113 @@ document.querySelectorAll('.acc-btn').forEach(btn => {
   });
 });
 
-const titleEl = document.getElementById('viewTitle').querySelector('span');
-const contentArea = document.getElementById('contentArea');
-
-// Sanitização simples
-function sanitize(html){
-  const template = document.createElement('template');
-  template.innerHTML = html;
-  const allowed = ['H1','H2','H3','H4','H5','H6','P','UL','OL','LI','STRONG','EM','B','I','SPAN','DIV','TABLE','THEAD','TBODY','TR','TH','TD','BR','IMG'];
-  const walker = document.createTreeWalker(template.content, NodeFilter.SHOW_ELEMENT, null);
-  let node;
-  const toRemove = [];
-  while(node = walker.nextNode()){
-    if(!allowed.includes(node.tagName)){
-      toRemove.push(node);
-    }else{
-      [...node.attributes].forEach(attr=>{
-        const name = attr.name.toLowerCase();
-        if(!['class','id','style','colspan','rowspan','scope','align','src','alt'].includes(name)){
-          node.removeAttribute(attr.name);
-        }
-      });
-    }
-  }
-  toRemove.forEach(n=>n.replaceWith(...n.childNodes));
-  return template.innerHTML;
-}
-
-// Constrói GRID padronizado de membros
-function buildGridFromBlock(blockEl){
-  // Heurística: procurar itens que tenham IMG + algum texto (nome/descrição)
-  let items = Array.from(blockEl.querySelectorAll('.card, .membro, .item, .perfil, li, .grid-item, .col'))
-    .filter(el => el.querySelector('img') || /img/i.test(el.innerHTML));
-  if(items.length === 0){
-    // Se não achar, tenta pegar filhos diretos com imagem
-    items = Array.from(blockEl.querySelectorAll('*'))
-      .filter(el => el.querySelector && el.querySelector('img'));
-  }
-
-  const rows = [];
-  items.forEach(el => {
-    const img = el.querySelector('img');
-    // Nome: tentar h3/h4/strong/.nome; se não, primeira linha de texto forte
-    let nomeEl = el.querySelector('h3, h4, .nome, strong, b');
-    let nome = nomeEl ? nomeEl.textContent.trim() : '';
-    if(!nome){
-      // tenta pegar primeira linha de texto significativa
-      const txt = el.textContent.trim().split('\n').map(s=>s.trim()).filter(Boolean)[0] || '';
-      nome = txt;
-    }
-    // Cargo/descrição: tentar .cargo/.funcao/p depois do nome
-    let cargoEl = el.querySelector('.cargo, .funcao');
-    if(!cargoEl){
-      const ps = Array.from(el.querySelectorAll('p, span')).map(x=>x.textContent.trim()).filter(Boolean);
-      cargoEl = {textContent: ps.slice(1).join(' • ') || ps[0] || ''};
-    }
-    const cargo = (cargoEl && cargoEl.textContent) ? cargoEl.textContent.trim() : '';
-
-    rows.append = undefined
-    rows.push({
-      foto: img ? img.getAttribute('src') : '',
-      nome: nome,
-      cargo: cargo
-    });
-  });
-
-  // Monta HTML da grid
-  const header = `
-    <div class="head">Foto</div>
-    <div class="head">Nome</div>
-    <div class="head">Cargo / Representação</div>
-  `;
-  const body = rows.map(r => `
-    <div class="cell foto">${ r.foto ? `<img src="${r.foto}" alt="${r.nome||'Membro'}">` : '' }</div>
-    <div class="cell nome">${r.nome || '—'}</div>
-    <div class="cell cargo">${r.cargo || '—'}</div>
-  `).join('');
-
-  return `<div class="grid-wrap"><div class="membros-grid">${header}${body}</div></div>`;
-}
-
-// Carrega composicao.html e renderiza em GRID
-async function loadComposicao(tipo){ // 'conselho' | 'comite'
-  titleEl.textContent = 'Composição — ' + (tipo==='conselho'?'Conselho Previdenciário':'Comitê de Investimentos');
-  contentArea.innerHTML = '<div class="card"><div class="card-pad">Carregando composição…</div></div>';
-  try{
-    const res = await fetch('composicao.html', {cache:'no-store'});
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const html = await res.text();
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-
-    // Seleciona secao por heading
-    const allH2 = Array.from(doc.querySelectorAll('h2'));
-    const targetH2 = allH2.find(h => {
-      const t = (h.textContent || '').trim().toLowerCase();
-      return (tipo==='conselho' ? t.includes('conselho previdenci') : t.includes('comit'));
-    });
-    let bloco = null;
-    if(targetH2){
-      bloco = targetH2.closest('.secao') || targetH2.parentElement;
-    }
-
-    if(bloco){
-      const safe = sanitize(bloco.outerHTML);
-      // cria um container temporário para manipular DOM
-      const tmp = document.createElement('div');
-      tmp.innerHTML = safe;
-      // procurar o melhor sub-bloco: card-container, lista etc.
-      const inner = tmp.querySelector('.card-container') || tmp;
-      const gridHtml = buildGridFromBlock(inner);
-      contentArea.innerHTML = `
-        <h2 style="margin:0 0 10px;">${tipo==='conselho'?'Conselho Previdenciário':'Comitê de Investimentos'}</h2>
-        <div class="card"><div class="card-pad">${gridHtml}</div></div>
-      `;
-    }else{
-      contentArea.innerHTML = `
-        <div class="card"><div class="card-pad">
-          <div class="notice">
-            Não foi possível identificar o bloco de composição em <code>composicao.html</code>.
-            <br>Verifique se os títulos contêm “Conselho Previdenciário” ou “Comitê” e se os membros estão agrupados em uma seção.
-          </div>
-        </div></div>`;
-    }
-  }catch(e){
-    contentArea.innerHTML = `
-      <div class="card"><div class="card-pad">
-        <div class="notice">
-          Não foi possível carregar <code>composicao.html</code>. Se estiver em outro domínio, o navegador pode bloquear (CORS).
-          <br><a class="link-out" href="composicao.html" target="_blank" rel="noopener">Abrir composicao.html em nova aba</a>.
-        </div>
-      </div></div>
-    `;
-  }
-}
-
-// Clique em "Composição"
-document.querySelectorAll('[data-compose]').forEach(a=>{
-  a.addEventListener('click', (e)=>{
-    e.preventDefault();
-    loadComposicao(a.dataset.compose);
-  });
-});
-
-// Placeholder para cronograma (caso use cronograma.json em outra versão)
+// Handler para "Cronograma de Reuniões"
 document.querySelectorAll('[data-cronograma]').forEach(a=>{
-  a.addEventListener('click', (e)=>{
+  a.addEventListener('click', async (e)=>{
     e.preventDefault();
-    const entidade = a.getAttribute('data-cronograma');
+    const entidade = a.getAttribute('data-cronograma'); // conselho | comite
     titleEl.textContent = 'Cronograma — ' + (entidade === 'conselho' ? 'Conselho Previdenciário' : 'Comitê de Investimentos');
-    contentArea.innerHTML = '<div class="card"><div class="card-pad">Se quiser, integro aqui o mesmo cronograma.json.</div></div>';
+    // Carrega JSON se ainda não carregado
+    if(!CRONO){
+      try{
+        const res = await fetch('cronograma.json', {cache:'no-store'});
+        if(!res.ok) throw new Error('Falha ao carregar cronograma.json');
+        CRONO = await res.json();
+      }catch(err){
+        contentArea.innerHTML = '<div class="empty">Não foi possível carregar o cronograma.json. Verifique se o arquivo está na mesma pasta desta página.</div>';
+        return;
+      }
+    }
+    renderYears(entidade);
   });
 });
 
+// Renderizações
+function renderYears(entidade){
+  const years = Object.keys(CRONO[entidade] || {}).sort();
+  if(years.length === 0){
+    contentArea.innerHTML = `<div class="empty">Não há anos cadastrados ainda para ${entidade}.</div>`;
+    return;
+  }
+  const last = years[years.length-1];
+  contentArea.innerHTML = `
+    <h2>Selecione o ano</h2>
+    <div class="muted">Clique no ano e depois na <strong>data</strong> para ver a pauta e o previsto.</div>
+    <div class="years">
+      ${years.map(y=>`<button class="year-btn" data-year="${y}">${y}</button>`).join('')}
+    </div>
+    <div id="datesWrap"></div>
+    <div id="detailWrap" style="margin-top:14px;"></div>
+  `;
+  contentArea.querySelectorAll('.year-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      contentArea.querySelectorAll('.year-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      renderDates(entidade, btn.dataset.year);
+    });
+  });
+  // auto selecionar último ano
+  const lastBtn = contentArea.querySelector(`.year-btn[data-year="${last}"]`);
+  if(lastBtn) lastBtn.click();
+}
+
+function renderDates(entidade, ano){
+  const wrap = document.getElementById('datesWrap');
+  const list = (CRONO[entidade] && CRONO[entidade][ano]) ? CRONO[entidade][ano] : [];
+  if(list.length === 0){
+    wrap.innerHTML = `<div class="empty">Nenhuma reunião cadastrada em ${ano}.</div>`;
+    document.getElementById('detailWrap').innerHTML = '';
+    return;
+  }
+  wrap.innerHTML = `
+    <h2>Datas de ${ano}</h2>
+    <div class="dates">
+      ${list.map((item,idx)=>`
+        <div class="date-card" data-idx="${idx}" data-ano="${ano}" data-ent="${entidade}">
+          <h4>${formatDateISO(item.data)}</h4>
+          <div class="tag">${item.previsto ? ('Previsto: ' + item.previsto) : ''}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  wrap.querySelectorAll('.date-card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      const idx = Number(card.dataset.idx);
+      renderDetail(entidade, ano, idx);
+    });
+  });
+  document.getElementById('detailWrap').innerHTML = '';
+}
+
+function renderDetail(entidade, ano, idx){
+  const item = CRONO[entidade][ano][idx];
+  const det = document.getElementById('detailWrap');
+  const itens = (item.pauta || '').split(';').map(s => s.trim()).filter(Boolean);
+  const lista = itens.length ? `<ul class="list">${itens.map(i=>`<li>${i.replace(/\.$/, '')}</li>`).join('')}</ul>` : '<div class="detail-item">Pauta: —</div>';
+  det.innerHTML = `
+    <div class="detail">
+      <h3>${formatDateISO(item.data)} — Pauta</h3>
+      ${lista}
+      <div class="detail-item"><strong>Previsto:</strong> ${item.previsto || '—'}</div>
+      <div class="muted" style="margin-top:8px">Observação: em atenção à LGPD, documentos (se houver) são disponibilizados separadamente.</div>
+    </div>
+  `;
+}
+
+// Util
+function formatDateISO(iso){
+  if(!iso) return "";
+  const d = new Date(iso + "T00:00:00");
+  const pad = (n)=> String(n).padStart(2,'0');
+  return pad(d.getDate()) + "/" + pad(d.getMonth()+1) + "/" + d.getFullYear();
+}
+
+// Atualiza título quando clicar em qualquer link (feedback)
+document.querySelectorAll('.acc-links a[target="_blank"]').forEach(a => {
+  a.addEventListener('click', () => {
+    titleEl.textContent = a.textContent.replace('(nova aba)','').trim();
+  });
+});
 </script>
 
 </body>
