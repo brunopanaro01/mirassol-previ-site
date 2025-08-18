@@ -5,32 +5,55 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Painel Pró-Gestão RPPS | Mirassol-Previ</title>
 <style>
-:root{ --prim:#014c85; --borda:#e5e7eb; --muted:#64748b;}
+:root{ --prim:#014c85; --borda:#e5e7eb; --muted:#64748b; --bg:#ffffff; --sidebar:#f9fafb; }
 *{box-sizing:border-box;margin:0;padding:0}
-html, body{height:100%; overflow:hidden; font-family:Arial, Helvetica, sans-serif; color:#0f172a; background:#fff;}
+html, body{height:100%; overflow:hidden; font-family:Arial, Helvetica, sans-serif; color:#0f172a; background:var(--bg);}
 header{background:var(--prim);color:#fff;text-align:center;padding:12px 8px;flex:0 0 auto}
 header img{height:56px}
 .app{display:flex;flex-direction:column;height:100%}
 .main{display:grid;grid-template-columns:280px 1fr;gap:0;flex:1 1 auto;min-height:0}
-.sidebar{border-right:1px solid var(--borda);background:#f9fafb;display:flex;flex-direction:column;min-height:0}
-.sidebar-header{padding:10px 14px;font-size:17px;color:#014c85;background:#eef6ff;border-bottom:1px solid var(--borda);flex:0 0 auto}
+/* Sidebar */
+.sidebar{border-right:1px solid var(--borda);background:var(--sidebar);display:flex;flex-direction:column;min-height:0}
+.sidebar-header{padding:10px 14px;font-size:17px;color:var(--prim);background:#eef6ff;border-bottom:1px solid var(--borda);flex:0 0 auto}
 .sidebar-note{padding:6px 14px;font-size:12px;color:#334155;background:#f6f7fb;border-bottom:1px solid #eaeef3}
 .sidebar-scroll{overflow:auto;flex:1 1 auto;padding:6px 0}
 .acc-item{margin-bottom:6px}
-.acc-btn{width:100%;text-align:left;border:none;background:#fff;padding:9px 12px;font-size:14px;font-weight:bold;cursor:pointer;border-top:1px solid var(--borda)}
+.acc-btn{width:100%;text-align:left;border:none;background:#fff;padding:10px 12px;font-size:14px;font-weight:bold;cursor:pointer;border-top:1px solid var(--borda)}
 .acc-links{display:none;padding:6px 0;background:#fff;border-top:1px dashed #e2e8f0}
 .acc-links a{display:block;padding:6px 14px;font-size:13px;text-decoration:none;color:#0f172a}
 .acc-links a:hover{background:#eef2f7}
+/* Content */
 .content{display:flex;flex-direction:column;min-width:0;min-height:0}
-.toolbar{padding:8px 12px;border-bottom:1px solid var(--borda);background:#f8fafc;color:#014c85;font-weight:bold;font-size:14px;flex:0 0 auto}
-.viewer{flex:1 1 auto;min-height:0;display:flex;align-items:flex-start;justify-content:center;color:#0f172a;font-size:14px;padding:16px;overflow:auto}
-.footer{flex:0 0 auto;border-top:1px solid var(--borda);padding:10px 0;background:#fff}
-.back-btn{display:block;margin:0 auto;padding:8px 14px;background:#014c85;color:white;border-radius:6px;text-decoration:none;width:fit-content}
-.back-btn:hover{background:#003f6d}
-/* Cronograma UI */
-.section{max-width:980px;margin:0 auto;width:100%}
+.toolbar{padding:8px 12px;border-bottom:1px solid var(--borda);background:#f8fafc;color:#014c85;font-weight:bold;font-size:14px;flex:0 0 auto;display:flex;gap:8px;align-items:center;justify-content:space-between}
+.viewer{flex:1 1 auto;min-height:0;overflow:auto;padding:16px}
+.section{max-width:1100px;margin:0 auto}
+.card{ background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,.06); overflow:hidden; border:1px solid var(--borda) }
+.card-pad{ padding:16px }
+.muted{color:#64748b;font-size:13px}
 h2{color:#014c85;margin-bottom:8px}
-.muted{color:#64748b;font-size:13px;margin-bottom:12px}
+.notice{padding:12px;border:1px dashed #cbd5e1;border-radius:8px;background:#fafafa;color:#475569}
+.link-out{color:#014c85;text-decoration:none;font-weight:bold}
+.link-out:hover{text-decoration:underline}
+/* GRID de membros (tipo planilha) */
+.grid-wrap{margin-top:8px}
+.membros-grid{
+  display:grid;
+  grid-template-columns: 110px 1.1fr 1fr;
+  gap:10px 14px;
+  align-items:center;
+}
+.membros-grid .head{
+  font-weight:bold; color:#0f172a; background:#f3f6fb; border:1px solid var(--borda);
+  padding:10px; border-radius:8px;
+}
+.membros-grid .cell{
+  border:1px solid var(--borda); border-radius:8px; padding:10px; background:#fff;
+}
+.membros-grid .foto{ display:flex; align-items:center; justify-content:center; }
+.membros-grid img{ width:84px; height:84px; object-fit:cover; border-radius:8px; display:block; }
+.membros-grid .nome{ font-weight:bold; }
+.membros-grid .cargo{ color:#475569; }
+/* Cronograma */
 .years{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 16px}
 .year-btn{padding:8px 12px;border:1px solid var(--borda);border-radius:8px;background:#fff;cursor:pointer;font-size:14px}
 .year-btn.active{background:#014c85;color:#fff;border-color:#014c85}
@@ -43,7 +66,16 @@ h2{color:#014c85;margin-bottom:8px}
 .detail-item{margin-bottom:6px}
 .empty{padding:16px;border:1px dashed #cbd5e1;border-radius:10px;background:#fafafa;color:#64748b}
 .list{margin:8px 0 0 18px}
-@media (max-width: 900px){ .main{grid-template-columns:1fr} }
+/* Footer */
+.footer{flex:0 0 auto;border-top:1px solid var(--borda);padding:10px 0;background:#fff}
+.back-btn{display:block;margin:0 auto;padding:8px 14px;background:#014c85;color:white;border-radius:6px;text-decoration:none;width:fit-content}
+.back-btn:hover{background:#003f6d}
+@media (max-width: 900px){
+  .main{grid-template-columns:1fr}
+  .membros-grid{ grid-template-columns: 80px 1fr; }
+  .membros-grid .head:nth-child(3),
+  .membros-grid .cell.cargo{ grid-column: 1 / span 2; }
+}
 </style>
 </head>
 <body>
@@ -58,29 +90,32 @@ h2{color:#014c85;margin-bottom:8px}
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">Pró-Gestão</div>
-      <div class="sidebar-note">Obs.: Documentos e sistemas externos abrirão em <strong>nova aba</strong>.</div>
+      <div class="sidebar-note">Obs.: Por LGPD, documentos/sistemas externos abrem em <strong>nova aba</strong>. Já <strong>Composição</strong> abre aqui no painel.</div>
       <div class="sidebar-scroll">
 
+        <!-- Conselho -->
         <div class="acc-item">
           <button class="acc-btn">Conselho Previdenciário</button>
           <div class="acc-links">
-            <a href="https://mirassolprevi.com.br/composicao.html" target="_blank" rel="noopener">Composição (nova aba)</a>
+            <a href="#" data-compose="conselho">Composição (abrir aqui)</a>
             <a href="https://scpimirassoldoeste.fassilcloud.net:879/transparenciaiprem/?AcessoIndividual=lnkConselhoMunicipal" target="_blank" rel="noopener">Atas (nova aba)</a>
             <a href="docs/resolucoes-conselho.pdf" target="_blank" rel="noopener">Resoluções (nova aba)</a>
             <a href="#" data-cronograma="conselho">Cronograma de Reuniões (abrir aqui)</a>
           </div>
         </div>
 
+        <!-- Comitê -->
         <div class="acc-item">
           <button class="acc-btn">Comitê de Investimentos</button>
           <div class="acc-links">
-            <a href="https://mirassolprevi.com.br/composicao.html" target="_blank" rel="noopener">Composição (nova aba)</a>
+            <a href="#" data-compose="comite">Composição (abrir aqui)</a>
             <a href="https://scpimirassoldoeste.fassilcloud.net:879/transparenciaiprem/?AcessoIndividual=lnkConselhoMunicipal" target="_blank" rel="noopener">Atas (nova aba)</a>
             <a href="docs/resolucoes-comite.pdf" target="_blank" rel="noopener">Resoluções (nova aba)</a>
             <a href="#" data-cronograma="comite">Cronograma de Reuniões (abrir aqui)</a>
           </div>
         </div>
 
+        <!-- Demais itens -->
         <div class="acc-item">
           <button class="acc-btn">Reavaliação Atuarial</button>
           <div class="acc-links">
@@ -133,28 +168,21 @@ h2{color:#014c85;margin-bottom:8px}
         <div class="acc-item">
           <button class="acc-btn">Política de Informação</button>
           <div class="acc-links">
-            <a href="https://drive.google.com/file/d/1m7K5CDBqZG6PbbXwNrKYy40ffFiy2Mgb/view?usp=sharing" target="_blank" rel="noopener">Abrir Política de Informação (nova aba)</a>
+            <a href="docs/politica-informacao.pdf" target="_blank" rel="noopener">Abrir Política de Informação (nova aba)</a>
           </div>
         </div>
 
         <div class="acc-item">
           <button class="acc-btn">Plano de Ação</button>
           <div class="acc-links">
-            <a href="https://drive.google.com/file/d/1DnJ78soHjMrI03-29yslVQImRqkcdr23/view?usp=sharing" target="_blank" rel="noopener">Abrir Plano de Ação (nova aba)</a>
+            <a href="docs/plano-acao.pdf" target="_blank" rel="noopener">Abrir Plano de Ação (nova aba)</a>
           </div>
         </div>
 
         <div class="acc-item">
           <button class="acc-btn">Relatório de Governança</button>
           <div class="acc-links">
-            <a href="https://drive.google.com/file/d/1sspbaEYcivlzJz9cD9xFZ6HvOuXq6MeC/view?usp=sharing" target="_blank" rel="noopener">2024 (nova aba)</a>
-          </div>
-        </div>
-
-        <div class="acc-item">
-          <button class="acc-btn">Cartilha Previdenciária</button>
-          <div class="acc-links">
-            <a href="https://drive.google.com/file/d/1xHL5V9AfRJgKgvvgDUT6zSetc9FkhNUi/view?usp=sharing" target="_blank" rel="noopener">Abrir Cartilha Previdenciária (nova aba)</a>
+            <a href="docs/relatorio-governanca-2024.pdf" target="_blank" rel="noopener">2024 (nova aba)</a>
           </div>
         </div>
 
@@ -170,10 +198,13 @@ h2{color:#014c85;margin-bottom:8px}
 
     <!-- Content -->
     <main class="content">
-      <div class="toolbar" id="viewTitle">Selecione um item</div>
+      <div class="toolbar" id="viewTitle">
+        <span>Selecione um item</span>
+        <label class="muted" style="font-size:12px"></label>
+      </div>
       <div class="viewer">
         <div class="section" id="contentArea">
-          Os documentos abrem em nova aba (LGPD). Para ver o cronograma, escolha "Cronograma de Reuniões" no Conselho ou no Comitê.
+          <div class="notice">Clique em <b>Composição</b> do Conselho ou do Comitê para ver os membros aqui no painel (layout em grade: <i>foto • nome • cargo</i>). Para cronograma, escolha “Cronograma de Reuniões”.</div>
         </div>
       </div>
       <div class="footer">
@@ -185,12 +216,7 @@ h2{color:#014c85;margin-bottom:8px}
 </div>
 
 <script>
-// Estado
-let CRONO = null; // dados do cronograma.json serão carregados sob demanda
-const titleEl = document.getElementById('viewTitle');
-const contentArea = document.getElementById('contentArea');
-
-// Acordeão
+// Accordion (menu lateral)
 document.querySelectorAll('.acc-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const panel = btn.nextElementSibling;
@@ -200,32 +226,145 @@ document.querySelectorAll('.acc-btn').forEach(btn => {
   });
 });
 
-// Handler para "Cronograma de Reuniões"
-document.querySelectorAll('[data-cronograma]').forEach(a=>{
-  a.addEventListener('click', async (e)=>{
-    e.preventDefault();
-    const entidade = a.getAttribute('data-cronograma'); // conselho | comite
-    titleEl.textContent = 'Cronograma — ' + (entidade === 'conselho' ? 'Conselho Previdenciário' : 'Comitê de Investimentos');
-    // Carrega JSON se ainda não carregado
-    if(!CRONO){
-      try{
-        const res = await fetch('cronograma.json', {cache:'no-store'});
-        if(!res.ok) throw new Error('Falha ao carregar cronograma.json');
-        CRONO = await res.json();
-      }catch(err){
-        contentArea.innerHTML = '<div class="empty">Não foi possível carregar o cronograma.json. Verifique se o arquivo está na mesma pasta desta página.</div>';
-        return;
-      }
+const titleEl = document.getElementById('viewTitle').querySelector('span');
+const contentArea = document.getElementById('contentArea');
+
+// Sanitização simples
+function sanitize(html){
+  const template = document.createElement('template');
+  template.innerHTML = html;
+  const allowed = ['H1','H2','H3','H4','H5','H6','P','UL','OL','LI','STRONG','EM','B','I','SPAN','DIV','TABLE','THEAD','TBODY','TR','TH','TD','BR','IMG'];
+  const walker = document.createTreeWalker(template.content, NodeFilter.SHOW_ELEMENT, null);
+  let node;
+  const toRemove = [];
+  while(node = walker.nextNode()){
+    if(!allowed.includes(node.tagName)){
+      toRemove.push(node);
+    }else{
+      [...node.attributes].forEach(attr=>{
+        const name = attr.name.toLowerCase();
+        if(!['class','id','style','colspan','rowspan','scope','align','src','alt'].includes(name)){
+          node.removeAttribute(attr.name);
+        }
+      });
     }
-    renderYears(entidade);
+  }
+  toRemove.forEach(n=>n.replaceWith(...n.childNodes));
+  return template.innerHTML;
+}
+
+// Constrói GRID padronizado de membros (foto | nome | cargo)
+function buildGridFromBlock(blockEl){
+  let items = Array.from(blockEl.querySelectorAll('.card, .membro, .item, .perfil, li, .grid-item, .col'))
+    .filter(el => el.querySelector('img') || /<img/i.test(el.innerHTML));
+  if(items.length === 0){
+    items = Array.from(blockEl.children).filter(el => el.querySelector && el.querySelector('img'));
+  }
+  const rows = [];
+  items.forEach(el => {
+    const img = el.querySelector('img');
+    let nomeEl = el.querySelector('h3, h4, .nome, strong, b');
+    let nome = nomeEl ? nomeEl.textContent.trim() : '';
+    if(!nome){
+      const txt = el.textContent.trim().split('\\n').map(s=>s.trim()).filter(Boolean)[0] || '';
+      nome = txt;
+    }
+    let cargoEl = el.querySelector('.cargo, .funcao');
+    if(!cargoEl){
+      const ps = Array.from(el.querySelectorAll('p, span')).map(x=>x.textContent.trim()).filter(Boolean);
+      cargoEl = {textContent: ps.slice(1).join(' • ') || ps[0] || ''};
+    }
+    const cargo = (cargoEl && cargoEl.textContent) ? cargoEl.textContent.trim() : '';
+    rows.push({ foto: img ? img.getAttribute('src') : '', nome, cargo });
+  });
+
+  const header = `
+    <div class="head">Foto</div>
+    <div class="head">Nome</div>
+    <div class="head">Cargo / Representação</div>
+  `;
+  const body = rows.map(r => `
+    <div class="cell foto">${ r.foto ? `<img src="${r.foto}" alt="${r.nome||'Membro'}">` : '' }</div>
+    <div class="cell nome">${r.nome || '—'}</div>
+    <div class="cell cargo">${r.cargo || '—'}</div>
+  `).join('');
+
+  return `<div class="grid-wrap"><div class="membros-grid">${header}${body}</div></div>`;
+}
+
+// Carrega composicao.html e renderiza em GRID
+async function loadComposicao(tipo){ // 'conselho' | 'comite'
+  titleEl.textContent = 'Composição — ' + (tipo==='conselho'?'Conselho Previdenciário':'Comitê de Investimentos');
+  contentArea.innerHTML = '<div class="card"><div class="card-pad">Carregando composição…</div></div>';
+  try{
+    const res = await fetch('composicao.html', {cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const html = await res.text();
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+
+    // Seleciona seção pelo <h2>
+    const allH2 = Array.from(doc.querySelectorAll('h2'));
+    const targetH2 = allH2.find(h => {
+      const t = (h.textContent || '').trim().toLowerCase();
+      return (tipo==='conselho' ? t.includes('conselho previdenci') : t.includes('comit'));
+    });
+    let bloco = null;
+    if(targetH2){
+      bloco = targetH2.closest('.secao') || targetH2.parentElement;
+    }
+
+    if(bloco){
+      const safe = sanitize(bloco.outerHTML);
+      const tmp = document.createElement('div');
+      tmp.innerHTML = safe;
+      const inner = tmp.querySelector('.card-container') || tmp;
+      const gridHtml = buildGridFromBlock(inner);
+      contentArea.innerHTML = `
+        <h2 style="margin:0 0 10px;">${tipo==='conselho'?'Conselho Previdenciário':'Comitê de Investimentos'}</h2>
+        <div class="card"><div class="card-pad">${gridHtml}</div></div>
+      `;
+    }else{
+      contentArea.innerHTML = `
+        <div class="card"><div class="card-pad">
+          <div class="notice">
+            Não foi possível identificar o bloco de composição em <code>composicao.html</code>.
+            Verifique os títulos (“Conselho Previdenciário” / “Comitê”) e a estrutura dos cartões.
+            <br><a class="link-out" href="composicao.html" target="_blank" rel="noopener">Abrir composicao.html em nova aba</a>.
+          </div>
+        </div></div>`;
+    }
+  }catch(e){
+    contentArea.innerHTML = `
+      <div class="card"><div class="card-pad">
+        <div class="notice">
+          Não foi possível carregar <code>composicao.html</code>. (Se estiver em outro domínio, pode haver bloqueio do navegador.)
+          <br><a class="link-out" href="composicao.html" target="_blank" rel="noopener">Abrir composicao.html em nova aba</a>.
+        </div>
+      </div></div>
+    `;
+  }
+}
+
+// Clique em "Composição"
+document.querySelectorAll('[data-compose]').forEach(a=>{
+  a.addEventListener('click', (e)=>{
+    e.preventDefault();
+    loadComposicao(a.dataset.compose);
   });
 });
 
-// Renderizações
+// ===== CRONOGRAMA (carrega de cronograma.json) =====
+let CRONO = null;
+function formatDateISO(iso){
+  if(!iso) return "";
+  const d = new Date(iso + "T00:00:00");
+  const pad = (n)=> String(n).padStart(2,'0');
+  return pad(d.getDate()) + "/" + pad(d.getMonth()+1) + "/" + d.getFullYear();
+}
 function renderYears(entidade){
   const years = Object.keys(CRONO[entidade] || {}).sort();
   if(years.length === 0){
-    contentArea.innerHTML = `<div class="empty">Não há anos cadastrados ainda para ${entidade}.</div>`;
+    contentArea.innerHTML = `<div class="empty">Não há anos cadastrados para ${entidade}.</div>`;
     return;
   }
   const last = years[years.length-1];
@@ -245,11 +384,9 @@ function renderYears(entidade){
       renderDates(entidade, btn.dataset.year);
     });
   });
-  // auto selecionar último ano
   const lastBtn = contentArea.querySelector(`.year-btn[data-year="${last}"]`);
   if(lastBtn) lastBtn.click();
 }
-
 function renderDates(entidade, ano){
   const wrap = document.getElementById('datesWrap');
   const list = (CRONO[entidade] && CRONO[entidade][ano]) ? CRONO[entidade][ano] : [];
@@ -277,7 +414,6 @@ function renderDates(entidade, ano){
   });
   document.getElementById('detailWrap').innerHTML = '';
 }
-
 function renderDetail(entidade, ano, idx){
   const item = CRONO[entidade][ano][idx];
   const det = document.getElementById('detailWrap');
@@ -292,19 +428,26 @@ function renderDetail(entidade, ano, idx){
     </div>
   `;
 }
-
-// Util
-function formatDateISO(iso){
-  if(!iso) return "";
-  const d = new Date(iso + "T00:00:00");
-  const pad = (n)=> String(n).padStart(2,'0');
-  return pad(d.getDate()) + "/" + pad(d.getMonth()+1) + "/" + d.getFullYear();
+async function ensureCrono(){
+  if(CRONO) return true;
+  try{
+    const res = await fetch('cronograma.json', {cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    CRONO = await res.json();
+    return true;
+  }catch(err){
+    contentArea.innerHTML = '<div class="empty">Não foi possível carregar o cronograma.json. Verifique se o arquivo está na mesma pasta desta página.</div>';
+    return false;
+  }
 }
-
-// Atualiza título quando clicar em qualquer link (feedback)
-document.querySelectorAll('.acc-links a[target="_blank"]').forEach(a => {
-  a.addEventListener('click', () => {
-    titleEl.textContent = a.textContent.replace('(nova aba)','').trim();
+document.querySelectorAll('[data-cronograma]').forEach(a=>{
+  a.addEventListener('click', async (e)=>{
+    e.preventDefault();
+    const entidade = a.getAttribute('data-cronograma'); // conselho | comite
+    titleEl.textContent = 'Cronograma — ' + (entidade === 'conselho' ? 'Conselho Previdenciário' : 'Comitê de Investimentos');
+    if(await ensureCrono()){
+      renderYears(entidade);
+    }
   });
 });
 </script>
