@@ -58,13 +58,13 @@ h2{color:#014c85;margin-bottom:8px}
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">Pró-Gestão</div>
-      <div class="sidebar-note">Obs.: Documentos e sistemas externos abrirão em <strong>nova aba</strong>.</div>
+      <div class="sidebar-note">Obs.: Documentos e sistemas externos abrirão em <strong>nova aba</strong>. A opção <strong>Composição</strong> abre aqui no painel.</div>
       <div class="sidebar-scroll">
 
         <div class="acc-item">
           <button class="acc-btn">Conselho Previdenciário</button>
           <div class="acc-links">
-            <a href="https://mirassolprevi.com.br/composicao.html" target="_blank" rel="noopener">Composição (nova aba)</a>
+            <a href="#" data-compose="conselho">Composição (abrir aqui)</a>
             <a href="https://scpimirassoldoeste.fassilcloud.net:879/transparenciaiprem/?AcessoIndividual=lnkConselhoMunicipal" target="_blank" rel="noopener">Atas (nova aba)</a>
             <a href="docs/resolucoes-conselho.pdf" target="_blank" rel="noopener">Resoluções (nova aba)</a>
             <a href="#" data-cronograma="conselho">Cronograma de Reuniões (abrir aqui)</a>
@@ -74,7 +74,7 @@ h2{color:#014c85;margin-bottom:8px}
         <div class="acc-item">
           <button class="acc-btn">Comitê de Investimentos</button>
           <div class="acc-links">
-            <a href="https://mirassolprevi.com.br/composicao.html" target="_blank" rel="noopener">Composição (nova aba)</a>
+            <a href="#" data-compose="comite">Composição (abrir aqui)</a>
             <a href="https://scpimirassoldoeste.fassilcloud.net:879/transparenciaiprem/?AcessoIndividual=lnkConselhoMunicipal" target="_blank" rel="noopener">Atas (nova aba)</a>
             <a href="docs/resolucoes-comite.pdf" target="_blank" rel="noopener">Resoluções (nova aba)</a>
             <a href="#" data-cronograma="comite">Cronograma de Reuniões (abrir aqui)</a>
@@ -173,7 +173,7 @@ h2{color:#014c85;margin-bottom:8px}
       <div class="toolbar" id="viewTitle">Selecione um item</div>
       <div class="viewer">
         <div class="section" id="contentArea">
-          Os documentos abrem em nova aba (LGPD). Para ver o cronograma, escolha "Cronograma de Reuniões" no Conselho ou no Comitê.
+          Os documentos abrem em nova aba (LGPD). Para ver o cronograma, escolha "Cronograma de Reuniões". Ao clicar em "Composição", os membros serão exibidos aqui no painel.
         </div>
       </div>
       <div class="footer">
@@ -307,6 +307,56 @@ document.querySelectorAll('.acc-links a[target="_blank"]').forEach(a => {
     titleEl.textContent = a.textContent.replace('(nova aba)','').trim();
   });
 });
+
+// ======= Composição inline (carrega composicao.html e extrai o bloco do Conselho/Comitê) =======
+async function loadComposicao(tipo){ // 'conselho' | 'comite'
+  titleEl.textContent = 'Composição — ' + (tipo==='conselho' ? 'Conselho Previdenciário' : 'Comitê de Investimentos');
+  contentArea.innerHTML = '<div class="detail">Carregando composição…</div>';
+  try{
+    const res = await fetch('composicao.html', {cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const html = await res.text();
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+
+    // Busca por <h2> com o texto correto e pega o contêiner .secao correspondente
+    const allH2 = Array.from(doc.querySelectorAll('h2'));
+    const targetH2 = allH2.find(h => {
+      const t = (h.textContent || '').trim().toLowerCase();
+      return (tipo==='conselho' ? t.includes('conselho previdenci') : t.includes('comit') );
+    });
+
+    let bloco = null;
+    if(targetH2){
+      const sec = targetH2.closest('.secao');
+      if(sec){
+        // preferimos só a lista de cards (membros)
+        const cards = sec.querySelector('.card-container');
+        bloco = cards ? cards.outerHTML : sec.outerHTML;
+      }
+    }
+
+    if(bloco){
+      contentArea.innerHTML = '<h2 style="color:#014c85;margin:0 0 10px;">' + (tipo==='conselho'?'Conselho Previdenciário':'Comitê de Investimentos') + '</h2>' +
+                              '<div class="card" style="border:1px solid #e5e7eb;border-radius:8px;"><div class="card-pad">' + bloco + '</div></div>';
+    }else{
+      contentArea.innerHTML = '<div class="empty">Não foi possível localizar o bloco de composição em <code>composicao.html</code>. ' +
+                              'Abra <a href="composicao.html" target="_blank" rel="noopener">composicao.html</a> para verificar a estrutura.</div>';
+    }
+  }catch(e){
+    contentArea.innerHTML = '<div class="empty">Não foi possível carregar <code>composicao.html</code>. ' +
+                            'Se estiver em outro domínio, o navegador pode bloquear. ' +
+                            'Você pode abrir <a href="composicao.html" target="_blank" rel="noopener">composicao.html</a> em nova aba.</div>';
+  }
+}
+
+// Clique nos itens "Composição"
+document.querySelectorAll('[data-compose]').forEach(a=>{
+  a.addEventListener('click', (e)=>{
+    e.preventDefault();
+    loadComposicao(a.dataset.compose);
+  });
+});
+
 </script>
 
 </body>
