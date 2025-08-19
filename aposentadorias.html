@@ -14,7 +14,7 @@ header img{height:56px}
 .main{display:grid;grid-template-columns:280px 1fr;gap:0;flex:1 1 auto;min-height:0}
 /* Sidebar */
 .sidebar{border-right:1px solid var(--borda);background:var(--sidebar);display:flex;flex-direction:column;min-height:0}
-.sidebar-header{padding:10px 14px;font-size:17px;color:var(--prim);background:#eef6ff;border-bottom:1px solid var(--borda);flex:0 0 auto}
+.sidebar-header{padding:10px 14px;font-size:17px;color:#fff;background:#014c85;border-bottom:1px solid var(--borda);flex:0 0 auto}
 .sidebar-note{padding:6px 14px;font-size:12px;color:#334155;background:#f6f7fb;border-bottom:1px solid #eaeef3}
 .sidebar-scroll{overflow:auto;flex:1 1 auto;padding:6px 0}
 .menu-item{margin-bottom:6px}
@@ -27,6 +27,9 @@ header img{height:56px}
 .section{max-width:1100px;margin:0 auto}
 .card{ background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,.06); overflow:hidden; border:1px solid var(--borda) }
 .card-pad{ padding:16px }
+h1{font-size:22px;color:#014c85;margin:0 0 8px}
+h2{color:#014c85;margin:16px 0 8px}
+.lead{line-height:1.55}
 .lgpd{ font-size:13px; color:#475569; margin:6px 0 14px }
 /* Regras */
 .accordion { width:100%; }
@@ -64,6 +67,12 @@ header img{height:56px}
 .tabela th{ background:#eef2f7 }
 .tabela td:last-child a{ color:var(--prim); text-decoration:none; font-weight:bold }
 .tabela td:last-child a:hover{ text-decoration:underline }
+/* Memórias */
+.table{width:100%;border-collapse:collapse;margin-top:10px;background:#fff}
+.table th,.table td{border:1px solid var(--borda);padding:10px;text-align:left;vertical-align:top}
+.table th{background:#f3f6fb;color:#0f172a}
+.table a{color:#014c85;text-decoration:none}
+.table a:hover{text-decoration:underline}
 /* Footer */
 .footer{flex:0 0 auto;border-top:1px solid var(--borda);padding:10px 0;background:#fff}
 .back-btn{display:block;margin:0 auto;padding:8px 14px;background:#014c85;color:white;border-radius:6px;text-decoration:none;width:fit-content}
@@ -89,6 +98,7 @@ header img{height:56px}
       <div class="sidebar-scroll">
         <div class="menu-item"><button class="menu-btn active" data-section="regras">Regras de Aposentadoria</button></div>
         <div class="menu-item"><button class="menu-btn" data-section="beneficio">Benefício Concedido</button></div>
+        <div class="menu-item"><button class="menu-btn" data-section="memorias">Memórias</button></div>
       </div>
     </aside>
 
@@ -199,6 +209,29 @@ header img{height:56px}
             </div>
           </section>
 
+          <!-- Memórias -->
+          <section id="sec-memorias" class="card" style="display:none">
+            <div class="card-pad">
+              <h1>Memórias</h1>
+              <p class="lead">
+                O projeto tem como objetivo relacionar relatos orais e documentais dos servidores aposentados que fizeram parte do quadro de servidores do município de Mirassol D’Oeste - MT que em sua grande maioria se mistura com a história do município por meio de relatos, fotos, imagens, desenhos e fotografias antigas de que tenham posse visando demonstrar o fazer docente.
+              </p>
+              <p class="lead">
+                As recordações pessoais dos profissionais buscam reconstruir a história do município além de recontar as memórias afetivas que se fizeram presentes ao longo dos anos.
+              </p>
+              <h2>Acervo (relatos & arquivos)</h2>
+              <p class="lgpd">Os arquivos de relatos, fotos e documentos são disponibilizados mediante autorização dos participantes. Ao clicar, o arquivo abre em <strong>nova aba</strong>.</p>
+              <table class="table" id="tabelaMemorias">
+                <thead>
+                  <tr><th style="width:65%;">Descrição</th><th>Arquivo</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td colspan="2">Nenhum item cadastrado ainda.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
         </div>
       </div>
       <div class="footer">
@@ -216,10 +249,11 @@ buttons.forEach(btn=>{
   btn.addEventListener('click', ()=>{
     buttons.forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    const sec = btn.dataset.section; // 'regras' | 'beneficio'
-    titleEl.textContent = (sec==='regras' ? 'Regras de Aposentadoria' : 'Benefício Concedido');
+    const sec = btn.dataset.section; // 'regras' | 'beneficio' | 'memorias'
+    titleEl.textContent = (sec==='regras' ? 'Regras de Aposentadoria' : (sec==='beneficio' ? 'Benefício Concedido' : 'Memórias'));
     document.getElementById('sec-regras').style.display = (sec==='regras')?'':'none';
     document.getElementById('sec-beneficio').style.display = (sec==='beneficio')?'':'none';
+    document.getElementById('sec-memorias').style.display = (sec==='memorias')?'':'none';
   });
 });
 
@@ -244,6 +278,29 @@ document.querySelectorAll('.ano-btn').forEach(btn => {
     if(!aberto){ el.style.display = 'block'; btn.querySelector('i').textContent = 'fechar'; }
   });
 });
+
+// Carregar itens de memorias.json, se existir (para preencher a tabela automaticamente)
+async function carregarMemorias(){
+  try{
+    const res = await fetch('memorias.json', {cache:'no-store'});
+    if(!res.ok) return;
+    const dados = await res.json();
+    const corpo = document.querySelector('#tabelaMemorias tbody');
+    if(!Array.isArray(dados) || dados.length===0){
+      corpo.innerHTML = '<tr><td colspan="2">Nenhum item cadastrado ainda.</td></tr>';
+      return;
+    }
+    corpo.innerHTML = dados.map(item => `
+      <tr>
+        <td>${item.descricao || ''}</td>
+        <td>${item.link ? `<a href="${item.link}" target="_blank" rel="noopener">Baixar arquivo</a>` : '-'}</td>
+      </tr>
+    `).join('');
+  }catch(e){
+    // mantém a mensagem padrão caso o JSON não exista
+  }
+}
+carregarMemorias();
 </script>
 
 </body>
