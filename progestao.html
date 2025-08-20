@@ -76,6 +76,13 @@ h2{color:#014c85;margin-bottom:8px}
   .membros-grid .head:nth-child(3),
   .membros-grid .cell.cargo{ grid-column: 1 / span 2; }
 }
+
+/* Tabela planejamento educação */
+.table{width:100%;border-collapse:collapse;margin-top:8px;background:#fff}
+.table th,.table td{border:1px solid var(--borda);padding:10px;text-align:left;vertical-align:top;font-size:14px}
+.table th{background:#f3f6fb;color:#0f172a}
+.badge{display:inline-block;border:1px solid var(--borda);border-radius:999px;padding:2px 8px;font-size:12px;color:#334155;background:#f8fafc}
+
 </style>
 </head>
 <body>
@@ -150,14 +157,12 @@ h2{color:#014c85;margin-bottom:8px}
             <a href="certidoes.html" target="_blank" rel="noopener">Visualizar Certidões (nova aba)</a>
           </div>
         </div>
-
-        <div class="acc-item">
+         <div class="acc-item">
           <button class="acc-btn">Educação Previdenciária</button>
           <div class="acc-links">
-            <a href="docs/educacao-previdenciaria-materiais.pdf" target="_blank" rel="noopener">Materiais e Ações (nova aba)</a>
+            <a href="#" data-educacao="planejamento">Planejamento de Capacitação (abrir aqui)</a>
           </div>
         </div>
-
         <div class="acc-item">
           <button class="acc-btn">Código de Ética</button>
           <div class="acc-links">
@@ -350,6 +355,86 @@ document.querySelectorAll('[data-compose]').forEach(a=>{
   a.addEventListener('click', (e)=>{
     e.preventDefault();
     loadComposicao(a.dataset.compose);
+  });
+});
+
+
+// ===== EDUCAÇÃO PREVIDENCIÁRIA (planejamento por ano a partir de educacao.json) =====
+let EDUC = null;
+function tableEduc(rows){
+  if(!rows || rows.length===0){
+    return '<div class="empty">Nenhum treinamento cadastrado neste ano.</div>';
+  }
+  return `
+    <table class="table">
+      <thead>
+        <tr>
+          <th style="width:36%;">Treinamento</th>
+          <th style="width:22%;">Público-alvo</th>
+          <th style="width:12%;">Duração</th>
+          <th style="width:12%;">Mês</th>
+          <th style="width:12%;">Formato</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map(r=>`
+          <tr>
+            <td>${r.treinamento || ''}</td>
+            <td>${r.publico || ''}</td>
+            <td>${r.duracao || ''}</td>
+            <td>${r.mes || ''}</td>
+            <td>${r.formato ? `<span class="badge">${r.formato}</span>` : ''}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+}
+function renderEducYears(){
+  const years = Object.keys(EDUC || {}).sort();
+  if(years.length===0){
+    contentArea.innerHTML = '<div class="empty">Não há anos cadastrados no <code>educacao.json</code>.</div>';
+    return;
+  }
+  const last = years[years.length-1];
+  contentArea.innerHTML = `
+    <h2>Educação Previdenciária — Planejamento anual</h2>
+    <div class="muted">Selecione o ano para visualizar a programação de treinamentos.</div>
+    <div class="years">
+      ${years.map(y=>`<button class="year-btn" data-year="${y}">${y}</button>`).join('')}
+    </div>
+    <div id="educTable"></div>
+  `;
+  contentArea.querySelectorAll('.year-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      contentArea.querySelectorAll('.year-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const ano = btn.dataset.year;
+      const rows = (EDUC && EDUC[ano]) ? EDUC[ano] : [];
+      document.getElementById('educTable').innerHTML = tableEduc(rows);
+    });
+  });
+  const lastBtn = contentArea.querySelector(`.year-btn[data-year="${last}"]`);
+  if(lastBtn) lastBtn.click();
+}
+async function ensureEduc(){
+  if(EDUC) return true;
+  try{
+    const res = await fetch('educacao.json', {cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    EDUC = await res.json();
+    return true;
+  }catch(err){
+    contentArea.innerHTML = '<div class="empty">Não foi possível carregar o <code>educacao.json</code>. Coloque o arquivo na mesma pasta desta página.</div>';
+    return false;
+  }
+}
+document.querySelectorAll('[data-educacao]').forEach(a=>{
+  a.addEventListener('click', async (e)=>{
+    e.preventDefault();
+    titleEl.textContent = 'Educação Previdenciária — Planejamento';
+    if(await ensureEduc()){
+      renderEducYears();
+    }
   });
 });
 
