@@ -210,27 +210,77 @@ h2{color:#014c85;margin:16px 0 8px}
           </section>
 
           <!-- Memórias -->
-          <section id="sec-memorias" class="card" style="display:none">
-            <div class="card-pad">
-              <h1>Memórias</h1>
-              <p class="lead">
-                O projeto tem como objetivo relacionar relatos orais e documentais dos servidores aposentados que fizeram parte do quadro de servidores do município de Mirassol D’Oeste - MT que em sua grande maioria se mistura com a história do município por meio de relatos, fotos, imagens, desenhos e fotografias antigas de que tenham posse visando demonstrar o fazer docente.
-              </p>
-              <p class="lead">
-                As recordações pessoais dos profissionais buscam reconstruir a história do município além de recontar as memórias afetivas que se fizeram presentes ao longo dos anos.
-              </p>
-              <h2>Acervo (relatos & arquivos)</h2>
-              <p class="lgpd">Os arquivos de relatos, fotos e documentos são disponibilizados mediante autorização dos participantes. Ao clicar, o arquivo abre em <strong>nova aba</strong>.</p>
-              <table class="table" id="tabelaMemorias">
-                <thead>
-                  <tr><th style="width:65%;">Descrição</th><th>Arquivo</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td colspan="2">Nenhum item cadastrado ainda.</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
+<section id="sec-memorias" class="card" style="display:none">
+  <div class="card-pad">
+    <h1>Memórias</h1>
+    <p class="lead">
+      O projeto tem como objetivo relacionar relatos orais e documentais dos servidores aposentados que fizeram parte do quadro de servidores do município de Mirassol D’Oeste - MT que em sua grande maioria se mistura com a história do município por meio de relatos, fotos, imagens, desenhos e fotografias antigas de que tenham posse visando demonstrar o fazer docente.
+    </p>
+    <p class="lead">
+      As recordações pessoais dos profissionais buscam reconstruir a história do município além de recontar as memórias afetivas que se fizeram presentes ao longo dos anos.
+    </p>
+    <h2>Acervo (relatos & arquivos)</h2>
+    <p class="lgpd">
+      Os arquivos de relatos, fotos e documentos são disponibilizados mediante autorização dos participantes. 
+      Ao clicar, o arquivo abre em <strong>nova aba</strong>.
+    </p>
+
+    <table class="table" id="tabelaMemorias">
+      <thead>
+        <tr>
+          <th style="width:65%;">Descrição</th>
+          <th>Arquivo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="2">Carregando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<script>
+  // Carregar os dados de memorias.json
+  fetch('memorias.json')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Erro ao carregar o arquivo memorias.json");
+      }
+      return response.json();
+    })
+    .then(data => {
+      const tbody = document.querySelector("#tabelaMemorias tbody");
+      tbody.innerHTML = ""; // limpar linha de "Carregando..."
+
+      if (data.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='2'>Nenhum item cadastrado ainda.</td></tr>";
+        return;
+      }
+
+      data.forEach(item => {
+        const tr = document.createElement("tr");
+
+        const tdDesc = document.createElement("td");
+        tdDesc.textContent = item.descricao;
+
+        const tdLink = document.createElement("td");
+        const link = document.createElement("a");
+        link.href = item.link;
+        link.target = "_blank";
+        link.textContent = "Baixar arquivo";
+        tdLink.appendChild(link);
+
+        tr.appendChild(tdDesc);
+        tr.appendChild(tdLink);
+        tbody.appendChild(tr);
+      });
+    })
+    .catch(error => {
+      console.error(error);
+      const tbody = document.querySelector("#tabelaMemorias tbody");
+      tbody.innerHTML = "<tr><td colspan='2'>Erro ao carregar os dados.</td></tr>";
+    });
+</script>
 
         </div>
       </div>
