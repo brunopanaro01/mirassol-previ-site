@@ -152,94 +152,20 @@ h2{color:#014c85;margin:16px 0 8px}
             </div>
           </section>
 
-          <!-- Benefício Concedido -->
+          
+          <!-- Benefício Concedido (dinâmico via beneficios.json) -->
           <section id="sec-beneficio" class="card" style="display:none">
             <div class="card-pad">
               <h2 style="margin:0 0 6px">Benefício Concedido</h2>
-              <p class="lgpd" style="margin-top:0">Distribuído por <strong>ano</strong>, com colunas: <em>Mês</em>, <em>Descrição</em> e <em>Arquivo</em> (abre em nova aba).</p>
-
-              <!-- 2025 -->
-              <div class="ano">
-                <button class="ano-btn" data-ano="2025">
-                  <span>2025</span><i>abrir</i>
-                </button>
-                <div class="ano-conteudo" id="ano-2025">
-                  <table class="tabela">
-                    <thead><tr><th style="width:120px">Mês</th><th>Descrição</th><th style="width:180px">Arquivo</th></tr></thead>
-                    <tbody>
-                      <tr>
-                        <td>Julho</td><td>Benefício de aposentadoria por tempo de contribuição: Rinaldo Valenciano</td>
-                        <td><a href="https://drive.google.com/file/d/1uEOLmkHiaCslvN4o8Uh1KnDfbayJHIwm/view?usp=sharing" target="_blank" rel="noopener">Baixar arquivo</a></td>
-                      </tr>
-                      <tr>
-                        <td>Março</td><td>Benefício de aposentadoria por tempo de contribuição: Elisangela Marques Faria</td>
-                        <td><a href="https://drive.google.com/file/d/16FKs6NaFu17mgUKDhN6hXnakBCpJPKfs/view?usp=sharing" target="_blank" rel="noopener">Baixar arquivo</a></td>
-                      </tr>                      
-                    </tbody>
-                  </table>
-                </div>
+              <p class="lgpd" style="margin-top:0">
+                Distribuído por <strong>ano</strong>, com colunas: <em>Mês</em>, <em>Descrição</em> e <em>Arquivo</em> (abre em nova aba).
+              </p>
+              <div id="benef-container">
+                <div class="empty">Carregando dados…</div>
               </div>
-
-              <!-- 2024 -->
-              <div class="ano">
-                <button class="ano-btn" data-ano="2024">
-                  <span>2024</span><i>abrir</i>
-                </button>
-                <div class="ano-conteudo" id="ano-2024">
-                  <table class="tabela">
-                    <thead><tr><th style="width:120px">Mês</th><th>Descrição</th><th style="width:180px">Arquivo</th></tr></thead>
-                    <tbody>
-                      <tr>
-                        <td>Dezembro</td><td>Benefício Aposentadoria por incapacidade Permanente para o trabalho: Livardo Mendes da Rocha</td>
-                        <td><a href="https://drive.google.com/file/d/1ABIYaZve5w4kPYgsPUlMoyGJ90g9fEZB/view?usp=sharing" target="_blank" rel="noopener">Baixar arquivo</a></td>
-                      </tr>
-                      <tr>
-                        <td>Novembro</td><td>Benefício de pensão: Isleide Alves da Silva Gomes</td>
-                        <td><a href="https://drive.google.com/file/d/13sRb-BuC9Ze4oAXLqgaYj5X7TH2dY9yq/view?usp=sharing" target="_blank" rel="noopener">Baixar arquivo</a></td>
-                      </tr>
-                      <tr>
-                        <td>Novembro</td><td>Benefício de aposentadoria por tempo de contribuição: Claudia Mara de Campos</td>
-                        <td><a href="https://drive.google.com/file/d/1Z5EQPBrig1SRiKwtNPH_yOgVyjk7A9Ys/view?usp=sharing" target="_blank" rel="noopener">Baixar arquivo</a></td>
-                      </tr>
-                      <tr>
-                        <td>Outubro</td><td>Benefício de aposentadoria por tempo de contribuição: Luciana Alves da Costa</td>
-                        <td><a href="https://drive.google.com/file/d/1dBQmtPmBVLZ2B7zQ8tkzi38kswdANDso/view?usp=sharing" target="_blank" rel="noopener">Baixar arquivo</a></td>
-                      </tr>
-                      <tr>
-                        <td>Agosto</td><td>Benefício de aposentadoria por tempo de contribuição: Antonio Rezende da Silva</td>
-                        <td><a href="https://drive.google.com/file/d/1yRMI0ZLh-NX3Wyu0SJTfezmjduKZQDuF/view?usp=sharing" target="_blank" rel="noopener">Baixar arquivo</a></td>
-                      </tr>
-                      <tr>
-                        <td>Junho</td><td>Benefício de aposentadoria por idade: Francisca Fatima Gomes de Matos</td>
-                        <td><a href="https://drive.google.com/file/d/1qR3Kj9gW_mu37NMCVZl50soyUX1zq8U1/view?usp=sharing" target="_blank" rel="noopener">Baixar arquivo</a></td>
-                      </tr>
-                      <tr>
-                        <td>Abril</td><td>Benefício de pensão: Isadora Araújo dos Reis e Marcelo de Souza Santana</td>
-                        <td><a href="https://drive.google.com/file/d/1vf61f9cyfn7wxTMjuYa4Lx7ok_JcMYyu/view?usp=sharing" target="_blank" rel="noopener">Baixar arquivo</a></td>
-                      </tr>
-                      <tr>
-                        <td>Abril</td><td>Benefício de aposentadoria por tempo de contribuição: Rosimeire Aparecida de Almeida Oliveira</td>
-                        <td><a href="https://drive.google.com/file/d/1vhXLQVCNyrL_ooyIDJugChZ1EC3rS3GX/view?usp=sharing" target="_blank" rel="noopener">Baixar arquivo</a></td>
-                      </tr>
-                      <tr>
-                        <td>Janeiro</td><td>Benefício de pensão: Rosalina Longo Machado</td>
-                        <td><a href="https://drive.google.com/file/d/1IBcZBnsT10FYFe3ZCL3xlbPXxRz0UuIQ/view?usp=sharing" target="_blank" rel="noopener">Baixar arquivo</a></td>
-                      </tr>
-                      <tr>
-                        <td>Janeiro</td><td>Benefício de aposentadoria por idade: Manoel Pereira Clube</td>
-                        <td><a href="https://drive.google.com/file/d/17cgdy_8ITqyc15snplxLvjHQCHLqU1VX/view?usp=sharing" target="_blank" rel="noopener">Baixar arquivo</a></td>
-                      </tr>
-                      <tr>
-                        <td>Janeiro</td><td>Benefício de aposentadoria por tempo de contribuição: Miguel Francisco de Melo</td>
-                        <td><a href="https://drive.google.com/file/d/1F1SZiue2cDMVCnoIkUwLbz_dQj0ly6JQ/view?usp=sharing" target="_blank" rel="noopener">Baixar arquivo</a></td>
-                      </tr>                   
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
             </div>
           </section>
+
 
           <!-- Memórias -->
 <section id="sec-memorias" class="card" style="display:none">
@@ -383,6 +309,81 @@ async function carregarMemorias(){
   }
 }
 carregarMemorias();
+
+
+// ===== BENEFÍCIO CONCEDIDO (dinâmico a partir de beneficios.json) =====
+let BENEF = null;
+
+function tableBenef(rows){
+  if(!rows || rows.length===0){
+    return '<div class="empty">Nenhum registro neste ano.</div>';
+  }
+  return `
+    <table class="tabela">
+      <thead><tr><th style="width:120px">Mês</th><th>Descrição</th><th style="width:180px">Arquivo</th></tr></thead>
+      <tbody>
+        ${rows.map(r=>`
+          <tr>
+            <td>${r.mes || ''}</td>
+            <td>${r.descricao || ''}</td>
+            <td>${r.link ? `<a href="${r.link}" target="_blank" rel="noopener">Baixar arquivo</a>` : '-'}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+function renderBenefYears(){
+  const container = document.getElementById('benef-container');
+  const years = Object.keys(BENEF || {}).sort();
+  if(years.length===0){
+    container.innerHTML = '<div class="empty">Não há anos cadastrados no <code>beneficios.json</code>.</div>';
+    return;
+  }
+  const last = years[years.length-1];
+  container.innerHTML = `
+    <h2>Selecione o ano</h2>
+    <div class="years">
+      ${years.map(y=>`<button class="year-btn" data-year="${y}">${y}</button>`).join('')}
+    </div>
+    <div id="benef-table"></div>
+  `;
+  container.querySelectorAll('.year-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      container.querySelectorAll('.year-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const ano = btn.dataset.year;
+      const rows = BENEF[ano] || [];
+      document.getElementById('benef-table').innerHTML = tableBenef(rows);
+    });
+  });
+  const lastBtn = container.querySelector(`.year-btn[data-year="${last}"]`);
+  if(lastBtn) lastBtn.click();
+}
+async function ensureBenef(){
+  if(BENEF) return true;
+  try{
+    const res = await fetch('beneficios.json', {cache: 'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    BENEF = await res.json();
+    return true;
+  }catch(e){
+    const container = document.getElementById('benef-container');
+    if(container){
+      container.innerHTML = '<div class="empty">Não foi possível carregar o <code>beneficios.json</code>. Coloque o arquivo na mesma pasta desta página.</div>';
+    }
+    return false;
+  }
+}
+// Aciona quando o usuário escolhe o menu "Benefício Concedido"
+document.querySelectorAll('.menu-btn[data-section="beneficio"]').forEach(btn=>{
+  btn.addEventListener('click', async ()=>{
+    if(await ensureBenef()){
+      renderBenefYears();
+    }
+  });
+});
+
 </script>
 
 </body>
