@@ -103,18 +103,76 @@
       font-size: 14px;
       color: #333;
     }
-  </style>
+  
+/* ===== Correções visuais padrão ===== */
+.topo{
+  background:var(--prim, #014c85);
+  color:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:10px 12px;
+}
+.topo .brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  text-decoration:none;
+  color:#fff;
+}
+.topo img{ height:56px; display:block; }
+.topo .titles h1{ margin:0; font-size:22px; }
+.topo .titles p{ margin:0; font-size:13px; }
+
+/* Botões de anos com espaçamento (Benefício Concedido) */
+.years{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:10px 0 16px;
+}
+.year-btn{
+  padding:8px 12px;
+  border:1px solid var(--borda, #e5e7eb);
+  border-radius:8px;
+  background:#fff;
+  cursor:pointer;
+  font-size:14px;
+}
+.year-btn.active{
+  background:var(--prim, #014c85);
+  color:#fff;
+  border-color:var(--prim, #014c85);
+}
+
+/* Padronização das fotos em cards (inclusive Diretor/Coordenador) */
+.card-container .card img,
+.card-container .photo img{
+  width:100%;
+  height:auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  display:block;
+  border:0;
+}
+/* Caso existam imagens diretas sem wrapper .card (reforço) */
+.secao img{
+  max-width:100%;
+  height:auto;
+}
+
+</style>
 </head>
 <body>
 
-  <header style="display:flex; align-items:center; gap:10px;">
-  <a href="index.html">
-    <img src="brasao.png" alt="Brasão" style="height:60px;">
+  <header class="topo">
+  <a href="index.html" class="brand">
+    <img src="brasao.png" alt="Brasão">
+    <div class="titles">
+      <h1>Mirassol‑Previ</h1>
+      <p>Fundo Municipal de Previdência Social</p>
+    </div>
   </a>
-  <div>
-    <h1 style="font-size:22px; margin:0;">Mirassol-Previ</h1>
-    <p style="font-size:13px; margin:0;">Fundo Municipal de Previdência Social</p>
-  </div>
 </header>
 
   <!-- DIREÇÃO EXECUTIVA -->

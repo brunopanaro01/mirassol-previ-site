@@ -122,6 +122,64 @@ h2{color:#014c85;margin:16px 0 8px}
   border-color:var(--prim);
 }
 
+
+/* ===== Correções visuais padrão ===== */
+.topo{
+  background:var(--prim, #014c85);
+  color:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:10px 12px;
+}
+.topo .brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  text-decoration:none;
+  color:#fff;
+}
+.topo img{ height:56px; display:block; }
+.topo .titles h1{ margin:0; font-size:22px; }
+.topo .titles p{ margin:0; font-size:13px; }
+
+/* Botões de anos com espaçamento (Benefício Concedido) */
+.years{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:10px 0 16px;
+}
+.year-btn{
+  padding:8px 12px;
+  border:1px solid var(--borda, #e5e7eb);
+  border-radius:8px;
+  background:#fff;
+  cursor:pointer;
+  font-size:14px;
+}
+.year-btn.active{
+  background:var(--prim, #014c85);
+  color:#fff;
+  border-color:var(--prim, #014c85);
+}
+
+/* Padronização das fotos em cards (inclusive Diretor/Coordenador) */
+.card-container .card img,
+.card-container .photo img{
+  width:100%;
+  height:auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  display:block;
+  border:0;
+}
+/* Caso existam imagens diretas sem wrapper .card (reforço) */
+.secao img{
+  max-width:100%;
+  height:auto;
+}
+
 </style>
 </head>
 <body>
