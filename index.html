@@ -541,6 +541,60 @@
   }
 </style>
 
+
+<!-- POPUP AUDIÊNCIA - Mirassol-Previ -->
+<div id="aud-overlay" style="display:none;"></div>
+<div id="aud-popup" role="dialog" aria-modal="true" aria-label="Divulgação da Audiência" style="display:none;">
+  <button id="aud-close" aria-label="Fechar pop-up">×</button>
+  <img src="divulgacao_audiencia.jpg" alt="Audiência Pública Mirassol-Previ • 03/10 às 9h" />
+</div>
+
+<style>
+#aud-overlay{
+  position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:9998;
+}
+#aud-popup{
+  position:fixed; inset:0; display:grid; place-items:center; z-index:9999;
+}
+#aud-popup img{
+  width:min(92vw,820px); height:auto; border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+#aud-close{
+  position:absolute; top:14px; right:20px;
+  width:42px; height:42px; border-radius:50%;
+  border:0; background:#ffffff; font-size:26px; line-height:42px; cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,.25);
+}
+@media (max-width:480px){ #aud-close{ top:8px; right:10px; } }
+</style>
+
+<script>
+(function(){
+  const KEY = 'audienciaPopupShown';
+  const today = new Date().toISOString().slice(0,10);
+  const last = localStorage.getItem(KEY);
+
+  function openPopup(){
+    document.getElementById('aud-overlay').style.display = 'block';
+    document.getElementById('aud-popup').style.display = 'grid';
+  }
+  function closePopup(){
+    document.getElementById('aud-overlay').style.display = 'none';
+    document.getElementById('aud-popup').style.display = 'none';
+    localStorage.setItem(KEY, today);
+  }
+
+  if (last !== today) {
+    window.addEventListener('load', function(){ setTimeout(openPopup, 800); });
+  }
+
+  document.getElementById('aud-overlay').addEventListener('click', closePopup);
+  document.getElementById('aud-close').addEventListener('click', closePopup);
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closePopup(); });
+})();
+</script>
+<!-- /POPUP AUDIÊNCIA -->
+
 </body>
 </html>
 
