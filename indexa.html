@@ -71,7 +71,7 @@
     .btn.primary:hover{background:var(--brand-700)}
     .btn.ghost{background:#eef5fb;color:var(--brand-800)}
 
-    .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}
+    .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:24px}
     .kpi{background:var(--paper);border-radius:12px;box-shadow:var(--shadow);padding:16px;text-align:center}
     .kpi b{font-size:26px;color:var(--brand-900)}
     .kpi span{display:block;color:var(--muted);font-size:12px}
@@ -174,7 +174,6 @@
         <div class="kpis" aria-label="Indicadores resumidos">
           <div class="kpi"><b id="kpi-aposentados">—</b><span>Aposentados</span></div>
           <div class="kpi"><b id="kpi-pensionistas">—</b><span>Pensionistas</span></div>
-          <div class="kpi"><b id="kpi-ativos">—</b><span>Servidores ativos</span></div>
         </div>
       </div>
       <div class="reveal">
@@ -338,7 +337,7 @@
     }, {threshold:.12});
     document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
 
-    // Google Sheets -> Tabela de números (sem fallback fixo)
+    // Google Sheets -> Tabela de números
     const PUBLISHED_BASE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTx0EPL7Kx-En8PrYDM40dC79T8sD_buPMo4OGxGFVqyTA0A3tPKZVE8-nAikDWOw";
     const GID = "1904627341";
 
@@ -361,7 +360,7 @@
     function renderTable(rows){
       const tbody = document.getElementById('tbody-numeros');
       tbody.innerHTML = '';
-      let aposentados=0,pensoes=0,ativos=0;
+      let aposentados=0,pensoes=0;
       rows.forEach(r=>{
         const cells = r.c.map(c=> c? c.v : '');
         const tr = document.createElement('tr');
@@ -377,11 +376,9 @@
         const last = Number(cells[cells.length-1])||0;
         if(String(cells[0]).toLowerCase().includes('aposent')) aposentados=last;
         if(String(cells[0]).toLowerCase().includes('pens')) pensoes=last;
-        if(String(cells[0]).toLowerCase().includes('ativo')) ativos=last;
       });
       if(aposentados) document.getElementById('kpi-aposentados').textContent=aposentados;
       if(pensoes) document.getElementById('kpi-pensionistas').textContent=pensoes;
-      if(ativos) document.getElementById('kpi-ativos').textContent=ativos;
     }
 
     fetchSheet();
