@@ -337,9 +337,28 @@
     }, {threshold:.12});
     document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
 
-    // Google Sheets -> Tabela de números
+    // Google Sheets -> Tabela de números (robusto para vírgula/ano vazio)
     const PUBLISHED_BASE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTx0EPL7Kx-En8PrYDM40dC79T8sD_buPMo4OGxGFVqyTA0A3tPKZVE8-nAikDWOw";
     const GID = "1904627341";
+
+    function toNumber(val){
+      if (typeof val === 'number') return val;
+      if (val == null) return NaN;
+      const s = String(val).trim()
+        .replace(/\./g,'')   // remove milhares 1.234
+        .replace(',','.')    // vírgula para decimal 1.234,56 -> 1234.56
+        .replace(/[^0-9.-]/g,''); // remove símbolos
+      const n = Number(s);
+      return Number.isFinite(n) ? n : NaN;
+    }
+
+    function lastNumeric(cells){
+      for(let i=cells.length-1;i>=1;i--){ // ignora a coluna 0 (Categoria)
+        const n = toNumber(cells[i]);
+        if(!Number.isNaN(n)) return n;
+      }
+      return NaN;
+    }
 
     async function fetchSheet(){
       const status = document.getElementById('sheet-status');
@@ -360,7 +379,8 @@
     function renderTable(rows){
       const tbody = document.getElementById('tbody-numeros');
       tbody.innerHTML = '';
-      let aposentados=0,pensoes=0;
+      let aposentados = NaN, pensoes = NaN;
+
       rows.forEach(r=>{
         const cells = r.c.map(c=> c? c.v : '');
         const tr = document.createElement('tr');
@@ -373,12 +393,18 @@
           tr.appendChild(td);
         });
         tbody.appendChild(tr);
-        const last = Number(cells[cells.length-1])||0;
-        if(String(cells[0]).toLowerCase().includes('aposent')) aposentados=last;
-        if(String(cells[0]).toLowerCase().includes('pens')) pensoes=last;
+
+        const label = String(cells[0]).toLowerCase();
+        const n = lastNumeric(cells);
+        if(label.includes('aposent')) aposentados = n;
+        if(label.includes('pens'))     pensoes     = n;
+        if(label.includes('pension'))  pensoes     = n; // robusto para "Pensionistas"
       });
-      if(aposentados) document.getElementById('kpi-aposentados').textContent=aposentados;
-      if(pensoes) document.getElementById('kpi-pensionistas').textContent=pensoes;
+
+      const kApos = document.getElementById('kpi-aposentados');
+      const kPens = document.getElementById('kpi-pensionistas');
+      if(Number.isFinite(aposentados)) kApos.textContent = String(aposentados);
+      if(Number.isFinite(pensoes))     kPens.textContent = String(pensoes);
     }
 
     fetchSheet();
