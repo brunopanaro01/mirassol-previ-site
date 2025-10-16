@@ -1,590 +1,542 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
+  <!-- ============================== META / HEAD =============================== -->
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mirassol-Previ</title>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-H8TT7E77K7"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <title>Mirassol-Previ — Fundo Municipal de Previdência</title>
+  <meta name="description" content="Site oficial do Mirassol-Previ — Fundo Municipal de Previdência Social dos Servidores de Mirassol D’Oeste - MT."/>
 
-  gtag('config', 'G-H8TT7E77K7');
-</script>
-  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <!-- ================================ CSS ===================================== -->
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
+    :root{
+      --brand-900:#01385f;
+      --brand-800:#014c85;
+      --brand-700:#03588c;
+      --bg:#f7fafc;
+      --paper:#ffffff;
+      --ink:#0f172a;
+      --muted:#475569;
+      --shadow:0 10px 30px rgba(2,8,23,.08);
+      --radius:16px;
     }
 
-    header {
-      background-color: #014c85;
-      padding: 15px;
-      color: white;
-      text-align: center;
+    /* Reset básico */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+      line-height:1.5;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      text-rendering:optimizeLegibility;
+    }
+    img{max-width:100%;height:auto;display:block}
+    a{color:var(--brand-800);text-decoration:none}
+
+    /* Anti-popup hardening (bloqueia qualquer modal legado) */
+    #popup,.popup,.modal,.modal-backdrop,[role="dialog"],.overlay,.newsletter-modal,.cookie-modal{display:none!important}
+    body.modal-open{overflow:auto!important}
+
+    /* ============================== HEADER ==================================== */
+    header.site-header{
+      position:sticky;top:0;z-index:100;
+      background:#fff;border-bottom:1px solid #e2e8f0
+    }
+    .header-wrap{
+      max-width:1200px;margin:0 auto;padding:10px 16px;
+      display:flex;align-items:center;gap:16px
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand img{width:52px;height:52px}
+    .brand .titles{display:flex;flex-direction:column}
+    .brand .titles h1{font-size:20px;margin:0;color:var(--brand-800)}
+    .brand .titles small{font-size:12px;color:var(--muted)}
+
+    nav.primary{margin-left:auto;position:relative}
+    .menu{display:flex;gap:8px;align-items:center}
+    .menu a, .menu button{
+      padding:10px 12px;border-radius:10px;color:var(--ink);
+      background:transparent;border:0;font:inherit;cursor:pointer
+    }
+    .menu a:hover, .menu button:hover{background:#eef5fb}
+    .hamb{display:none;background:none;border:0;padding:8px;border-radius:10px}
+    .hamb:focus{outline:2px solid #94a3b8;outline-offset:2px}
+
+    /* Submenu “Institucional” */
+    .has-sub{position:relative}
+    .has-sub > button{display:inline-flex;align-items:center;gap:6px}
+    .submenu{
+      display:none;position:absolute;top:100%;left:0;z-index:101;
+      background:#fff;border:1px solid #e2e8f0;border-radius:12px;
+      box-shadow:var(--shadow);min-width:260px;padding:6px
+    }
+    .submenu a{display:block;padding:10px 12px;border-radius:8px}
+    .submenu a:hover{background:#f3f7fb}
+    /* Desktop: abre ao hover/focus */
+    .has-sub:focus-within .submenu,
+    .has-sub:hover .submenu{display:block}
+
+    /* ============================== HERO ====================================== */
+    .hero{background:linear-gradient(180deg,#fff,#f5f9fc 65%)}
+    .hero .wrap{
+      max-width:1200px;margin:0 auto;padding:56px 16px;
+      display:grid;grid-template-columns:1.1fr .9fr;gap:32px;align-items:center
+    }
+    .hero h2{font-size:34px;line-height:1.15;margin:0 0 10px;color:var(--brand-900)}
+    .hero p{color:var(--muted);max-width:56ch;margin:0 0 10px}
+    .hero .wrap img.hero-img{
+      max-width:360px;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.15);
+      margin-left:auto
     }
 
-    nav {
-      background-color: #026aa7;
+    .cta{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
+    .btn{appearance:none;border:0;padding:12px 16px;border-radius:12px;font-weight:600;cursor:pointer}
+    .btn.primary{background:var(--brand-800);color:#fff}
+    .btn.primary:hover{background:var(--brand-700)}
+    .btn.ghost{background:#eef5fb;color:var(--brand-800)}
+
+    .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:24px}
+    .kpi{background:var(--paper);border-radius:12px;box-shadow:var(--shadow);padding:16px;text-align:center}
+    .kpi b{font-size:26px;color:var(--brand-900)}
+    .kpi span{display:block;color:var(--muted);font-size:12px}
+
+    /* ============================== SEÇÕES ==================================== */
+    section{padding:56px 16px}
+    .container{max-width:1200px;margin:0 auto}
+    h2.section-title{font-size:28px;color:var(--brand-900);margin:0 0 24px}
+
+    /* Notícias */
+    .grid{display:grid;gap:20px}
+    .grid.cards-3{grid-template-columns:repeat(3,1fr)}
+    .card{
+      background:var(--paper);border-radius:12px;overflow:hidden;
+      box-shadow:var(--shadow);display:flex;flex-direction:column;min-height:100%
     }
+    .card img{height:180px;object-fit:cover}
+    .card .body{padding:16px;display:flex;flex-direction:column;gap:10px}
+    .card h3{font-size:18px;margin:0}
+    .card p{color:var(--muted);margin:0}
+    .card .actions{margin-top:auto}
+    .badge{display:inline-block;font-size:11px;padding:4px 8px;background:#eef5fb;color:var(--brand-800);border-radius:999px}
+    .link-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:var(--brand-800);color:#fff}
+    .link-btn:hover{background:var(--brand-700)}
 
-    nav ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-wrap: wrap;
+    /* Números (tabela) */
+    table#tabela-numeros{width:100%;background:#fff;border-radius:12px;box-shadow:var(--shadow);border-collapse:collapse}
+    table#tabela-numeros thead th{position:sticky;top:0;background:var(--brand-800);color:#fff}
+    table#tabela-numeros th, table#tabela-numeros td{padding:12px 14px;text-align:center}
+    table#tabela-numeros th:first-child, table#tabela-numeros td:first-child{text-align:left}
+    table#tabela-numeros tbody tr:nth-child(odd){background:#fafcff}
+
+    /* Serviços */
+    .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .tile{background:var(--paper);border-radius:14px;box-shadow:var(--shadow);padding:20px;display:grid;place-items:center;text-align:center}
+    .tile img{width:84px;height:84px;object-fit:contain;margin-bottom:10px}
+    .tile a{font-weight:700}
+
+    /* Links úteis */
+    .links{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .link-card{background:var(--paper);border-radius:14px;box-shadow:var(--shadow);padding:18px}
+    .link-card h3{margin:0 0 6px;color:var(--brand-900)}
+    .link-card p{margin:0;color:var(--muted)}
+
+    /* Contato */
+    .contact{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .contact .card{text-align:center;padding-bottom:22px}
+
+    /* ============================== FOOTER ==================================== */
+    footer.site-footer{background:#0d2636;color:#cbd5e1}
+    .footer-wrap{
+      max-width:1200px;margin:0 auto;padding:20px 16px;
+      display:flex;gap:16px;align-items:center;justify-content:space-between
     }
+    .foot-note{font-size:13px}
 
-    nav ul li {
-      position: relative;
+    /* WhatsApp flutuante */
+    .whatsapp-float{
+      position:fixed;right:20px;bottom:20px;z-index:99;width:60px;height:60px;
+      border-radius:50%;background:#25d366;display:grid;place-items:center;box-shadow:var(--shadow)
     }
+    .whatsapp-float img{width:34px;height:34px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.2))}
 
-    nav ul li a {
-      display: block;
-      padding: 14px 20px;
-      color: white;
-      text-decoration: none;
+    /* Reveal on scroll */
+    .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+    .reveal.in{opacity:1;transform:none}
+
+    /* ============================== MEDIA ===================================== */
+    @media(max-width:980px){
+      .hero .wrap{grid-template-columns:1fr}
+      .hero .wrap img.hero-img{margin:20px auto 0}
+      .grid.cards-3{grid-template-columns:repeat(2,1fr)}
+      .tiles{grid-template-columns:repeat(2,1fr)}
     }
-
-    nav ul li:hover {
-      background-color: #03588c;
+    @media(max-width:860px){
+      .menu{display:none;position:absolute;top:64px;right:16px;background:#fff;border:1px solid #e2e8f0;box-shadow:var(--shadow);padding:8px;border-radius:12px;flex-direction:column;min-width:280px}
+      .menu.show{display:flex}
+      .hamb{display:inline-grid;place-items:center}
+      .brand .titles h1{font-size:18px}
+      .brand img{width:44px;height:44px}
+      /* Submenu em mobile: vira bloco dentro do dropdown */
+      .has-sub .submenu{position:static;box-shadow:none;border:0;padding:0;margin-left:8px;margin-bottom:8px;display:none}
+      .has-sub.open .submenu{display:block}
     }
-
-    nav ul li ul {
-      display: none;
-      position: absolute;
-      top: 48px;
-      left: 0;
-      background-color: #026aa7;
-      padding: 0;
-      z-index: 1000;
-      min-width: 180px;
+    @media(max-width:640px){
+      .grid.cards-3{grid-template-columns:1fr}
+      .links{grid-template-columns:1fr}
+      .contact{grid-template-columns:1fr}
+      .tiles{grid-template-columns:1fr}
     }
-
-    nav ul li:hover ul {
-      display: block;
-    }
-
-    nav ul li ul li a {
-      padding: 12px 16px;
-    }
-
-    nav ul li ul li a:hover {
-      background-color: #03588c;
-    }
-
-    .container {
-      padding: 20px;
-    }
-
-    .noticias {
-  padding: 40px 20px;
-  background-color: #f9f9f9;
-}
-
-.noticias h2 {
-  text-align: center;
-  margin-bottom: 30px;
-  font-size: 28px;
-  color: #014c85;
-}
-
-.noticias-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.noticia-card {
-  background-color: #fff;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-}
-
-.noticia-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-}
-
-.noticia-conteudo {
-  padding: 16px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.noticia-conteudo h3 {
-  font-size: 16px;
-  margin-bottom: 10px;
-}
-
-.noticia-conteudo p {
-  font-size: 14px;
-  flex: 1;
-  margin-bottom: 15px;
-  text-align: justify;
-}
-
-.botao-noticia {
-  align-self: flex-start;
-  background-color: #014c85;
-  color: white;
-  padding: 8px 12px;
-  text-decoration: none;
-  border-radius: 4px;
-  transition: background 0.3s;
-  font-size: 14px;
-}
-
-.botao-noticia:hover {
-  background-color: #003f6d;
-}
-
-    .servicos {
-      padding: 40px 20px;
-      background-color: #eef1f5;
-    }
-
-    .servicos h2 {
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 28px;
-      color: #014c85;
-    }
-
-    .servicos-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .servico {
-      background-color: #fff;
-      border-radius: 10px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-      text-align: center;
-      padding: 20px;
-    }
-
-    .servico img {
-      width: 80px;
-      height: 80px;
-      object-fit: contain;
-      margin-bottom: 10px;
-    }
-
-    .servico a {
-      display: block;
-      font-weight: bold;
-      color: #014c85;
-      text-decoration: none;
-      margin-top: 10px;
-    }
-
-    .servico a:hover {
-      text-decoration: underline;
-    }
-
-    footer {
-      background-color: #014c85;
-      color: white;
-      text-align: center;
-      padding: 15px;
-    }
-    .links-uteis {
-  padding: 40px 20px;
-  background-color: #f0f4f8;
-  text-align: center;
-}
-
-.links-uteis h2 {
-  color: #014c85;
-  margin-bottom: 30px;
-  font-size: 28px;
-}
-
-.links-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.link-card {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  text-decoration: none;
-  color: #333;
-  box-shadow: 0 0 10px rgba(0,0,0,0.08);
-  transition: transform 0.2s, box-shadow 0.3s;
-}
-
-.link-card h3 {
-  margin-bottom: 10px;
-  color: #014c85;
-}
-
-.link-card p {
-  font-size: 14px;
-}
-
-.link-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-.contato {
-  padding: 40px 20px;
-  background-color: #f9f9f9;
-}
-
-.contato h2 {
-  text-align: center;
-  font-size: 28px;
-  margin-bottom: 30px;
-  color: #014c85;
-}
-
-.contato-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-.contato-card {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
-  text-align: center;
-}
-
-.contato-card h3 {
-  margin-bottom: 10px;
-  color: #014c85;
-}
-
-.contato-card a {
-  color: #014c85;
-  text-decoration: none;
-}
-
-.contato-card a:hover {
-  text-decoration: underline;
-}
-
-.contato-icon {
-  width: 40px;
-  height: 40px;
-  margin-bottom: 10px;
-}
-.numeros {
-  background-color: #f9f9f9;
-  padding: 40px 20px;
-  text-align: center;
-}
-
-.numeros h2 {
-  color: #014c85;
-  font-size: 28px;
-  margin-bottom: 30px;
-}
-
-.tabela-container {
-  overflow-x: auto;
-}
-
-.tabela-numeros {
-  width: 100%;
-  max-width: 1000px;
-  margin: 0 auto;
-  border-collapse: collapse;
-  background-color: #fff;
-  box-shadow: 0 0 8px rgba(0,0,0,0.1);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.tabela-numeros th, .tabela-numeros td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #ddd;
-  text-align: center;
-}
-
-.tabela-numeros thead {
-  background-color: #014c85;
-  color: white;
-}
-
-.tabela-numeros tbody td:first-child {
-  font-weight: bold;
-  background-color: #eef1f5;
-  color: #014c85;
-}
   </style>
 </head>
+
 <body>
+  <!-- ============================== HEADER ==================================== -->
+  <header class="site-header" role="banner">
+    <div class="header-wrap">
+      <a class="brand" href="./index.html" aria-label="Ir para a página inicial">
+        <img src="brasao.png" alt="Brasão de Mirassol D'Oeste" loading="eager"/>
+        <span class="titles">
+          <h1>Mirassol-Previ</h1>
+          <small>Fundo Municipal de Previdência Social — Mirassol D’Oeste/MT</small>
+        </span>
+      </a>
 
-<header style="background-color: #014c85; color: white; padding: 20px 10px; text-align: center;">
-  <img src="brasao.png" alt="Brasão de Mirassol D'Oeste" style="height: 70px; margin-bottom: 10px;">
-  <h1 style="margin: 0; font-size: 28px;">Mirassol-Previ</h1>
-  <p style="margin: 5px 0 0; font-size: 14px;">
-    Fundo Municipal de Previdência Social dos Servidores de Mirassol D’Oeste - MT
-  </p>
-</header>
+      <button class="hamb" aria-label="Abrir menu" aria-controls="menu" aria-expanded="false">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
 
-  <nav>
-  <ul>
-    <li><a href="index.html">Início</a></li>
-    <li><a href="#">Institucional</a>
-      <ul>
-        <li><a href="historia.html">História</a></li>
-        <li><a href="identidade.html">Identidade</a></li>
-        <li><a href="composicao.html">Composição</a></li>
-        <li><a href="organograma.html">Organograma</a></li>
-      </ul>
-    </li>
-    <li><a href="aposentadorias.html">Aposentadorias</a></li>
-    <li><a href="transparencia.html">Transparência</a></li>
-    <li><a href="progestao.html">Pró-Gestão</a></li>
-    <li><a href="https://mirassoldoeste.flowdocs.com.br:2053/public/home/group/5" target="_blank" > Ouvidoria</a></li>
-  </ul>
-</nav>
+      <nav class="primary" aria-label="Menu principal">
+        <div id="menu" class="menu" role="menubar">
+          <a role="menuitem" href="./index.html">Início</a>
 
-  <div class="container">
-    <h2>Bem-vindo ao site do Mirassol-Previ</h2>
-    <p>Aqui você encontra todas as informações sobre aposentadorias, gestão, legislação e serviços ao segurado.</p>
-  </div>
+          <!-- Submenu Institucional -->
+          <div class="has-sub" role="none">
+            <button aria-haspopup="true" aria-expanded="false">Institucional ▾</button>
+            <div class="submenu" role="menu">
+              <a role="menuitem" href="historia.html">História</a>
+              <a role="menuitem" href="identidade.html">Identidade</a>
+              <a role="menuitem" href="composicao.html">Composição</a>
+              <a role="menuitem" href="organograma.html">Organograma</a>
+            </div>
+          </div>
 
-  <section class="numeros">
-  <h2>Números de Aposentadorias e Pensões</h2>
-  <div class="tabela-container">
-    <table class="tabela-numeros">
-      <thead>
-        <tr>
-          <th></th>
-          <th>2016</th>
-          <th>2017</th>
-          <th>2018</th>
-          <th>2019</th>
-          <th>2020</th>
-          <th>2021</th>
-          <th>2022</th>
-          <th>2023</th>
-          <th>2024</th>
-          <th>2025</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Aposentados</strong></td>
-          <td>6</td>
-          <td>22</td>
-          <td>38</td>
-          <td>57</td>
-          <td>72</td>
-          <td>90</td>
-          <td>105</td>
-          <td>118</td>
-          <td>127</td>
-          <td>125</td>
-        </tr>
-        <tr>
-          <td><strong>Pensão</strong></td>
-          <td>0</td>
-          <td>0</td>
-          <td>1</td>
-          <td>2</td>
-          <td>2</td>
-          <td>7</td>
-          <td>9</td>
-          <td>9</td>
-          <td>12</td>
-          <td>11</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<section class="noticias">
-  <h2>Notícias</h2>
-  <div class="noticias-grid">
-  
-    <div class="noticia-card">
-      <img src="divulgacao_audiencia.jpg" alt="Imagem notícia Audiência Pública">
-      <div class="noticia-conteudo">
-        <h3>Audiência Pública do Mirassol-Previ apresentará resultados de 2024</h3>
-        <p>Participe da audiência pública com transmissão ao vivo, nesta sexta-feira (03/10), às 9h, e acompanhe os resultados do exercício de 2024.</p>
-        <a class="botao-noticia" href="materia_audiencia.html" target="_blank">Leia mais</a>
-      </div>
+          <a role="menuitem" href="aposentadorias.html">Aposentadorias</a>
+          <a role="menuitem" href="transparencia.html">Transparência</a>
+          <a role="menuitem" href="progestao.html">Pró-Gestão</a>
+          <a role="menuitem" href="https://mirassoldoeste.flowdocs.com.br:2053/public/home/group/5" target="_blank" rel="noopener">Ouvidoria</a>
+        </div>
+      </nav>
     </div>
-    
-    <div class="noticia-card">
-      <img src="materiaprovavida.png" alt="Imagem notícia Prova de Vida">
-      <div class="noticia-conteudo">
-        <h3>Prova de Vida é Obrigatória para Aposentados e Pensionistas do Mirassol-Previ</h3>
-        <p>A partir de 1º de agosto de 2025, entrou em vigor o Decreto nº 5.146/2025, que regulamenta a obrigatoriedade da Prova de Vida.</p>
-        <a class="botao-noticia" href="materia2.html" target="_blank">Leia mais</a>
-      </div>
-    </div>
+  </header>
 
-    <div class="noticia-card">
-      <img src="imagem.noticia1.jpeg" alt="Imagem notícia Concurso Público">
-      <div class="noticia-conteudo">
-        <h3>Mirassol-Previ celebra apoio do Prefeito para realização de novo concurso público</h3>
-        <p>Com muita receptividade e atenção, o Prefeito sinalizou positivamente ao pedido, reconhecendo a relevância da medida.</p>
-        <a class="botao-noticia" href="https://www.mirassoldoeste.mt.gov.br/noticia/mirassol-previ-celebra-apoio-do-prefeito-para-realizacao-de-novo-concurso-publico-6839e41acd061" target="_blank">Leia mais</a>
-      </div>
-    </div>
+  <!-- ================================ HERO ==================================== -->
+  <section class="hero">
+    <div class="wrap container">
+      <div class="reveal">
+        <h2>Transparência, segurança e serviço ao segurado</h2>
+        <p>Acompanhe notícias, documentos oficiais, dados de aposentadorias e pensões e acesse nossos serviços digitais.</p>
+        <div class="cta">
+          <a class="btn primary" href="http://www.agendadatacenter.com.br/portalMirassoldoEste/Login/Login.aspx" target="_blank" rel="noopener">Portal do Segurado</a>
+          <a class="btn ghost" href="#numeros">Ver números</a>
+        </div>
 
-  </div>
-</section>
-
-
-  <section class="servicos">
-    <h2>Serviços</h2>
-    <div class="servicos-grid">
-      <div class="servico">
-        <img src="PortaldoSegurado.png" alt="Portal do Segurado">
-        <a href="http://www.agendadatacenter.com.br/portalMirassoldoEste/Login/Login.aspx" target="_blank">Portal do Segurado</a>
+        <div class="kpis" aria-label="Indicadores resumidos">
+          <div class="kpi"><b id="kpi-aposentados">—</b><span>Aposentados</span></div>
+          <div class="kpi"><b id="kpi-pensionistas">—</b><span>Pensionistas</span></div>
+        </div>
       </div>
-      <div class="servico">
-        <img src="digitalconsig.jpeg" alt="Digital Consig">
-        <a href="https://play.google.com/store/apps/details?id=br.com.digitalConsig" target="_blank">Digital Consig</a>
-      </div>
-      <div class="servico">
-        <img src="meurpps.png" alt="Meu RPPS">
-        <a href="https://play.google.com/store/apps/details?id=agendaassessoria.meurpps" target="_blank">Meu RPPS</a>
+
+      <div class="reveal">
+        <img src="brasao.png" alt="Imagem institucional Mirassol-Previ" class="hero-img" loading="lazy"/>
       </div>
     </div>
   </section>
 
-  <section class="links-uteis">
-  <h2>Links Úteis</h2>
-  <div class="links-grid">
-    <a href="https://www.mirassoldoeste.mt.gov.br/" target="_blank" class="link-card">
-      <h3>Prefeitura Municipal</h3>
-      <p>Portal oficial da Prefeitura de Mirassol D’Oeste.</p>
-    </a>
-    <a href="https://www.camaramirassoldoeste.mt.gov.br/" target="_blank" class="link-card">
-      <h3>Câmara Municipal</h3>
-      <p>Acompanhe os trabalhos legislativos e sessões da Câmara.</p>
-    </a>
-    <a href="https://www.saemi.com.br/" target="_blank" class="link-card">
-      <h3>SAEMI</h3>
-      <p>Serviço de Água e Esgoto de Mirassol D’Oeste.</p>
-    </a>
-  </div>
-</section>
+  <!-- ============================== NOTÍCIAS ================================== -->
+  <section aria-labelledby="noticias-title" class="reveal">
+    <div class="container">
+      <h2 id="noticias-title" class="section-title">Notícias</h2>
+      <div class="grid cards-3">
+        <article class="card">
+          <img src="divulgacao_audiencia.jpg" alt="Audiência pública Mirassol-Previ" loading="lazy"/>
+          <div class="body">
+            <span class="badge">Institucional</span>
+            <h3>Audiência Pública apresenta resultados de 2024</h3>
+            <p>Participe da audiência com transmissão ao vivo e acompanhe os resultados do exercício de 2024.</p>
+            <div class="actions">
+              <a class="link-btn" href="materia_audiencia.html" target="_blank" rel="noopener">Ler matéria</a>
+            </div>
+          </div>
+        </article>
 
-<section class="contato">
-  <h2>Fale Conosco</h2>
-  <div class="contato-grid">
-    <!-- WhatsApp -->
-    <div class="contato-card">
-      <img src="whatsapp.png" alt="WhatsApp" class="contato-icon">
-      <h3>WhatsApp</h3>
-      <p><a href="https://wa.me/5565998002383" target="_blank">(65) 9 9800-2383</a></p>
+        <article class="card">
+          <img src="materiaprovavida.png" alt="Prova de Vida obrigatória" loading="lazy"/>
+          <div class="body">
+            <span class="badge">Benefícios</span>
+            <h3>Prova de Vida: regras e prazos do Decreto 5.146/2025</h3>
+            <p>Entenda como realizar a comprovação anual e evite o bloqueio do benefício.</p>
+            <div class="actions">
+              <a class="link-btn" href="materia2.html" target="_blank" rel="noopener">Saiba mais</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <img src="imagem.noticia1.jpeg" alt="Concurso público" loading="lazy"/>
+          <div class="body">
+            <span class="badge">Gestão</span>
+            <h3>Novo concurso público: apoio confirmado pelo Executivo</h3>
+            <p>Medida reforça o compromisso com a qualidade do serviço previdenciário.</p>
+            <div class="actions">
+              <a class="link-btn" href="https://www.mirassoldoeste.mt.gov.br/noticia/mirassol-previ-celebra-apoio-do-prefeito-para-realizacao-de-novo-concurso-publico-6839e41acd061" target="_blank" rel="noopener">No portal da Prefeitura</a>
+            </div>
+          </div>
+        </article>
+      </div>
     </div>
+  </section>
 
-    <!-- E-mail -->
-    <div class="contato-card">
-      <h3>E-mail</h3>
-      <p><a href="mailto:mirassolprevi@mirassoldoeste.mt.gov.br">mirassolprevi@mirassoldoeste.mt.gov.br</a></p>
+  <!-- ============================== NÚMEROS (JSON) ============================ -->
+  <section id="numeros" class="reveal" aria-labelledby="numeros-title" style="background:#f5f9fc">
+    <div class="container">
+      <h2 id="numeros-title" class="section-title">Números de Aposentadorias e Pensões</h2>
+
+      <div style="overflow-x:auto">
+        <table id="tabela-numeros">
+          <thead>
+            <tr id="thead-row"><!-- preenchido via JS --></tr>
+          </thead>
+          <tbody id="tbody-numeros"><!-- preenchido via JS --></tbody>
+        </table>
+      </div>
+
+      <p id="sheet-status" style="color:var(--muted);font-size:13px;margin-top:10px">Carregando dados…</p>
     </div>
+  </section>
 
-    <!-- Endereço -->
-    <div class="contato-card">
-      <h3>Endereço</h3>
-      <p>Rua Juscelino Kubitschek, nº 3182 – Centro<br>Mirassol D’Oeste – MT</p>
-      <p><strong>Atendimento:</strong><br>Segunda a Sexta, das 7h às 13h</p>
+  <!-- ============================== SERVIÇOS ================================== -->
+  <section class="reveal" aria-labelledby="servicos-title">
+    <div class="container">
+      <h2 id="servicos-title" class="section-title">Serviços</h2>
+      <div class="tiles">
+        <div class="tile">
+          <img src="PortaldoSegurado.png" alt="Portal do Segurado" loading="lazy"/>
+          <a href="http://www.agendadatacenter.com.br/portalMirassoldoEste/Login/Login.aspx" target="_blank" rel="noopener">Portal do Segurado</a>
+        </div>
+        <div class="tile">
+          <img src="digitalconsig.jpeg" alt="Digital Consig" loading="lazy"/>
+          <a href="https://play.google.com/store/apps/details?id=br.com.digitalConsig" target="_blank" rel="noopener">Digital Consig</a>
+        </div>
+        <div class="tile">
+          <img src="meurpps.png" alt="Meu RPPS" loading="lazy"/>
+          <a href="https://play.google.com/store/apps/details?id=agendaassessoria.meurpps" target="_blank" rel="noopener">Meu RPPS</a>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
 
-  <div style="text-align: center; margin-top: 20px; font-size: 15px; color: #014c85;">
-    Estamos à disposição para atendê-lo! Entre em contato pelo WhatsApp ou e-mail acima.
-  </div>
-</section>
+  <!-- ============================== LINKS ÚTEIS =============================== -->
+  <section class="reveal" aria-labelledby="links-title" style="background:#f5f9fc">
+    <div class="container">
+      <h2 id="links-title" class="section-title">Links Úteis</h2>
+      <div class="links">
+        <a class="link-card" href="https://www.mirassoldoeste.mt.gov.br/" target="_blank" rel="noopener">
+          <h3>Prefeitura Municipal</h3>
+          <p>Portal oficial da Prefeitura de Mirassol D’Oeste.</p>
+        </a>
+        <a class="link-card" href="https://www.camaramirassoldoeste.mt.gov.br/" target="_blank" rel="noopener">
+          <h3>Câmara Municipal</h3>
+          <p>Trabalhos legislativos e sessões.</p>
+        </a>
+        <a class="link-card" href="https://www.saemi.com.br/" target="_blank" rel="noopener">
+          <h3>SAEMI</h3>
+          <p>Serviço de Água e Esgoto.</p>
+        </a>
+      </div>
+    </div>
+  </section>
 
-  <footer>
-    <p>&copy; 2025 Mirassol-Previ</p>
+  <!-- ============================== CONTATO =================================== -->
+  <section class="reveal" aria-labelledby="contato-title">
+    <div class="container">
+      <h2 id="contato-title" class="section-title">Fale Conosco</h2>
+      <div class="contact">
+        <div class="card">
+          <img src="whatsapp.png" alt="WhatsApp" style="width:40px;height:40px;margin:8px auto 6px"/>
+          <h3>WhatsApp</h3>
+          <p><a href="https://wa.me/5565998002383" target="_blank" rel="noopener">(65) 9 9800-2383</a></p>
+        </div>
+        <div class="card">
+          <h3>E-mail</h3>
+          <p><a href="mailto:mirassolprevi@mirassoldoeste.mt.gov.br">mirassolprevi@mirassoldoeste.mt.gov.br</a></p>
+        </div>
+        <div class="card">
+          <h3>Endereço</h3>
+          <p>Rua Juscelino Kubitschek, nº 3182 – Centro<br/>Mirassol D’Oeste – MT</p>
+          <p><strong>Atendimento:</strong> Seg a Sex, 7h às 13h</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== FOOTER ==================================== -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-wrap">
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="brasao.png" alt="Brasão de Mirassol D'Oeste" width="28" height="28"/>
+        <span class="foot-note">© <span id="year"></span> Mirassol-Previ</span>
+      </div>
+      <a href="#top" class="foot-note">Voltar ao topo</a>
+    </div>
   </footer>
 
-  <!-- Botão flutuante do WhatsApp -->
-<a href="https://wa.me/5565998002383" target="_blank" class="whatsapp-float" title="Fale conosco pelo WhatsApp">
-  <img src="whatsapp.png" alt="WhatsApp" style="width: 60px;">
-</a>
+  <!-- WhatsApp flutuante -->
+  <a href="https://wa.me/5565998002383" class="whatsapp-float" target="_blank" rel="noopener" title="Fale conosco pelo WhatsApp">
+    <img src="whatsapp.png" alt="Ícone WhatsApp"/>
+  </a>
 
-<style>
-  .whatsapp-float {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-  }
-</style>
+  <!-- ================================ JS ====================================== -->
+  <script>
+    // Ano dinâmico no rodapé
+    document.getElementById('year').textContent = new Date().getFullYear();
 
+    // Menu mobile: abre/fecha dropdown
+    const hamb = document.querySelector('.hamb');
+    const menu = document.getElementById('menu');
+    hamb?.addEventListener('click', ()=>{
+      const open = menu.classList.toggle('show');
+      hamb.setAttribute('aria-expanded', String(open));
+    });
 
-<!-- POPUP AUDIÊNCIA - Mirassol-Previ -->
-<div id="aud-overlay" style="display:none;"></div>
-<div id="aud-popup" role="dialog" aria-modal="true" aria-label="Divulgação da Audiência" style="display:none;">
-  <button id="aud-close" aria-label="Fechar pop-up">×</button>
-  <img src="divulgacao_audiencia.jpg" alt="Audiência Pública Mirassol-Previ • 03/10 às 9h" />
-</div>
+    // Submenu em mobile: botão abre/fecha
+    document.querySelectorAll('.has-sub > button').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const parent = btn.closest('.has-sub');
+        const isOpen = parent.classList.toggle('open');
+        btn.setAttribute('aria-expanded', String(isOpen));
+      });
+    });
 
-<style>
-#aud-overlay{position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:9998;}
-#aud-popup{position:fixed; inset:0; display:grid; place-items:center; z-index:9999;}
-#aud-popup img{width:min(92vw,820px); height:auto; border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,.35);}
-#aud-close{position:absolute; top:14px; right:20px; width:42px; height:42px; border-radius:50%; border:0; background:#ffffff; font-size:26px; line-height:42px; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,.25);}
-@media (max-width:480px){ #aud-close{ top:8px; right:10px; } }
-</style>
+    // Scroll reveal simples
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, {threshold:.12});
+    document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
 
-<script>
-(function(){
-  const KEY = 'audienciaPopupShown';
-  const today = new Date().toISOString().slice(0,10);
-  const last = localStorage.getItem(KEY);
+    // ===================== DADOS (dados.json, sem CORS) =======================
+    async function fetchDados(){
+      const status = document.getElementById('sheet-status');
+      try{
+        const res = await fetch('./dados.json', { cache:'no-store' });
+        const dados = await res.json();
+        renderKPIs(dados);
+        renderTable(dados);
+        if(status) status.textContent = 'Dados carregados de dados.json (local).';
+      }catch(err){
+        console.warn('Erro ao carregar dados.json', err);
+        if(status) status.textContent = 'Não foi possível carregar dados.json.';
+      }
+    }
 
-  function openPopup(){
-    document.getElementById('aud-overlay').style.display = 'block';
-    document.getElementById('aud-popup').style.display = 'grid';
-  }
-  function closePopup(){
-    document.getElementById('aud-overlay').style.display = 'none';
-    document.getElementById('aud-popup').style.display = 'none';
-    localStorage.setItem(KEY, today);
-  }
+    // Último valor numérico (ano mais recente -> mais antigo)
+    function lastValue(obj){
+      const anos = Object.keys(obj||{}).sort();
+      for(let i=anos.length-1;i>=0;i--){
+        const raw = obj[anos[i]];
+        if (raw === null || raw === undefined || raw === '') continue;
+        const n = Number(String(raw).replace(/\./g,'').replace(',','.'));
+        if(Number.isFinite(n)) return n;
+      }
+      return null;
+    }
 
-  if (last !== today) {
-    window.addEventListener('load', function(){ setTimeout(openPopup, 800); });
-  }
+    // Preenche KPIs
+    function renderKPIs(dados){
+      const a = lastValue(dados.aposentados||{});
+      const p = lastValue(dados.pensionistas||{});
+      if(a!=null) document.getElementById('kpi-aposentados').textContent = String(a);
+      if(p!=null) document.getElementById('kpi-pensionistas').textContent = String(p);
+    }
 
-  document.getElementById('aud-overlay').addEventListener('click', closePopup);
-  document.getElementById('aud-close').addEventListener('click', closePopup);
-  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closePopup(); });
-})();
-</script>
-<!-- /POPUP AUDIÊNCIA -->
+    // Monta tabela (anos nas colunas, duas linhas: Aposentados e Pensionistas)
+    function renderTable(dados){
+      const thead = document.getElementById('thead-row');
+      const tbody = document.getElementById('tbody-numeros');
+      if(!thead || !tbody) return;
 
+      thead.innerHTML = '';
+      tbody.innerHTML = '';
+
+      const anos = Object.keys(dados.aposentados || {}).sort();
+
+      // Cabeçalho
+      const thCat = document.createElement('th');
+      thCat.textContent = 'Categoria';
+      thCat.style.padding='12px 16px';
+      thCat.style.textAlign='left';
+      thead.appendChild(thCat);
+
+      anos.forEach(ano=>{
+        const th = document.createElement('th');
+        th.textContent = ano;
+        th.style.padding='12px 10px';
+        th.style.textAlign='center';
+        thead.appendChild(th);
+      });
+
+      // Linha Aposentados
+      const trA = document.createElement('tr');
+      const thA = document.createElement('th');
+      thA.textContent = 'Aposentados';
+      thA.style.background='#f1f5f9';
+      thA.style.color='var(--brand-900)';
+      thA.style.textAlign='left';
+      trA.appendChild(thA);
+
+      anos.forEach(ano=>{
+        const td = document.createElement('td');
+        td.textContent = (dados.aposentados?.[ano] ?? '');
+        td.style.textAlign='center';
+        trA.appendChild(td);
+      });
+      tbody.appendChild(trA);
+
+      // Linha Pensionistas
+      const trP = document.createElement('tr');
+      const thP = document.createElement('th');
+      thP.textContent = 'Pensionistas';
+      thP.style.background='#f1f5f9';
+      thP.style.color='var(--brand-900)';
+      thP.style.textAlign='left';
+      trP.appendChild(thP);
+
+      anos.forEach(ano=>{
+        const td = document.createElement('td');
+        td.textContent = (dados.pensionistas?.[ano] ?? '');
+        td.style.textAlign='center';
+        trP.appendChild(td);
+      });
+      tbody.appendChild(trP);
+    }
+
+    // Inicia
+    fetchDados();
+  </script>
 </body>
 </html>
-
-
