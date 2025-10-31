@@ -16,6 +16,11 @@
         "pauta": "Reunião ordinária de outubro; Análise das alterações do Regimento Interno do Conselho; Discussão e votação do Regimento Interno do Comite de Investimento; Parecer referente aos documentos encaminhados pelo Comite de Investimento, Elaboração do calendário de reuniões para 2026.",
         "previsto": "Realização da 3ª reunião ordinária do ano."
       }
+      {
+        "data": "2025-11-03",
+        "pauta": "Análise e aprovação do Plano Anual de Investimento: 2026",
+        "previsto": "Reunião Extraordinária."
+      }
     ]
   },
   "comite": {
@@ -39,6 +44,12 @@
         "data": "2025-10-08",
         "pauta": "Reunião ordinária de outubro; Discussão e votação do Regimento Interno do Comite de Investimento; Emissão de Parecer dos relatórios mensais de investimento.",
         "previsto": "3ª reunião ordinária do ano."
+      }
+      
+      {
+        "data": "2025-11-03",
+        "pauta": "Análise e aprovação do Plano Anual de Investimento: 2026",
+        "previsto": "Reunião Extraordinária."
       }
     ]
   }
