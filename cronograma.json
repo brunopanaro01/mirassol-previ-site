@@ -21,6 +21,28 @@
         "pauta": "Análise e aprovação do Plano Anual de Investimento: 2026",
         "previsto": "Reunião Extraordinária."
       }
+    ],
+    "2026": [
+      {
+        "data": "2026-03-28",
+        "pauta": "Abertura; Verificação de quórum; Parecer referente aos documentos encaminhados pelo Comite de Investimento; Encerramento (assuntos gerais e palavra livre).",
+        "previsto": "Realização da 1ª reunião ordinária do ano."
+      },
+      {
+        "data": "2026-08-13",
+        "pauta": "Abertura; Verificação de quórum; Aprovação da pauta; Parecer referente aos documentos encaminhados pelo Comite de Investimento; Encerramento.",
+        "previsto": "Realização da 2ª reunião ordinária do ano."
+      },
+      {
+        "data": "2026-10-08",
+        "pauta": "Abertura; Verificação de quórum; Aprovação da pauta; Parecer referente aos documentos encaminhados pelo Comite de Investimento; Encerramento.",
+        "previsto": "Realização da 3ª reunião ordinária do ano."
+      },
+      {
+        "data": "2026-11-03",
+        "pauta": "Análise e aprovação do Plano Anual de Investimento: 2027",
+        "previsto": "Reunião Extraordinária."
+      }
     ]
   },
   "comite": {
