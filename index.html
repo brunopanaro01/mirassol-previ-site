@@ -104,7 +104,7 @@
     .btn.primary:hover{background:var(--brand-700)}
     .btn.ghost{background:#eef5fb;color:var(--brand-800)}
 
-    .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:24px}
+    .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}
     .kpi{background:var(--paper);border-radius:12px;box-shadow:var(--shadow);padding:16px;text-align:center}
     .kpi b{font-size:26px;color:var(--brand-900)}
     .kpi span{display:block;color:var(--muted);font-size:12px}
@@ -245,7 +245,7 @@
     <div class="wrap container">
       <div class="reveal">
         <h2>Transparência, segurança e serviço ao segurado</h2>
-        <p>Acompanhe notícias, documentos oficiais, dados de aposentadorias e pensões e acesse nossos serviços digitais.</p>
+        <p>Acompanhe notícias, documentos oficiais, dados de aposentadorias, pensões e segurados, e acesse nossos serviços digitais.</p>
         <div class="cta">
           <a class="btn primary" href="http://www.agendadatacenter.com.br/portalMirassoldoEste/Login/Login.aspx" target="_blank" rel="noopener">Portal do Segurado</a>
           <a class="btn ghost" href="#numeros">Ver números</a>
@@ -254,6 +254,7 @@
         <div class="kpis" aria-label="Indicadores resumidos">
           <div class="kpi"><b id="kpi-aposentados">—</b><span>Aposentados</span></div>
           <div class="kpi"><b id="kpi-pensionistas">—</b><span>Pensionistas</span></div>
+          <div class="kpi"><b id="kpi-segurados">—</b><span>Segurados</span></div>
         </div>
       </div>
 
@@ -310,7 +311,7 @@
   <!-- ============================== NÚMEROS (JSON) ============================ -->
   <section id="numeros" class="reveal" aria-labelledby="numeros-title" style="background:#f5f9fc">
     <div class="container">
-      <h2 id="numeros-title" class="section-title">Números de Aposentadorias e Pensões</h2>
+      <h2 id="numeros-title" class="section-title">Números de Aposentadorias, Pensões e Segurados</h2>
 
       <div style="overflow-x:auto">
         <table id="tabela-numeros">
@@ -466,15 +467,18 @@
       return null;
     }
 
-    // Preenche KPIs
+    // Preenche KPIs (agora incluindo segurados)
     function renderKPIs(dados){
       const a = lastValue(dados.aposentados||{});
       const p = lastValue(dados.pensionistas||{});
+      const s = lastValue(dados.segurados||{});
+
       if(a!=null) document.getElementById('kpi-aposentados').textContent = String(a);
       if(p!=null) document.getElementById('kpi-pensionistas').textContent = String(p);
+      if(s!=null) document.getElementById('kpi-segurados').textContent = String(s);
     }
 
-    // Monta tabela (anos nas colunas, duas linhas: Aposentados e Pensionistas)
+    // Monta tabela (anos nas colunas, três linhas: Aposentados, Pensionistas, Segurados)
     function renderTable(dados){
       const thead = document.getElementById('thead-row');
       const tbody = document.getElementById('tbody-numeros');
@@ -500,39 +504,29 @@
         thead.appendChild(th);
       });
 
-      // Linha Aposentados
-      const trA = document.createElement('tr');
-      const thA = document.createElement('th');
-      thA.textContent = 'Aposentados';
-      thA.style.background='#f1f5f9';
-      thA.style.color='var(--brand-900)';
-      thA.style.textAlign='left';
-      trA.appendChild(thA);
+      // Função auxiliar para criar linhas
+      function addRow(label, dataset){
+        const tr = document.createElement('tr');
+        const th = document.createElement('th');
+        th.textContent = label;
+        th.style.background='#f1f5f9';
+        th.style.color='var(--brand-900)';
+        th.style.textAlign='left';
+        tr.appendChild(th);
 
-      anos.forEach(ano=>{
-        const td = document.createElement('td');
-        td.textContent = (dados.aposentados?.[ano] ?? '');
-        td.style.textAlign='center';
-        trA.appendChild(td);
-      });
-      tbody.appendChild(trA);
+        anos.forEach(ano=>{
+          const td = document.createElement('td');
+          td.textContent = (dataset?.[ano] ?? '');
+          td.style.textAlign='center';
+          tr.appendChild(td);
+        });
 
-      // Linha Pensionistas
-      const trP = document.createElement('tr');
-      const thP = document.createElement('th');
-      thP.textContent = 'Pensionistas';
-      thP.style.background='#f1f5f9';
-      thP.style.color='var(--brand-900)';
-      thP.style.textAlign='left';
-      trP.appendChild(thP);
+        tbody.appendChild(tr);
+      }
 
-      anos.forEach(ano=>{
-        const td = document.createElement('td');
-        td.textContent = (dados.pensionistas?.[ano] ?? '');
-        td.style.textAlign='center';
-        trP.appendChild(td);
-      });
-      tbody.appendChild(trP);
+      addRow('Aposentados', dados.aposentados);
+      addRow('Pensionistas', dados.pensionistas);
+      addRow('Segurados', dados.segurados);
     }
 
     // Inicia
