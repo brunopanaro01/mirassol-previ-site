@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ouvidoria — Mirassol-Previ</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --brand:#014c85; --brand-dark:#01385f;
+  --bg:#f7fafc; --paper:#fff; --ink:#0f172a;
+  --muted:#475569; --line:#e2e8f0; --soft:#f1f5f9;
+  --shadow:0 10px 30px rgba(2,8,23,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui;background:var(--bg);color:var(--ink);line-height:1.6}
+a{text-decoration:none;color:var(--brand)}
+img{max-width:100%;display:block}
+
+/* Cabeçalho */
+header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:100}
+.header-wrap{max-width:1200px;margin:auto;padding:12px 16px;display:flex;align-items:center;gap:14px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{width:50px}
+.brand h1{margin:0;font-size:20px;color:var(--brand)}
+.brand small{font-size:12px;color:var(--muted)}
+nav{margin-left:auto}
+.menu{display:flex;gap:8px;align-items:center}
+.menu a,.menu button{padding:10px 12px;border-radius:10px;border:0;background:none;cursor:pointer;color:var(--ink)}
+.menu a:hover,.menu button:hover{background:var(--soft)}
+.has-sub{position:relative}
+.submenu{display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);min-width:240px}
+.submenu a{display:block;padding:10px 12px}
+.submenu a:hover{background:var(--soft)}
+.has-sub:hover .submenu{display:block}
+.menu .active{background:var(--soft);font-weight:700}
+
+/* Conteúdo */
+main{padding:32px 16px}
+.container{max-width:1200px;margin:auto}
+.hero{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:20px;margin-bottom:20px}
+.hero h2{margin:0;color:var(--brand-dark)}
+.hero p{margin-top:8px;color:var(--muted)}
+
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:20px}
+.doc{display:flex;gap:10px;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.doc + .doc{margin-top:10px}
+.dot{width:10px;height:10px;border-radius:999px;background:#22c55e;margin-top:6px;flex:0 0 auto}
+.doc-title{margin:0;font-weight:700}
+.doc-meta{margin:4px 0 0;color:var(--muted);font-size:14px}
+.doc-actions{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
+
+.btn{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--soft)}
+.btn-primary{background:#e6f0fb;border-color:#cfe3f7;color:var(--brand-dark)}
+.btn-primary:hover{background:#dcedff}
+
+/* Viewer abaixo */
+.viewer{margin-top:22px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;display:none}
+.viewer-top{padding:12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.viewer-title{font-weight:700;color:var(--brand-dark)}
+.viewer-sub{color:var(--muted);font-size:12px;margin:0}
+iframe{width:100%;height:80vh;border:0}
+
+/* Rodapé */
+footer{background:#0d2636;color:#cbd5e1;text-align:center;padding:20px;margin-top:40px}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-wrap">
+    <a class="brand" href="index.html" aria-label="Ir para a página inicial">
+      <img src="brasao.png" alt="Brasão">
+      <div>
+        <h1>Mirassol-Previ</h1>
+        <small>Fundo Municipal de Previdência Social</small>
+      </div>
+    </a>
+
+    <nav>
+      <div class="menu">
+        <a href="index.html">Início</a>
+        <div class="has-sub">
+          <button type="button">Institucional ▾</button>
+          <div class="submenu">
+            <a href="historia.html">História</a>
+            <a href="identidade.html">Identidade</a>
+            <a href="composicao.html">Composição</a>
+            <a href="organograma.html">Organograma</a>
+          </div>
+        </div>
+        <a href="aposentadorias.html">Aposentadorias</a>
+        <a href="transparencia.html">Transparência</a>
+        <a href="progestao.html">Pró-Gestão</a>
+        <a class="active" href="ouvidoria.html">Ouvidoria</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <section class="hero">
+      <h2>Ouvidoria</h2>
+      <p>Solicitações, denúncias, sugestões, reclamações e elogios.</p>
+    </section>
+
+    <section class="panel" aria-label="Informações da Ouvidoria">
+      <article class="doc">
+        <span class="dot"></span>
+        <div>
+          <p class="doc-title">Responsável</p>
+          <p class="doc-meta">Maria Aracelly Machado</p>
+        </div>
+      </article>
+
+      <article class="doc">
+        <span class="dot"></span>
+        <div>
+          <p class="doc-title">Endereço</p>
+          <p class="doc-meta">Rua Antônio Tavares, 3310 – Centro</p>
+        </div>
+      </article>
+
+      <article class="doc">
+        <span class="dot"></span>
+        <div>
+          <p class="doc-title">Fone</p>
+          <p class="doc-meta">(65) 3241-5152</p>
+        </div>
+      </article>
+
+      <article class="doc">
+        <span class="dot"></span>
+        <div>
+          <p class="doc-title">E-mail</p>
+          <p class="doc-meta"><a href="mailto:ouvidoria@mirassoldoeste.mt.gov.br">ouvidoria@mirassoldoeste.mt.gov.br</a></p>
+        </div>
+      </article>
+
+      <article class="doc">
+        <span class="dot"></span>
+        <div style="width:100%">
+          <p class="doc-title">Horário de Atendimento</p>
+          <p class="doc-meta">Segunda à Sexta das 07h às 13h</p>
+
+          <div class="doc-actions">
+            <!-- BOTÃO COM O TEXTO EXATO QUE VOCÊ PEDIU -->
+            <button class="btn btn-primary"
+              onclick="openViewer('https://mirassoldoeste.flowdocs.com.br:2053/public/home/group/5','Ouvidoria — Solicitar informação')">
+              Solicitar informação
+            </button>
+
+            <a class="btn"
+              href="https://mirassoldoeste.flowdocs.com.br:2053/public/home/group/5"
+              target="_blank" rel="noopener">
+              Nova aba ↗
+            </a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- VISUALIZADOR ABAIXO (SÓ APARECE AO CLICAR) -->
+    <section class="viewer" id="viewer" aria-label="Visualizador">
+      <div class="viewer-top">
+        <div>
+          <div class="viewer-title" id="viewerTitle">Ouvidoria</div>
+          <p class="viewer-sub">O formulário será exibido aqui, na própria página.</p>
+        </div>
+        <button class="btn" onclick="closeViewer()">Fechar</button>
+      </div>
+      <iframe id="viewerFrame" title="Ouvidoria" src="about:blank"></iframe>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  © 2025 Mirassol-Previ
+</footer>
+
+<script>
+function openViewer(url,title){
+  document.getElementById('viewerTitle').textContent = title || 'Ouvidoria';
+  document.getElementById('viewerFrame').src = url;
+  const v = document.getElementById('viewer');
+  v.style.display = 'block';
+  v.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function closeViewer(){
+  document.getElementById('viewerFrame').src = 'about:blank';
+  document.getElementById('viewer').style.display = 'none';
+}
+</script>
+
+</body>
+</html>
