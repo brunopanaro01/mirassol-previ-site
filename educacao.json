@@ -1,39 +1,84 @@
 {
   "2025": [
     {
-      "treinamento": "RPPS de Excelência - Pró-Gestão e Investimento na Prática",
-      "publico": "Diretor",
-      "duracao": "24h",
-      "mes": "Junho",
-      "formato": "PRESENCIAL"
+      "O QUE (CURSO)": "Censo Cadastral Previdenciário (Turma NOV/2025)",
+      "ONDE": "EAD",
+      "INÍCIO PREVISTO": "Janeiro",
+      "FIM PREVISTO": "Novembro",
+      "PARTICIPANTES": "Membros do conselho previdenciario e comite de investimento",
+      "OBJETIVO": "",
+      "CARGA HORÁRIA": "30h",
+      "STATUS": "REALIZADO"
     },
     {
-      "treinamento": "Curso Prático sobre PPP e LTCAT",
-      "publico": "Coordenador de Benefícios",
-      "duracao": "16h",
-      "mes": "Junho",
-      "formato": "PRESENCIAL"
+      "O QUE (CURSO)": "Direito e Processo Previdenciário",
+      "ONDE": "EAD",
+      "INÍCIO PREVISTO": "Abril/2024",
+      "FIM PREVISTO": "Fevereiro/2025",
+      "PARTICIPANTES": "Gestores De Rpps",
+      "OBJETIVO": "",
+      "CARGA HORÁRIA": "360h",
+      "STATUS": "REALIZADO"
     },
     {
-      "treinamento": "Censo Cadastral Previdenciário",
-      "publico": "Membros do Conselho e do Comite",
-      "duracao": "30h",
-      "mes": "Janeiro a Novembro",
-      "formato": "EAD"
+      "O QUE (CURSO)": "RPPS de Excelência: Pró-Gestão e Investimento na Prática",
+      "ONDE": "PRESENCIAL",
+      "INÍCIO PREVISTO": "Junho",
+      "FIM PREVISTO": "Junho",
+      "PARTICIPANTES": "Servidores da Área Previdenciária",
+      "OBJETIVO": "",
+      "CARGA HORÁRIA": "24h",
+      "STATUS": "REALIZADO"
     },
     {
-      "treinamento": "12º Encontro de Gestores de RPPS do Estado de Mato Grosso e o 2º Encontro da Região Centro Oeste",
-      "publico": "Diretor, Coordenador de Beneficios e Membros do Conselho e do Comite",
-      "duracao": "24h",
-      "mes": "Outubro",
-      "formato": "PRESENCIAL"
+      "O QUE (CURSO)": "CURSO PRÁTICO SOBRE O PPP E LTCAT PARA A ADMINISTRAÇÃO PÚBLICA",
+      "ONDE": "PRESENCIAL",
+      "INÍCIO PREVISTO": "Junho",
+      "FIM PREVISTO": "Junho",
+      "PARTICIPANTES": "Gestores De Rpps",
+      "OBJETIVO": "",
+      "CARGA HORÁRIA": "16h",
+      "STATUS": "REALIZADO"
     },
     {
-      "treinamento": "Capacitação para Certificação dos Membros Conselheiros",
-      "publico": "Conselheiros não certificados",
-      "duracao": "20h",
-      "mes": "Novembro",
-      "formato": "PRESENCIAL"
+      "O QUE (CURSO)": "Encontro de Gestores de RPPS do Estado de Mato Grosso e o 2° Encontro da Região Centro Oeste.",
+      "ONDE": "PRESENCIAL",
+      "INÍCIO PREVISTO": "Outubro",
+      "FIM PREVISTO": "Outubro",
+      "PARTICIPANTES": "Gestores De Rpps",
+      "OBJETIVO": "",
+      "CARGA HORÁRIA": "16h",
+      "STATUS": "REALIZADO"
+    },
+    {
+      "O QUE (CURSO)": "Certificação do Responsavel pela gestão de recursos e membros do comitê de investimento do RPPS. CP RPPS CGINV I",
+      "ONDE": "PRESENCIAL",
+      "INÍCIO PREVISTO": "Novembro",
+      "FIM PREVISTO": "Novembro",
+      "PARTICIPANTES": "Comitê de Investimento",
+      "OBJETIVO": "",
+      "CARGA HORÁRIA": "2h30",
+      "STATUS": "REALIZADO"
+    },
+    {
+      "O QUE (CURSO)": "Demonstrativo de Investimentos do RPPS - DAIR E DPIN (Turma NOV/2025)",
+      "ONDE": "EAD",
+      "INÍCIO PREVISTO": "Novembro",
+      "FIM PREVISTO": "Novembro",
+      "PARTICIPANTES": "Presidente do Comitê Investimento",
+      "OBJETIVO": "",
+      "CARGA HORÁRIA": "30h",
+      "STATUS": "REALIZADO"
+    },
+    {
+      "O QUE (CURSO)": "Aposentadoria e Pensão de servidores: Atualizações conforme Emenda 103/2019 (Turma NOV/2025)",
+      "ONDE": "EAD",
+      "INÍCIO PREVISTO": "Novembro",
+      "FIM PREVISTO": "Novembro",
+      "PARTICIPANTES": "Servidores da Área Previdenciária",
+      "OBJETIVO": "",
+      "CARGA HORÁRIA": "25h",
+      "STATUS": "REALIZADO"
     }
   ]
 }
