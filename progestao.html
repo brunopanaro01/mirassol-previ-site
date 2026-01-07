@@ -1,20 +1,140 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Painel Pró-Gestão RPPS | Mirassol-Previ</title>
-<style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pró-Gestão — Mirassol-Previ</title>
+  <meta name="description" content="Portal de Transparência do Mirassol-Previ — acesso a certidões, relatórios, pareceres, despesas e receitas."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root{
+      --brand-900:#01385f; --brand-800:#014c85;
+      --bg:#f7fafc; --paper:#fff; --ink:#0f172a; --muted:#475569;
+      --line:#e2e8f0; --soft:#f3f7fb; --shadow:0 10px 30px rgba(2,8,23,.08);
+      --warn:#b45309;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui;background:var(--bg);color:var(--ink);line-height:1.6}
+    a{color:var(--brand-800);text-decoration:none}
+    img{max-width:100%;height:auto;display:block}
+
+    /* Anti-popup (bloqueia qualquer modal legado) */
+    #popup,.popup,.modal,.modal-backdrop,[role="dialog"],.overlay,.newsletter-modal,.cookie-modal{display:none!important}
+    body.modal-open{overflow:auto!important}
+
+    /* Cabeçalho padrão */
+    header.site-header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--line)}
+    .header-wrap{max-width:1200px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:16px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand img{width:52px;height:52px}
+    .brand .titles{display:flex;flex-direction:column}
+    .brand .titles h1{margin:0;font-size:20px;color:var(--brand-800)}
+    .brand .titles small{font-size:12px;color:var(--muted)}
+    nav.primary{margin-left:auto;position:relative}
+
+    .menu{display:flex;gap:8px;align-items:center}
+    .menu a,.menu button{padding:10px 12px;border-radius:10px;color:var(--ink);background:transparent;border:0;font:inherit;cursor:pointer}
+    .menu a:hover,.menu button:hover{background:#eef5fb}
+    .menu a.active{background:#eef5fb}
+
+    /* Submenu “Institucional” */
+    .has-sub{position:relative}
+    .has-sub > button{display:inline-flex;align-items:center;gap:6px}
+    .submenu{
+      display:none;position:absolute;top:100%;left:0;z-index:101;
+      background:#fff;border:1px solid var(--line);border-radius:12px;
+      box-shadow:var(--shadow);min-width:260px;padding:6px
+    }
+    .submenu a{display:block;padding:10px 12px;border-radius:8px}
+    .submenu a:hover{background:var(--soft)}
+    .has-sub:hover .submenu,
+    .has-sub:focus-within .submenu{display:block}
+
+    /* Botão hambúrguer */
+    .hamb{display:none;background:none;border:0;padding:8px;border-radius:10px;cursor:pointer}
+    .hamb:hover{background:#eef5fb}
+
+    /* Conteúdo */
+    main{padding:40px 16px}
+    .container{max-width:1200px;margin:0 auto}
+    h1.page-title{text-align:center;font-size:clamp(1.6rem,1.2rem + 1vw,2.2rem);color:var(--brand-900);margin:0 0 14px}
+    .lead{max-width:860px;margin:0 auto 18px;color:var(--muted);text-align:center}
+
+    /* Aviso de links externos */
+    .notice{
+      max-width:980px;margin:0 auto 20px;
+      background:#fff;border:1px solid var(--line);border-left:6px solid var(--warn);
+      border-radius:14px;box-shadow:var(--shadow);padding:14px 16px
+    }
+    .notice strong{display:block;color:#7c2d12;margin-bottom:4px}
+    .notice p{margin:0;color:var(--muted);font-size:14px}
+    .notice code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:.95em}
+
+    /* Seções */
+    .section-title{
+      margin:24px 0 10px;
+      font-size:14px;letter-spacing:.06em;text-transform:uppercase;
+      color:#334155
+    }
+
+    .cards-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:18px
+    }
+    .card{
+      background:var(--paper);border:1px solid var(--line);border-radius:16px;
+      padding:18px;text-align:center;box-shadow:var(--shadow);
+      transition:transform .25s ease,box-shadow .25s ease
+    }
+    .card:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(2,8,23,.12)}
+    .card a{font-weight:650;font-size:15.5px;color:var(--brand-800);display:inline-block}
+    .badge{
+      display:inline-block;margin-top:10px;
+      font-size:12px;color:#0f172a;background:var(--soft);
+      border:1px solid var(--line);padding:4px 10px;border-radius:999px
+    }
+
+    .voltar{display:block;text-align:center;margin:28px auto 0;font-weight:650;color:var(--brand-800)}
+
+    /* Rodapé central */
+    footer.site-footer{background:#0d2636;color:#cbd5e1;margin-top:40px}
+    .footer-wrap{max-width:1200px;margin:0 auto;padding:20px 16px;text-align:center}
+
+    /* Scroll reveal */
+    .reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+    .reveal.in{opacity:1;transform:none}
+
+    /* Mobile */
+    @media(max-width:860px){
+      .hamb{display:inline-grid;place-items:center}
+      .menu{
+        display:none;position:absolute;top:64px;right:16px;background:#fff;border:1px solid var(--line);
+        box-shadow:var(--shadow);padding:8px;border-radius:12px;flex-direction:column;min-width:280px
+      }
+      .menu.show{display:flex}
+      .brand .titles h1{font-size:18px}
+      .brand img{width:44px;height:44px}
+      .has-sub .submenu{position:static;box-shadow:none;border:0;padding:0;margin-left:8px;margin-bottom:8px;display:none}
+      .has-sub.open .submenu{display:block}
+    }
+  </style>
+  <style>
+/* ===== Painel Pró-Gestão (embutido) ===== */
+
 :root{ --prim:#014c85; --borda:#e5e7eb; --muted:#64748b; --bg:#ffffff; --sidebar:#f9fafb; }
 *{box-sizing:border-box;margin:0;padding:0}
-html, body{height:100%; overflow:hidden; font-family:Arial, Helvetica, sans-serif; color:#0f172a; background:var(--bg);}
-header{background:var(--prim);color:#fff;text-align:center;padding:12px 8px;flex:0 0 auto}
-header img{height:56px}
+
+
+
 .app{display:flex;flex-direction:column;height:100%}
 .main{display:grid;grid-template-columns:280px 1fr;gap:0;flex:1 1 auto;min-height:0}
 /* Sidebar */
 .sidebar{border-right:1px solid var(--borda);background:var(--sidebar);display:flex;flex-direction:column;min-height:0}
-.sidebar-header{padding:10px 14px;font-size:17px;color:var(--prim);background:#eef6ff;border-bottom:1px solid var(--borda);flex:0 0 auto}
+.sidebar-
 .sidebar-note{padding:6px 14px;font-size:12px;color:#334155;background:#f6f7fb;border-bottom:1px solid #eaeef3}
 .sidebar-scroll{overflow:auto;flex:1 1 auto;padding:6px 0}
 .acc-item{margin-bottom:6px}
@@ -83,15 +203,64 @@ h2{color:#014c85;margin-bottom:8px}
 .table th{background:#f3f6fb;color:#0f172a}
 .badge{display:inline-block;border:1px solid var(--borda);border-radius:999px;padding:2px 8px;font-size:12px;color:#334155;background:#f8fafc}
 
-</style>
+
+/* Ajustes para integrar ao layout do site */
+.pg-wrap{margin-top:18px}
+.pg-wrap .app{height:auto}
+.pg-wrap .main{min-height:520px}
+@media(max-width:900px){.pg-wrap .main{min-height:auto}}
+  </style>
 </head>
+
 <body>
-<div class="app">
-  <header>
-    <img src="brasao.png" alt="Brasão">
-    <h1 style="font-size:22px;">Mirassol-Previ</h1>
-    <p style="font-size:13px;">Fundo Municipal de Previdência Social</p>
+  <!-- Cabeçalho -->
+  <header class="site-header">
+    <div class="header-wrap">
+      <a class="brand" href="index.html" aria-label="Ir para a página inicial">
+        <img src="brasao.png" alt="Brasão de Mirassol D'Oeste"/>
+        <span class="titles">
+          <h1>Mirassol-Previ</h1>
+          <small>Fundo Municipal de Previdência Social — Mirassol D’Oeste/MT</small>
+        </span>
+      </a>
+
+      <button class="hamb" aria-label="Abrir menu" aria-controls="menu" aria-expanded="false">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <nav class="primary" aria-label="Menu principal">
+        <div id="menu" class="menu" role="menubar">
+          <a role="menuitem" href="index.html">Início</a>
+          <div class="has-sub" role="none">
+            <button aria-haspopup="true" aria-expanded="false">Institucional ▾</button>
+            <div class="submenu" role="menu">
+              <a role="menuitem" href="historia.html">História</a>
+              <a role="menuitem" href="identidade.html">Identidade</a>
+              <a role="menuitem" href="composicao.html">Composição</a>
+              <a role="menuitem" href="organograma.html">Organograma</a>
+            </div>
+          </div>
+          <a role="menuitem" href="aposentadorias.html">Aposentadorias</a>
+          <a role="menuitem" class="active" href="transparencia.html">Transparência</a>
+          <a role="menuitem" href="progestao.html">Pró-Gestão</a>
+        </div>
+      </nav>
+    </div>
   </header>
+
+  <!-- Conteúdo -->
+  <main>
+
+    <section class="hero reveal">
+      <h2>Pró-Gestão RPPS</h2>
+      <p>Documentos, evidências e painéis de acompanhamento para atendimento aos requisitos do Pró-Gestão RPPS.</p>
+    </section>
+
+    <div class="pg-wrap reveal">
+<div class="app">
+  
 
   <div class="main">
     <!-- Sidebar -->
@@ -221,10 +390,7 @@ h2{color:#014c85;margin-bottom:8px}
           <div class="notice">Clique em <b>Composição</b> do Conselho ou do Comitê para ver os membros aqui no painel (layout em grade: <i>foto • nome • cargo</i>). Para cronograma, escolha “Cronograma de Reuniões”.</div>
         </div>
       </div>
-      <div class="footer">
-        <a href="index.html" class="back-btn">← Voltar</a>
-      </div>
-    </main>
+      </main>
 
   </div>
 </div>
@@ -280,7 +446,7 @@ function buildGridFromBlock(blockEl){
     let nomeEl = el.querySelector('h3, h4, .nome, strong, b');
     let nome = nomeEl ? nomeEl.textContent.trim() : '';
     if(!nome){
-      const txt = el.textContent.trim().split('\\n').map(s=>s.trim()).filter(Boolean)[0] || '';
+      const txt = el.textContent.trim().split('\n').map(s=>s.trim()).filter(Boolean)[0] || '';
       nome = txt;
     }
     let cargoEl = el.querySelector('.cargo, .funcao');
@@ -374,71 +540,72 @@ let EDUC = null;
 function esc(v){
   return (v ?? '').toString();
 }
-
 function badge(v){
   const t = esc(v).trim();
   return t ? `<span class="badge">${t}</span>` : '';
 }
 
 function tableEduc(rows){
-  if(!rows || rows.length === 0){
-    return '<div class="empty">Nenhum treinamento cadastrado neste ano.</div>';
+  if(!rows || rows.length===0){
+    return '<div class="empty">Nenhum registro cadastrado neste ano.</div>';
   }
-
   return `
-    <table class="table">
-      <thead>
-        <tr>
-          <th style="width:20%;">O QUE (CURSO)</th>
-          <th style="width:10%;">ONDE</th>
-          <th style="width:10%;">INÍCIO PREVISTO</th>
-          <th style="width:10%;">FIM PREVISTO</th>
-          <th style="width:16%;">PARTICIPANTES</th>
-          <th style="width:18%;">OBJETIVO</th>
-          <th style="width:8%;">CARGA HORÁRIA</th>
-          <th style="width:8%;">STATUS</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${rows.map(r => `
+    <div class="card"><div class="card-pad" style="padding-top:12px">
+      <table class="table">
+        <thead>
           <tr>
-            <td>${esc(r["O QUE (CURSO)"])}</td>
-            <td>${badge(r["ONDE"])}</td>
-            <td>${esc(r["INÍCIO PREVISTO"])}</td>
-            <td>${esc(r["FIM PREVISTO"])}</td>
-            <td>${esc(r["PARTICIPANTES"])}</td>
-            <td>${esc(r["OBJETIVO"])}</td>
-            <td>${esc(r["CARGA HORÁRIA"])}</td>
-            <td>${esc(r["STATUS"])}</td>
+            <th style="width:22%;">O QUE (CURSO)</th>
+            <th style="width:10%;">ONDE</th>
+            <th style="width:10%;">INÍCIO PREVISTO</th>
+            <th style="width:10%;">FIM PREVISTO</th>
+            <th style="width:16%;">PARTICIPANTES</th>
+            <th style="width:20%;">OBJETIVO</th>
+            <th style="width:6%;">CARGA HORÁRIA</th>
+            <th style="width:6%;">STATUS</th>
           </tr>
-        `).join('')}
-      </tbody>
-    </table>`;
+        </thead>
+        <tbody>
+          ${rows.map(r=>`
+            <tr>
+              <td>${esc(r["O QUE (CURSO)"])}</td>
+              <td>${badge(r["ONDE"])}</td>
+              <td>${esc(r["INÍCIO PREVISTO"])}</td>
+              <td>${esc(r["FIM PREVISTO"])}</td>
+              <td>${esc(r["PARTICIPANTES"])}</td>
+              <td>${esc(r["OBJETIVO"])}</td>
+              <td>${esc(r["CARGA HORÁRIA"])}</td>
+              <td>${badge(r["STATUS"])}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      <div class="muted" style="margin-top:10px">
+        Fonte: <code>educacao.json</code> (padrão do Plano de Ação de Capacitação).
+      </div>
+    </div></div>`;
 }
 
 function renderEducYears(){
   const years = Object.keys(EDUC || {}).sort();
-  if(years.length === 0){
+  if(years.length===0){
     contentArea.innerHTML = '<div class="empty">Não há anos cadastrados no <code>educacao.json</code>.</div>';
     return;
   }
-
-  const last = years[years.length - 1];
+  const last = years[years.length-1];
 
   contentArea.innerHTML = `
     <h2>Educação Previdenciária — Planejamento anual</h2>
-    <div class="muted">Selecione o ano para visualizar a programação de treinamentos.</div>
+    <div class="muted">Selecione o ano para visualizar a programação de capacitações.</div>
     <div class="years">
-      ${years.map(y => `<button class="year-btn" data-year="${y}">${y}</button>`).join('')}
+      ${years.map(y=>`<button class="year-btn" data-year="${y}">${y}</button>`).join('')}
     </div>
     <div id="educTable"></div>
   `;
 
-  contentArea.querySelectorAll('.year-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      contentArea.querySelectorAll('.year-btn').forEach(b => b.classList.remove('active'));
+  contentArea.querySelectorAll('.year-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      contentArea.querySelectorAll('.year-btn').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
-
       const ano = btn.dataset.year;
       const rows = (EDUC && EDUC[ano]) ? EDUC[ano] : [];
       document.getElementById('educTable').innerHTML = tableEduc(rows);
@@ -451,14 +618,28 @@ function renderEducYears(){
 
 async function ensureEduc(){
   if(EDUC) return true;
-
   try{
-    const res = await fetch('educacao.json', { cache: 'no-store' });
-    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const res = await fetch('educacao.json', {cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
     EDUC = await res.json();
     return true;
   }catch(err){
-    contentArea.innerHTML = '<div class="empty">Não foi possível carregar o <code>
+    console.error(err);
+    contentArea.innerHTML = '<div class="empty">Não foi possível carregar o <code>educacao.json</code>. Verifique se o arquivo está na mesma pasta desta página e se o nome está correto.</div>';
+    return false;
+  }
+}
+
+document.querySelectorAll('[data-educacao]').forEach(a=>{
+  a.addEventListener('click', async (e)=>{
+    e.preventDefault();
+    titleEl.textContent = 'Educação Previdenciária — Planejamento';
+    if(await ensureEduc()){
+      renderEducYears();
+    }
+  });
+});
+
 
 // ===== CRONOGRAMA (carrega de cronograma.json) =====
 let CRONO = null;
@@ -558,6 +739,61 @@ document.querySelectorAll('[data-cronograma]').forEach(a=>{
   });
 });
 </script>
+    </div>
 
+</main>
+
+  <!-- Rodapé -->
+  <footer class="site-footer">
+    <div class="footer-wrap">
+      <span>© <span id="year"></span> Mirassol-Previ</span>
+    </div>
+  </footer>
+
+  <script>
+    // Ano dinâmico
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Scroll reveal
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, {threshold:.12});
+    document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
+
+    // Menu mobile
+    const hamb = document.querySelector('.hamb');
+    const menu = document.getElementById('menu');
+    hamb?.addEventListener('click', ()=>{
+      const open = menu.classList.toggle('show');
+      hamb.setAttribute('aria-expanded', String(open));
+    });
+
+    // Submenu institucional (mobile)
+    document.querySelectorAll('.has-sub > button').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const parent = btn.closest('.has-sub');
+        const isOpen = parent.classList.toggle('open');
+        btn.setAttribute('aria-expanded', String(isOpen));
+      });
+    });
+
+    // Padronização automática de links externos: nova aba + noopener + seta ↗
+    const anchors = Array.from(document.querySelectorAll('.card a'));
+    anchors.forEach(a=>{
+      const href = a.getAttribute('href') || '';
+      if(!/^https?:\/\//i.test(href)) return;
+
+      a.setAttribute('target','_blank');
+      a.setAttribute('rel','noopener');
+      if(!a.textContent.includes('↗')){
+        a.textContent = a.textContent.trim() + ' ↗';
+      }
+    });
+  </script>
 </body>
 </html>
