@@ -370,82 +370,95 @@ document.querySelectorAll('[data-compose]').forEach(a=>{
 
 // ===== EDUCAÇÃO PREVIDENCIÁRIA (planejamento por ano a partir de educacao.json) =====
 let EDUC = null;
+
+function esc(v){
+  return (v ?? '').toString();
+}
+
+function badge(v){
+  const t = esc(v).trim();
+  return t ? `<span class="badge">${t}</span>` : '';
+}
+
 function tableEduc(rows){
-  if(!rows || rows.length===0){
+  if(!rows || rows.length === 0){
     return '<div class="empty">Nenhum treinamento cadastrado neste ano.</div>';
   }
+
   return `
     <table class="table">
       <thead>
         <tr>
-          <th style="width:36%;">Treinamento</th>
-          <th style="width:22%;">Público-alvo</th>
-          <th style="width:12%;">Duração</th>
-          <th style="width:12%;">Mês</th>
-          <th style="width:12%;">Formato</th>
+          <th style="width:20%;">O QUE (CURSO)</th>
+          <th style="width:10%;">ONDE</th>
+          <th style="width:10%;">INÍCIO PREVISTO</th>
+          <th style="width:10%;">FIM PREVISTO</th>
+          <th style="width:16%;">PARTICIPANTES</th>
+          <th style="width:18%;">OBJETIVO</th>
+          <th style="width:8%;">CARGA HORÁRIA</th>
+          <th style="width:8%;">STATUS</th>
         </tr>
       </thead>
       <tbody>
-        ${rows.map(r=>`
+        ${rows.map(r => `
           <tr>
-            <td>${r.treinamento || ''}</td>
-            <td>${r.publico || ''}</td>
-            <td>${r.duracao || ''}</td>
-            <td>${r.mes || ''}</td>
-            <td>${r.formato ? `<span class="badge">${r.formato}</span>` : ''}</td>
+            <td>${esc(r["O QUE (CURSO)"])}</td>
+            <td>${badge(r["ONDE"])}</td>
+            <td>${esc(r["INÍCIO PREVISTO"])}</td>
+            <td>${esc(r["FIM PREVISTO"])}</td>
+            <td>${esc(r["PARTICIPANTES"])}</td>
+            <td>${esc(r["OBJETIVO"])}</td>
+            <td>${esc(r["CARGA HORÁRIA"])}</td>
+            <td>${esc(r["STATUS"])}</td>
           </tr>
         `).join('')}
       </tbody>
     </table>`;
 }
+
 function renderEducYears(){
   const years = Object.keys(EDUC || {}).sort();
-  if(years.length===0){
+  if(years.length === 0){
     contentArea.innerHTML = '<div class="empty">Não há anos cadastrados no <code>educacao.json</code>.</div>';
     return;
   }
-  const last = years[years.length-1];
+
+  const last = years[years.length - 1];
+
   contentArea.innerHTML = `
     <h2>Educação Previdenciária — Planejamento anual</h2>
     <div class="muted">Selecione o ano para visualizar a programação de treinamentos.</div>
     <div class="years">
-      ${years.map(y=>`<button class="year-btn" data-year="${y}">${y}</button>`).join('')}
+      ${years.map(y => `<button class="year-btn" data-year="${y}">${y}</button>`).join('')}
     </div>
     <div id="educTable"></div>
   `;
-  contentArea.querySelectorAll('.year-btn').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      contentArea.querySelectorAll('.year-btn').forEach(b=>b.classList.remove('active'));
+
+  contentArea.querySelectorAll('.year-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      contentArea.querySelectorAll('.year-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+
       const ano = btn.dataset.year;
       const rows = (EDUC && EDUC[ano]) ? EDUC[ano] : [];
       document.getElementById('educTable').innerHTML = tableEduc(rows);
     });
   });
+
   const lastBtn = contentArea.querySelector(`.year-btn[data-year="${last}"]`);
   if(lastBtn) lastBtn.click();
 }
+
 async function ensureEduc(){
   if(EDUC) return true;
+
   try{
-    const res = await fetch('educacao.json', {cache:'no-store'});
-    if(!res.ok) throw new Error('HTTP '+res.status);
+    const res = await fetch('educacao.json', { cache: 'no-store' });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
     EDUC = await res.json();
     return true;
   }catch(err){
-    contentArea.innerHTML = '<div class="empty">Não foi possível carregar o <code>educacao.json</code>. Coloque o arquivo na mesma pasta desta página.</div>';
-    return false;
-  }
-}
-document.querySelectorAll('[data-educacao]').forEach(a=>{
-  a.addEventListener('click', async (e)=>{
-    e.preventDefault();
-    titleEl.textContent = 'Educação Previdenciária — Planejamento';
-    if(await ensureEduc()){
-      renderEducYears();
-    }
-  });
-});
+    contentArea.innerHTML = '<div class="empty">Não foi possível carregar o <code>
 
 // ===== CRONOGRAMA (carrega de cronograma.json) =====
 let CRONO = null;
