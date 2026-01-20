@@ -2,6 +2,16 @@
   "conselho": {
     "2025": [
       {
+        "data": "2025-01-29",
+        "pauta": "Abertura; Verificação de quórum; Aprovação da pauta; constituição de reservas com as sobras das receitas administrativas.",
+        "previsto": "Constituição de reservas com as sobras das receitas administrativas."
+      },
+      {
+        "data": "2025-02-20",
+        "pauta": "Abertura; Verificação de quórum; Aprovação da pauta; Alteração Alteração da Taxa do Consignado.",
+        "previsto": "Alteração da Taxa do Consignado."
+      },
+      {
         "data": "2025-03-28",
         "pauta": "Abertura; Verificação de quórum; Aprovação da pauta; Alteração na Direção Executiva; Substituição de membros (nomeações e suplência); Aprovação do Jeton (LC 285/2025); Aquisição de lote para construção da sede; Encerramento (assuntos gerais e palavra livre).",
         "previsto": "Deliberação sobre aquisição do lote e aprovação do Jeton."
@@ -12,14 +22,14 @@
         "previsto": "Aprovação da atualização do Regimento Interno do Conselho e aprovação do Regimento Interno do Comitê."
       },
       {
-        "data": "2025-10-08",
+        "data": "2025-10-07",
         "pauta": "Reunião ordinária de outubro; Análise das alterações do Regimento Interno do Conselho; Discussão e votação do Regimento Interno do Comite de Investimento; Parecer referente aos documentos encaminhados pelo Comite de Investimento, Elaboração do calendário de reuniões para 2026.",
         "previsto": "Realização da 3ª reunião ordinária do ano."
       },
       {
         "data": "2025-11-03",
-        "pauta": "Análise e aprovação do Plano Anual de Investimento: 2026",
-        "previsto": "Reunião Extraordinária."
+        "pauta": "Abertura; Verificação de quórum; Aprovação da pauta; Análise e aprovação do Plano Anual de Investimento: 2026",
+        "previsto": "Ata de Aprovação da Política Anual de Investimentos 2026"
       }
     ],
     "2026": [
