@@ -80,5 +80,117 @@
       "CARGA HORÁRIA": "25h",
       "STATUS": "REALIZADO"
     }
+  ],
+  "2026": [
+    {
+      "O QUE (CURSO)": "CURSOS na area previdenciaria e de investimento para RPPS",
+      "ONDE": "EAD",
+      "INÍCIO PREVISTO": "Janeiro",
+      "FIM PREVISTO": "Novembro",
+      "PARTICIPANTES": "Membros do Conselho e do Comitê",
+      "OBJETIVO": "Aprimorar conhecimento sobre a area afim",
+      "QUANTO? (CUSTO ESTIMADO)": "",
+      "CARGA HORÁRIA": "30",
+      "STATUS": "A AGENDAR"
+    },
+    {
+      "O QUE (CURSO)": "Diálogo Previdenciário",
+      "ONDE": "SALA DE REUNIÕES - Educação",
+      "INÍCIO PREVISTO": "Janeiro",
+      "FIM PREVISTO": "Janeiro",
+      "PARTICIPANTES": "Segurados com aposentadoria prevista para 2026",
+      "OBJETIVO": "Orientar os segurados quanto aos procedimentos adotados na futura concessão do benefício",
+      "QUANTO? (CUSTO ESTIMADO)": "",
+      "CARGA HORÁRIA": "4h",
+      "STATUS": "A AGENDAR"
+    },
+    {
+      "O QUE (CURSO)": "Palestra sobre Educação Previdenciária: Conheça o Mirassol-Previ.",
+      "ONDE": "A definir",
+      "INÍCIO PREVISTO": "Fevereiro",
+      "FIM PREVISTO": "Fevereiro",
+      "PARTICIPANTES": "Servidores da Educação",
+      "OBJETIVO": "Promover educação previdenciária aos segurados ativos vinculados à Secretaria Municipal de Educação, ampliando a compreensão sobre o RPPS",
+      "QUANTO? (CUSTO ESTIMADO)": "",
+      "CARGA HORÁRIA": "2h",
+      "STATUS": "A AGENDAR"
+    },
+    {
+      "O QUE (CURSO)": "Produção e divulgação de vídeos educativos sobre regras previdenciárias no canal oficial do Mirassol-Previ no YouTube",
+      "ONDE": "YouTube",
+      "INÍCIO PREVISTO": "Fevereiro",
+      "FIM PREVISTO": "Setembro",
+      "PARTICIPANTES": "Servidores em geral",
+      "OBJETIVO": "Ampliar o alcance da educação previdenciária, garantindo que os segurados tenham acesso claro, acessível e permanente às informações sobre direitos e deveres previdenciários, independentemente de horário ou local, contribuindo para uma relação de transparência e consciência previdenciária",
+      "QUANTO? (CUSTO ESTIMADO)": "",
+      "CARGA HORÁRIA": "3h",
+      "STATUS": "A AGENDAR"
+    },
+    {
+      "O QUE (CURSO)": "Curso Averbação de Tempo de Serviço/Contribuição",
+      "ONDE": "CUIABÁ-MT",
+      "INÍCIO PREVISTO": "Março",
+      "FIM PREVISTO": "Março",
+      "PARTICIPANTES": "Coordenador de Benefícios",
+      "OBJETIVO": "Buscar conhecimento e atualização da Averbação do tempo de contribuição",
+      "QUANTO? (CUSTO ESTIMADO)": "R$ 2.280,00",
+      "CARGA HORÁRIA": "16H",
+      "STATUS": "AGUARDANDO CONFIRMAÇÃO"
+    },
+    {
+      "O QUE (CURSO)": "Palestra sobre Educação Previdenciária: Conheça o Mirassol-Previ.",
+      "ONDE": "SAEMI",
+      "INÍCIO PREVISTO": "Abril",
+      "FIM PREVISTO": "Abril",
+      "PARTICIPANTES": "Servidores Ativos Do SAEMI",
+      "OBJETIVO": "Promover educação previdenciária aos segurados ativos vinculados ao SAEMI, ampliando a compreensão sobre o RPPS",
+      "QUANTO? (CUSTO ESTIMADO)": "",
+      "CARGA HORÁRIA": "2h",
+      "STATUS": "A AGENDAR"
+    },
+    {
+      "O QUE (CURSO)": "Palestra sobre Educação Previdenciária: Conheça o Mirassol-Previ.",
+      "ONDE": "SECRETARIA DE INFRAESTRUTURA",
+      "INÍCIO PREVISTO": "Maio",
+      "FIM PREVISTO": "Maio",
+      "PARTICIPANTES": "Servidores Ativos da Secretaria",
+      "OBJETIVO": "Promover educação previdenciária aos segurados ativos vinculados à Secretaria Municipal de Infraestrutura, ampliando a compreensão sobre o RPPS",
+      "QUANTO? (CUSTO ESTIMADO)": "",
+      "CARGA HORÁRIA": "2h",
+      "STATUS": "A AGENDAR"
+    },
+    {
+      "O QUE (CURSO)": "EVENTO: 13º Encontro de Gestores de RPPS do Estado de Mato Grosso",
+      "ONDE": "CUIABÁ-MT",
+      "INÍCIO PREVISTO": "Outubro",
+      "FIM PREVISTO": "Outubro",
+      "PARTICIPANTES": "Diretor, Coordenador, Conselheiros e Membros do Comitê",
+      "OBJETIVO": "Melhorar o conhecimento sobre o novo cenário dos RPPS",
+      "QUANTO? (CUSTO ESTIMADO)": "",
+      "CARGA HORÁRIA": "16",
+      "STATUS": "A AGENDAR"
+    },
+    {
+      "O QUE (CURSO)": "3º Encontro da Região Centro Oeste",
+      "ONDE": "CAMPO GRANDE - MS",
+      "INÍCIO PREVISTO": "Outubro",
+      "FIM PREVISTO": "Outubro",
+      "PARTICIPANTES": "Diretor, Coordenador, Conselheiros e Membros do Comitê",
+      "OBJETIVO": "Aprimorar conhecimento sobre a area afim",
+      "QUANTO? (CUSTO ESTIMADO)": "",
+      "CARGA HORÁRIA": "16",
+      "STATUS": "A AGENDAR"
+    },
+    {
+      "O QUE (CURSO)": "Capacitação para Certificação dos Membros Conselheiros",
+      "ONDE": "CUIABÁ-MT",
+      "INÍCIO PREVISTO": "Novembro",
+      "FIM PREVISTO": "Novembro",
+      "PARTICIPANTES": "Membros do Conselho e do Comitê (atualização)",
+      "OBJETIVO": "Capacitar-se para prova de certificação",
+      "QUANTO? (CUSTO ESTIMADO)": "",
+      "CARGA HORÁRIA": "20",
+      "STATUS": "A AGENDAR"
+    }
   ]
 }
