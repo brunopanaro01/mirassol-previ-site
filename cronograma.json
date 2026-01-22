@@ -34,6 +34,11 @@
     ],
     "2026": [
       {
+        "data": "2026-01-07",
+        "pauta": "Abertura; Verificação de quórum; Análise e aprovação do parecer do Conselho Previdenciário sobre a posição da carteira de investimentos referente aos meses de agosto, setembro e outubro de 2025.",
+        "previsto": "Reunião Extraordinária."
+      },
+      {
         "data": "2026-03-17",
         "pauta": "Abertura; Verificação de quórum; Informar sobre a renovação do CRP; Apresentar portifólio de investimentos, situação do consignado e situação da meta atuarial; Aprovar plano de ação de capacitação; Aprovar pareceres do Comitê de Investimentos; Apresentar a proposta de alteração da Lei Complementar nº 160/2016 referente a criação do Conselho Fiscal.",
         "previsto": "Realização da 1ª reunião ordinária do ano."
@@ -63,6 +68,11 @@
         "previsto": "Análise e encaminhamentos relativos às matérias conjuntas."
       },
       {
+        "data": "2025-05-20",
+        "pauta": "Abertura; Verificação de quórum; Análise da carteira de investimento; Encerramento.",
+        "previsto": "Reunião Extraordinária: Análise dos investimentos."
+      },
+      {
         "data": "2025-08-13",
         "pauta": "Abertura; Verificação de quórum; Aprovação da pauta; Elaboração e aprovação do Regimento Interno do Comitê de Investimentos; Atualização do Regimento Interno do Conselho Previdenciário; Doação de área para construção da sede; Encerramento.",
         "previsto": "Aprovação do Regimento Interno do Comitê e ciência das atualizações do Conselho."
@@ -83,7 +93,7 @@
         "previsto": "Reunião Extraordinária."
       },
       {
-        "data": "2025-12-10",
+        "data": "2025-12-09",
         "pauta": "Emissão de Parecer dos relatórios mensais de investimento relativos a agosto, setembro e outubro.",
         "previsto": "Parecer frente as relatórios e posterior encaminhamento ao Conselho Precidenciário"
       }
