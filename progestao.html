@@ -121,7 +121,13 @@
       .has-sub .submenu{position:static;box-shadow:none;border:0;padding:0;margin-left:8px;margin-bottom:8px;display:none}
       .has-sub.open .submenu{display:block}
     }
-  </style>
+  
+    /* Pró-Gestão - selo */
+    .hero{max-width:1100px;margin:0 auto 18px;text-align:center}
+    .hero h2{margin:0 0 6px;color:var(--brand-900);font-size:clamp(1.4rem,1.1rem + 1vw,2.0rem)}
+    .hero p{margin:0 auto;color:var(--muted);max-width:880px}
+    .pg-selo{width:130px;max-width:40vw;margin:12px auto 0;filter:drop-shadow(0 10px 18px rgba(2,8,23,.12))}
+</style>
   <style>
 /* ===== Painel Pró-Gestão (embutido) ===== */
 
@@ -256,6 +262,7 @@ h2{color:#014c85;margin-bottom:8px}
     <section class="hero reveal">
       <h2>Pró-Gestão RPPS</h2>
       <p>Documentos, evidências e painéis de acompanhamento para atendimento aos requisitos do Pró-Gestão RPPS.</p>
+      <img class="pg-selo" src="seloprogestao.png" alt="Selo Pró-Gestão RPPS">
     </section>
 
     <div class="pg-wrap reveal">
@@ -268,6 +275,16 @@ h2{color:#014c85;margin-bottom:8px}
       <div class="sidebar-header">Pró-Gestão</div>
       <div class="sidebar-note">Obs.: Os documentos/sistemas externos abrem em <strong>nova aba</strong>. Já <strong>Composição</strong> abre aqui no painel.</div>
       <div class="sidebar-scroll">
+
+        <!-- Certificado Pró-Gestão -->
+        <div class="acc-item">
+          <button class="acc-btn">Certificado Pró-Gestão</button>
+          <div class="acc-links">
+            <a href="#" data-certificado="progestao">Visualizar certificado (abrir aqui)</a>
+            <a href="https://drive.google.com/file/d/1xcCu6jjJVB3MeD-2WL3VL7v58CrsODXx/view?usp=sharing" target="_blank" rel="noopener">Abrir no Google Drive (nova aba)</a>
+          </div>
+        </div>
+
 
         <!-- Conselho -->
         <div class="acc-item">
@@ -387,7 +404,7 @@ h2{color:#014c85;margin-bottom:8px}
       </div>
       <div class="viewer">
         <div class="section" id="contentArea">
-          <div class="notice">Clique em <b>Composição</b> do Conselho ou do Comitê para ver os membros aqui no painel (layout em grade: <i>foto • nome • cargo</i>). Para cronograma, escolha “Cronograma de Reuniões”.</div>
+          <div class="notice" id="pgNotice">Clique em <b>Composição</b> do Conselho ou do Comitê para ver os membros aqui no painel (layout em grade: <i>foto • nome • cargo</i>). Para cronograma, escolha “Cronograma de Reuniões”.</div>
         </div>
       </div>
       </main>
@@ -408,6 +425,66 @@ document.querySelectorAll('.acc-btn').forEach(btn => {
 
 const titleEl = document.getElementById('viewTitle').querySelector('span');
 const contentArea = document.getElementById('contentArea');
+
+// ===== CERTIFICADO PRÓ-GESTÃO (abrir aqui) =====
+const CERT_URL = "https://drive.google.com/file/d/1xcCu6jjJVB3MeD-2WL3VL7v58CrsODXx/preview";
+const DRIVE_URL = "https://drive.google.com/file/d/1xcCu6jjJVB3MeD-2WL3VL7v58CrsODXx/view?usp=sharing";
+const noticeEl = document.getElementById('pgNotice');
+const noticeHTML = noticeEl ? noticeEl.outerHTML : "";
+
+function showCertificado(){
+  titleEl.textContent = "Certificado Pró-Gestão";
+  contentArea.innerHTML = `
+    <div class="card" style="max-width:980px;margin:0 auto 16px;">
+      <div class="card-pad" style="text-align:center">
+        <h2 style="margin:0 0 10px;">Certificado Pró-Gestão RPPS</h2>
+        <div class="muted" style="margin-bottom:10px">Se o visualizador não carregar, use: <a class="link-out" href="${DRIVE_URL}" target="_blank" rel="noopener">Abrir no Google Drive</a>.</div>
+
+        <div style="
+          position:relative;
+          padding-top:56.25%;
+          border:1px solid var(--borda);
+          border-radius:10px;
+          overflow:hidden;
+          background:#fff;
+        ">
+          <iframe
+            src="${CERT_URL}"
+            style="position:absolute;top:0;left:0;width:100%;height:100%;border:0"
+            allow="autoplay"
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+    ${noticeHTML}
+  `;
+}
+
+function hideCertificado(){
+  const cert = document.getElementById('certificado-progestao');
+  // (mantido por compatibilidade se você reutilizar o bloco antigo)
+  if(cert) cert.style.display = 'none';
+}
+
+// Ao clicar em qualquer item do painel lateral, o certificado pode sair do foco
+// (ele volta ao escolher “Certificado Pró-Gestão” ou ao recarregar a página)
+document.querySelectorAll('.acc-btn, .acc-links a').forEach(el=>{
+  el.addEventListener('click', ()=>{
+    // não faz nada aqui; as telas internas já substituem o contentArea
+    // mas mantemos o hook para comportamento consistente
+  });
+});
+
+// Clique em "Certificado Pró-Gestão"
+document.querySelectorAll('[data-certificado]').forEach(a=>{
+  a.addEventListener('click', (e)=>{
+    e.preventDefault();
+    showCertificado();
+  });
+});
+
+
 
 // Sanitização simples
 function sanitize(html){
@@ -738,6 +815,10 @@ document.querySelectorAll('[data-cronograma]').forEach(a=>{
     }
   });
 });
+
+
+// Exibe o certificado por padrão ao abrir a página
+showCertificado();
 </script>
     </div>
 
