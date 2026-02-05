@@ -12,9 +12,15 @@
 
   <style>
     :root{
-      --brand-900:#01385f; --brand-800:#014c85;
-      --bg:#f7fafc; --paper:#fff; --ink:#0f172a; --muted:#475569;
-      --line:#e2e8f0; --soft:#f3f7fb; --shadow:0 10px 30px rgba(2,8,23,.08);
+      --brand-900:#01385f;
+      --brand-800:#014c85;
+      --bg:#f7fafc;
+      --paper:#fff;
+      --ink:#0f172a;
+      --muted:#475569;
+      --line:#e2e8f0;
+      --soft:#f3f7fb;
+      --shadow:0 10px 30px rgba(2,8,23,.08);
       --warn:#b45309;
       --ok:#0f766e;
     }
@@ -23,11 +29,11 @@
     a{color:var(--brand-800);text-decoration:none}
     img{max-width:100%;height:auto;display:block}
 
-    /* Anti-popup (bloqueia qualquer modal legado) */
+    /* Anti-popup (igual ao modelo) */
     #popup,.popup,.modal,.modal-backdrop,[role="dialog"],.overlay,.newsletter-modal,.cookie-modal{display:none!important}
     body.modal-open{overflow:auto!important}
 
-    /* Cabeçalho padrão (igual ao modelo) */
+    /* Cabeçalho (igual ao modelo) */
     header.site-header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--line)}
     .header-wrap{max-width:1200px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:16px}
     .brand{display:flex;align-items:center;gap:12px}
@@ -41,7 +47,7 @@
     .menu a:hover,.menu button:hover{background:#eef5fb}
     .menu a.active{background:#eef5fb}
 
-    /* Submenu “Institucional” */
+    /* Submenu “Institucional” (igual ao modelo) */
     .has-sub{position:relative}
     .has-sub > button{display:inline-flex;align-items:center;gap:6px}
     .submenu{
@@ -54,15 +60,15 @@
     .has-sub:hover .submenu,
     .has-sub:focus-within .submenu{display:block}
 
-    /* Botão hambúrguer */
+    /* Botão hambúrguer (igual ao modelo) */
     .hamb{display:none;background:none;border:0;padding:8px;border-radius:10px;cursor:pointer}
     .hamb:hover{background:#eef5fb}
 
-    /* Conteúdo */
+    /* Conteúdo (igual ao modelo) */
     main{padding:40px 16px}
     .container{max-width:1200px;margin:0 auto}
     h1.page-title{text-align:center;font-size:clamp(1.6rem,1.2rem + 1vw,2.2rem);color:var(--brand-900);margin:0 0 14px}
-    .lead{max-width:900px;margin:0 auto 18px;color:var(--muted);text-align:center}
+    .lead{max-width:980px;margin:0 auto 18px;color:var(--muted);text-align:center}
 
     /* Aviso de links externos (igual ao modelo) */
     .notice{
@@ -74,7 +80,7 @@
     .notice p{margin:0;color:var(--muted);font-size:14px}
     .notice code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:.95em}
 
-    /* Layout com lateral (no padrão do site: paper + linha + sombra) */
+    /* Layout lateral */
     .layout{
       display:grid;
       grid-template-columns: 280px 1fr;
@@ -82,7 +88,6 @@
       align-items:start;
       margin-top:18px;
     }
-
     .side{
       background:var(--paper);
       border:1px solid var(--line);
@@ -90,29 +95,18 @@
       box-shadow:var(--shadow);
       padding:14px;
       position:sticky;
-      top:92px; /* abaixo do header sticky */
+      top:92px;
     }
-
     .side h2{
       margin:6px 0 4px;
       font-size:14px;
       letter-spacing:.06em;
       text-transform:uppercase;
-      color:#334155;
+      color:#334155
     }
+    .side p{margin:0 0 12px;color:var(--muted);font-size:13px}
 
-    .side p{
-      margin:0 0 12px;
-      color:var(--muted);
-      font-size:13px;
-    }
-
-    .tabs{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
-
+    .tabs{display:flex;flex-direction:column;gap:8px}
     .tab-btn{
       width:100%;
       display:flex;
@@ -127,21 +121,20 @@
       color:var(--ink);
     }
     .tab-btn:hover{background:var(--soft)}
-    .tab-btn.active{
-      background:#eef5fb;
-      border-color:#cfe2f3;
-    }
+    .tab-btn.active{background:#eef5fb;border-color:#cfe2f3}
     .tab-meta{font-size:12px;color:var(--muted)}
 
-    /* Área principal */
     .panel{
       background:var(--paper);
       border:1px solid var(--line);
       border-radius:16px;
       box-shadow:var(--shadow);
       padding:18px;
-      min-height: 520px;
+      min-height:520px;
     }
+
+    .panel-title{margin:0 0 6px;font-size:18px;color:var(--brand-900)}
+    .muted{color:var(--muted);font-size:13px;margin:0}
 
     /* Imagem central */
     .center-card{
@@ -152,10 +145,10 @@
       border:1px dashed var(--line);
       border-radius:14px;
       background:var(--soft);
+      margin-top:12px;
     }
     .center-card img{
-      max-width:760px;
-      width:100%;
+      max-width:820px;width:100%;
       border-radius:14px;
       border:1px solid var(--line);
       box-shadow:var(--shadow);
@@ -199,16 +192,8 @@
     .badge.external{border-left:4px solid var(--warn)}
     .badge.internal{border-left:4px solid var(--ok)}
 
-    .muted{color:var(--muted);font-size:13px;margin:0}
-    .panel-title{
-      margin:0 0 6px;
-      font-size:18px;
-      color:var(--brand-900);
-    }
-
-    /* Botões de ano */
-    .year-row{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 0}
-    .year-btn{
+    /* Botões padrão do portal (reuso do estilo “pill”) */
+    .pill{
       border:1px solid var(--line);
       background:#fff;
       padding:8px 12px;
@@ -217,24 +202,42 @@
       font:inherit;
       font-weight:600;
     }
-    .year-btn:hover{background:var(--soft)}
-    .year-btn.active{background:#eef5fb;border-color:#cfe2f3}
+    .pill:hover{background:var(--soft)}
+    .pill.active{background:#eef5fb;border-color:#cfe2f3}
 
-    .empty{
-      padding:14px;
-      color:var(--muted);
-      font-size:14px;
+    .year-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+
+    .empty{padding:14px;color:var(--muted);font-size:14px}
+
+    /* Visualizador (iframe) */
+    .viewer{
+      display:none;
+      margin-top:14px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      overflow:hidden;
+      background:#fff;
     }
+    .viewer-head{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+      padding:12px 12px;
+      background:var(--soft);
+      border-bottom:1px solid var(--line);
+      flex-wrap:wrap;
+    }
+    .viewer-head strong{color:var(--brand-900)}
+    .viewer-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .viewer iframe{width:100%;height:72vh;border:0;background:#fff}
 
     /* Scroll reveal (igual ao modelo) */
     .reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
     .reveal.in{opacity:1;transform:none}
 
-    /* Rodapé central (igual ao modelo) */
+    /* Rodapé (igual ao modelo) */
     footer.site-footer{background:#0d2636;color:#cbd5e1;margin-top:40px}
     .footer-wrap{max-width:1200px;margin:0 auto;padding:20px 16px;text-align:center}
 
-    /* Mobile (igual ao modelo + ajuste layout) */
+    /* Mobile (igual ao modelo + layout lateral) */
     @media(max-width:860px){
       .hamb{display:inline-grid;place-items:center}
       .menu{
@@ -249,12 +252,13 @@
 
       .layout{grid-template-columns:1fr}
       .side{position:relative;top:auto}
+      .viewer iframe{height:64vh}
     }
   </style>
 </head>
 
 <body>
-  <!-- Cabeçalho -->
+  <!-- Cabeçalho (mesmo do modelo) -->
   <header class="site-header">
     <div class="header-wrap">
       <a class="brand" href="index.html" aria-label="Ir para a página inicial">
@@ -296,15 +300,16 @@
     <div class="container">
       <h1 class="page-title reveal">Consignados</h1>
       <p class="lead reveal">
-        Consulte os regulamentos e relatórios por ano/mês. Para contratação, utilize os contatos exibidos na imagem do Início.
+        Para contratação, utilize os contatos exibidos na imagem do Início.
+        Regulamentos e relatórios podem ser visualizados na própria página.
       </p>
 
-      <!-- Aviso de links externos -->
+      <!-- Aviso (mantém o padrão do portal) -->
       <div class="notice reveal" role="note" aria-label="Aviso sobre links externos">
         <strong>🔔 Aviso importante</strong>
         <p>
-          Documentos hospedados no Google Drive são itens marcados como <code>Portal externo</code>.
-          Por segurança, esses links abrem em nova aba (↗).
+          Itens marcados como <code>Portal externo</code> são documentos hospedados fora do domínio do Mirassol-Previ (Google Drive).
+          Eles podem ser <strong>visualizados aqui</strong> por iframe, e você também pode optar por <strong>abrir em nova aba</strong> (↗).
         </p>
       </div>
 
@@ -334,7 +339,7 @@
             <h2 class="panel-title">Contatos para contratação</h2>
             <p class="muted">A imagem abaixo contém os dados de contato para contratação de consignado.</p>
 
-            <div class="center-card" style="margin-top:12px;">
+            <div class="center-card">
               <img src="consignado.jpeg" alt="Consignado — contatos para contratação"/>
             </div>
           </div>
@@ -342,37 +347,57 @@
           <!-- REGULAMENTO -->
           <div id="pane-regulamento" style="display:none;">
             <h2 class="panel-title">Regulamento</h2>
-            <p class="muted">Documentos normativos relacionados ao consignado.</p>
+            <p class="muted">Documentos normativos relacionados ao consignado (visualização interna disponível).</p>
 
             <div class="table-wrap" aria-label="Tabela de regulamentos">
               <table>
                 <thead>
                   <tr>
                     <th style="width:60%;">Documento</th>
-                    <th style="width:20%;">Tipo</th>
-                    <th style="width:20%;">Acesso</th>
+                    <th style="width:20%;">Origem</th>
+                    <th style="width:20%;">Ação</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td>Ata de Alteração do Consignado</td>
                     <td><span class="badge external">Portal externo</span></td>
-                    <td><a class="ext-link" href="https://drive.google.com/file/d/1398alFuUue0LnfYUrse9dnXQmuTdS9Oi/view?usp=sharing">Abrir</a></td>
+                    <td>
+                      <button class="pill" type="button"
+                        onclick="openPdfInPage('Ata de Alteração do Consignado','https://drive.google.com/file/d/1398alFuUue0LnfYUrse9dnXQmuTdS9Oi/view?usp=sharing')">
+                        Visualizar
+                      </button>
+                    </td>
                   </tr>
                   <tr>
                     <td>Estudo Atuarial</td>
                     <td><span class="badge external">Portal externo</span></td>
-                    <td><a class="ext-link" href="https://drive.google.com/file/d/1fsBJk7-yo-mXBcnDTM6O-RSulk0ae9Vh/view?usp=sharing">Abrir</a></td>
+                    <td>
+                      <button class="pill" type="button"
+                        onclick="openPdfInPage('Estudo Atuarial','https://drive.google.com/file/d/1fsBJk7-yo-mXBcnDTM6O-RSulk0ae9Vh/view?usp=sharing')">
+                        Visualizar
+                      </button>
+                    </td>
                   </tr>
                   <tr>
                     <td>PORTARIA N. 001 de 26 de fevereiro de 2025</td>
                     <td><span class="badge external">Portal externo</span></td>
-                    <td><a class="ext-link" href="https://drive.google.com/file/d/15rNn73VeF8vkU3dXOOZ7Bqa8bCEk5W5Z/view?usp=sharing">Abrir</a></td>
+                    <td>
+                      <button class="pill" type="button"
+                        onclick="openPdfInPage('PORTARIA N. 001 de 26 de fevereiro de 2025','https://drive.google.com/file/d/15rNn73VeF8vkU3dXOOZ7Bqa8bCEk5W5Z/view?usp=sharing')">
+                        Visualizar
+                      </button>
+                    </td>
                   </tr>
                   <tr>
                     <td>PORTARIA N.º 013 de 03 de dezembro de 2024 (Regulamento)</td>
                     <td><span class="badge external">Portal externo</span></td>
-                    <td><a class="ext-link" href="https://drive.google.com/file/d/1UQef_0Z0Sq2rQH1GZcA3_IbzZTP23PVE/view?usp=sharing">Abrir</a></td>
+                    <td>
+                      <button class="pill" type="button"
+                        onclick="openPdfInPage('PORTARIA N.º 013 de 03 de dezembro de 2024','https://drive.google.com/file/d/1UQef_0Z0Sq2rQH1GZcA3_IbzZTP23PVE/view?usp=sharing')">
+                        Visualizar
+                      </button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -382,34 +407,50 @@
           <!-- RELATÓRIOS -->
           <div id="pane-relatorios" style="display:none;">
             <h2 class="panel-title">Relatórios</h2>
-            <p class="muted">Selecione o ano para visualizar os meses disponíveis.</p>
+            <p class="muted">Selecione o ano para visualizar os meses disponíveis (dados carregados de <strong>consignados.json</strong>).</p>
 
-            <div class="year-row" id="year-row" aria-label="Seleção de ano">
-              <!-- preenchido via JS -->
-            </div>
+            <div class="year-row" id="year-row" aria-label="Seleção de ano"></div>
 
-            <div class="table-wrap" style="margin-top:12px;" aria-label="Tabela de relatórios">
+            <div class="table-wrap" aria-label="Tabela de relatórios">
               <table>
                 <thead>
                   <tr>
                     <th style="width:35%;">Mês</th>
                     <th style="width:45%;">Descrição</th>
-                    <th style="width:20%;">Acesso</th>
+                    <th style="width:20%;">Ação</th>
                   </tr>
                 </thead>
-                <tbody id="reports-body">
-                  <!-- preenchido via JS -->
-                </tbody>
+                <tbody id="reports-body"></tbody>
               </table>
               <div class="empty" id="reports-empty" style="display:none;">Nenhum relatório cadastrado para este ano.</div>
             </div>
+          </div>
+
+          <!-- VISUALIZADOR (iframe) -->
+          <div id="pdf-viewer" class="viewer" aria-label="Visualizador de PDF">
+            <div class="viewer-head">
+              <div>
+                <strong id="pdf-title">Documento</strong>
+                <div class="muted" style="margin-top:2px;">
+                  Conteúdo hospedado em <span class="badge external">Portal externo</span>.
+                  Se preferir, use <strong>Abrir em nova aba</strong> (↗).
+                </div>
+              </div>
+
+              <div class="viewer-actions">
+                <a id="pdf-open-newtab" class="pill" href="#" target="_blank" rel="noopener">Abrir em nova aba ↗</a>
+                <button class="pill" type="button" onclick="closePdfViewer()">Fechar</button>
+              </div>
+            </div>
+
+            <iframe id="pdf-iframe" title="Documento (visualização)" loading="lazy"></iframe>
           </div>
         </section>
       </div>
     </div>
   </main>
 
-  <!-- Rodapé -->
+  <!-- Rodapé (mesmo do modelo) -->
   <footer class="site-footer">
     <div class="footer-wrap">
       <span>© <span id="year"></span> Mirassol-Previ</span>
@@ -417,10 +458,10 @@
   </footer>
 
   <script>
-    // Ano dinâmico
+    // Ano dinâmico (igual ao modelo) :contentReference[oaicite:3]{index=3}
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Scroll reveal (igual ao modelo)
+    // Scroll reveal (igual ao modelo) :contentReference[oaicite:4]{index=4}
     const io = new IntersectionObserver((entries)=>{
       entries.forEach(e=>{
         if(e.isIntersecting){
@@ -431,7 +472,7 @@
     }, {threshold:.12});
     document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
 
-    // Menu mobile (igual ao modelo)
+    // Menu mobile (igual ao modelo) :contentReference[oaicite:5]{index=5}
     const hamb = document.querySelector('.hamb');
     const menu = document.getElementById('menu');
     hamb?.addEventListener('click', ()=>{
@@ -439,7 +480,7 @@
       hamb.setAttribute('aria-expanded', String(open));
     });
 
-    // Submenu institucional (mobile) (igual ao modelo)
+    // Submenu institucional (mobile) (igual ao modelo) :contentReference[oaicite:6]{index=6}
     document.querySelectorAll('.has-sub > button').forEach(btn=>{
       btn.addEventListener('click', ()=>{
         const parent = btn.closest('.has-sub');
@@ -460,26 +501,57 @@
       document.getElementById('pane-regulamento').style.display = (which==='regulamento') ? 'block' : 'none';
       document.getElementById('pane-relatorios').style.display = (which==='relatorios') ? 'block' : 'none';
 
+      // Ao trocar de aba, fecha o viewer para não ficar “sobrando”
+      closePdfViewer(false);
+
       if(which==='inicio') setActiveTab('tab-inicio');
       if(which==='regulamento') setActiveTab('tab-regulamento');
       if(which==='relatorios') setActiveTab('tab-relatorios');
     }
 
-    // Padronização automática de links externos (abre nova aba + noopener + seta ↗ + classe)
-    function markExternalLinks(){
-      const anchors = Array.from(document.querySelectorAll('a.ext-link'));
-      anchors.forEach(a=>{
-        const href = a.getAttribute('href') || '';
-        if(!/^https?:\/\//i.test(href)) return;
-
-        a.setAttribute('target','_blank');
-        a.setAttribute('rel','noopener');
-        if(!a.textContent.includes('↗')){
-          a.textContent = a.textContent.trim() + ' ↗';
-        }
-      });
+    // ===== Visualizador Google Drive (iframe /preview) =====
+    function getDriveFileId(url){
+      const m1 = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      if(m1 && m1[1]) return m1[1];
+      const m2 = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if(m2 && m2[1]) return m2[1];
+      return null;
     }
-    markExternalLinks();
+    function toDrivePreviewUrl(url){
+      const id = getDriveFileId(url);
+      if(!id) return url;
+      return `https://drive.google.com/file/d/${id}/preview`;
+    }
+
+    function openPdfInPage(title, driveUrl){
+      const viewer = document.getElementById('pdf-viewer');
+      const iframe = document.getElementById('pdf-iframe');
+      const ttl = document.getElementById('pdf-title');
+      const newTab = document.getElementById('pdf-open-newtab');
+
+      ttl.textContent = title || 'Documento';
+      newTab.href = driveUrl;
+
+      iframe.src = toDrivePreviewUrl(driveUrl);
+      viewer.style.display = 'block';
+
+      // rola até o viewer (bom p/ mobile)
+      viewer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function closePdfViewer(scrollBack=true){
+      const viewer = document.getElementById('pdf-viewer');
+      const iframe = document.getElementById('pdf-iframe');
+      if(viewer.style.display === 'none' || viewer.style.display === '') return;
+
+      iframe.src = '';
+      viewer.style.display = 'none';
+
+      if(scrollBack){
+        // opcional: volta para o topo do painel
+        document.querySelector('.panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
 
     // ===== Relatórios via JSON =====
     const JSON_URL = "consignados.json";
@@ -496,7 +568,7 @@
       years.forEach(y=>{
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'year-btn';
+        btn.className = 'pill';
         btn.textContent = y;
         btn.addEventListener('click', ()=>selectYear(y));
         yearRow.appendChild(btn);
@@ -508,7 +580,7 @@
     }
 
     function setActiveYearBtn(year){
-      document.querySelectorAll('.year-btn').forEach(b=>{
+      document.querySelectorAll('#year-row .pill').forEach(b=>{
         b.classList.toggle('active', b.textContent === String(year));
       });
     }
@@ -535,24 +607,24 @@
         const tdDesc = document.createElement('td');
         tdDesc.textContent = item.descricao || 'Relatório de consignados';
 
-        const tdLink = document.createElement('td');
+        const tdAction = document.createElement('td');
         if(item.url && item.url.trim()){
-          const a = document.createElement('a');
-          a.className = 'ext-link';
-          a.href = item.url;
-          a.textContent = 'Abrir';
-          tdLink.appendChild(a);
+          // Visualiza na página (iframe)
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'pill';
+          btn.textContent = 'Visualizar';
+          btn.addEventListener('click', () => openPdfInPage(item.descricao || 'Relatório', item.url));
+          tdAction.appendChild(btn);
         }else{
-          tdLink.innerHTML = '<span class="badge internal">No portal</span> <span class="muted">Em breve</span>';
+          tdAction.innerHTML = '<span class="badge internal">No portal</span> <span class="muted">Em breve</span>';
         }
 
         tr.appendChild(tdMes);
         tr.appendChild(tdDesc);
-        tr.appendChild(tdLink);
+        tr.appendChild(tdAction);
         body.appendChild(tr);
       });
-
-      markExternalLinks();
     }
 
     async function loadReports(){
