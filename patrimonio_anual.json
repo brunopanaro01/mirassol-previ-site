@@ -1,0 +1,38 @@
+{
+  "titulo": "Evolução Patrimonial Anual (R$)",
+  "fonte": "Mirassol-Previ",
+  "dados": [
+    {
+      "ano": 2018,
+      "valor": 8867051.16
+    },
+    {
+      "ano": 2019,
+      "valor": 12472331.86
+    },
+    {
+      "ano": 2020,
+      "valor": 15009589.64
+    },
+    {
+      "ano": 2021,
+      "valor": 16737166.29
+    },
+    {
+      "ano": 2022,
+      "valor": 19641188.86
+    },
+    {
+      "ano": 2023,
+      "valor": 31198105.91
+    },
+    {
+      "ano": 2024,
+      "valor": 49075375.52
+    },
+    {
+      "ano": 2025,
+      "valor": 0.0
+    }
+  ]
+}
