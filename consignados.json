@@ -1,0 +1,25 @@
+{
+  "observacoes": "Relatórios de consignados organizados por ano e mês. Atualize este arquivo com novos links sempre que necessário.",
+  "relatorios": {
+    "2024": [
+      { "mes": "Dezembro", "descricao": "Relatório de consignados - Dez/2024", "url": "" }
+    ],
+    "2025": [
+      { "mes": "Janeiro",   "descricao": "Relatório de consignados - Jan/2025", "url": "" },
+      { "mes": "Fevereiro", "descricao": "Relatório de consignados - Fev/2025", "url": "" },
+      { "mes": "Março",     "descricao": "Relatório de consignados - Mar/2025", "url": "" },
+      { "mes": "Abril",     "descricao": "Relatório de consignados - Abr/2025", "url": "" },
+      { "mes": "Maio",      "descricao": "Relatório de consignados - Mai/2025", "url": "" },
+      { "mes": "Junho",     "descricao": "Relatório de consignados - Jun/2025", "url": "" },
+      { "mes": "Julho",     "descricao": "Relatório de consignados - Jul/2025", "url": "" },
+      { "mes": "Agosto",    "descricao": "Relatório de consignados - Ago/2025", "url": "" },
+      { "mes": "Setembro",  "descricao": "Relatório de consignados - Set/2025", "url": "" },
+      { "mes": "Outubro",   "descricao": "Relatório de consignados - Out/2025", "url": "" },
+      { "mes": "Novembro",  "descricao": "Relatório de consignados - Nov/2025", "url": "" },
+      { "mes": "Dezembro",  "descricao": "Relatório de consignados - Dez/2025", "url": "" }
+    ],
+    "2026": [
+      { "mes": "Janeiro", "descricao": "Relatório de consignados - Jan/2026", "url": "" }
+    ]
+  }
+}

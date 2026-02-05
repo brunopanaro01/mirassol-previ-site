@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Consignados — Mirassol-Previ</title>
+  <meta name="description" content="Consignados do Mirassol-Previ — regulamentos e relatórios por ano e mês."/>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root{
+      --brand-900:#01385f; --brand-800:#014c85;
+      --bg:#f7fafc; --paper:#fff; --ink:#0f172a; --muted:#475569;
+      --line:#e2e8f0; --soft:#f3f7fb; --shadow:0 10px 30px rgba(2,8,23,.08);
+      --warn:#b45309;
+      --ok:#0f766e;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui;background:var(--bg);color:var(--ink);line-height:1.6}
+    a{color:var(--brand-800);text-decoration:none}
+    img{max-width:100%;height:auto;display:block}
+
+    /* Anti-popup (bloqueia qualquer modal legado) */
+    #popup,.popup,.modal,.modal-backdrop,[role="dialog"],.overlay,.newsletter-modal,.cookie-modal{display:none!important}
+    body.modal-open{overflow:auto!important}
+
+    /* Cabeçalho padrão (igual ao modelo) */
+    header.site-header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--line)}
+    .header-wrap{max-width:1200px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:16px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand img{width:52px;height:52px}
+    .brand .titles{display:flex;flex-direction:column}
+    .brand .titles h1{margin:0;font-size:20px;color:var(--brand-800)}
+    .brand .titles small{font-size:12px;color:var(--muted)}
+    nav.primary{margin-left:auto;position:relative}
+    .menu{display:flex;gap:8px;align-items:center}
+    .menu a,.menu button{padding:10px 12px;border-radius:10px;color:var(--ink);background:transparent;border:0;font:inherit;cursor:pointer}
+    .menu a:hover,.menu button:hover{background:#eef5fb}
+    .menu a.active{background:#eef5fb}
+
+    /* Submenu “Institucional” */
+    .has-sub{position:relative}
+    .has-sub > button{display:inline-flex;align-items:center;gap:6px}
+    .submenu{
+      display:none;position:absolute;top:100%;left:0;z-index:101;
+      background:#fff;border:1px solid var(--line);border-radius:12px;
+      box-shadow:var(--shadow);min-width:260px;padding:6px
+    }
+    .submenu a{display:block;padding:10px 12px;border-radius:8px}
+    .submenu a:hover{background:var(--soft)}
+    .has-sub:hover .submenu,
+    .has-sub:focus-within .submenu{display:block}
+
+    /* Botão hambúrguer */
+    .hamb{display:none;background:none;border:0;padding:8px;border-radius:10px;cursor:pointer}
+    .hamb:hover{background:#eef5fb}
+
+    /* Conteúdo */
+    main{padding:40px 16px}
+    .container{max-width:1200px;margin:0 auto}
+    h1.page-title{text-align:center;font-size:clamp(1.6rem,1.2rem + 1vw,2.2rem);color:var(--brand-900);margin:0 0 14px}
+    .lead{max-width:900px;margin:0 auto 18px;color:var(--muted);text-align:center}
+
+    /* Aviso de links externos (igual ao modelo) */
+    .notice{
+      max-width:980px;margin:0 auto 20px;
+      background:#fff;border:1px solid var(--line);border-left:6px solid var(--warn);
+      border-radius:14px;box-shadow:var(--shadow);padding:14px 16px
+    }
+    .notice strong{display:block;color:#7c2d12;margin-bottom:4px}
+    .notice p{margin:0;color:var(--muted);font-size:14px}
+    .notice code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:.95em}
+
+    /* Layout com lateral (no padrão do site: paper + linha + sombra) */
+    .layout{
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      gap:18px;
+      align-items:start;
+      margin-top:18px;
+    }
+
+    .side{
+      background:var(--paper);
+      border:1px solid var(--line);
+      border-radius:16px;
+      box-shadow:var(--shadow);
+      padding:14px;
+      position:sticky;
+      top:92px; /* abaixo do header sticky */
+    }
+
+    .side h2{
+      margin:6px 0 4px;
+      font-size:14px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      color:#334155;
+    }
+
+    .side p{
+      margin:0 0 12px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .tabs{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .tab-btn{
+      width:100%;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font:inherit;
+      color:var(--ink);
+    }
+    .tab-btn:hover{background:var(--soft)}
+    .tab-btn.active{
+      background:#eef5fb;
+      border-color:#cfe2f3;
+    }
+    .tab-meta{font-size:12px;color:var(--muted)}
+
+    /* Área principal */
+    .panel{
+      background:var(--paper);
+      border:1px solid var(--line);
+      border-radius:16px;
+      box-shadow:var(--shadow);
+      padding:18px;
+      min-height: 520px;
+    }
+
+    /* Imagem central */
+    .center-card{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:12px;
+      border:1px dashed var(--line);
+      border-radius:14px;
+      background:var(--soft);
+    }
+    .center-card img{
+      max-width:760px;
+      width:100%;
+      border-radius:14px;
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+    }
+
+    /* Tabelas */
+    .table-wrap{
+      border:1px solid var(--line);
+      border-radius:14px;
+      overflow:hidden;
+      background:#fff;
+      margin-top:12px;
+    }
+    table{width:100%;border-collapse:collapse}
+    thead th{
+      text-align:left;
+      background:var(--soft);
+      border-bottom:1px solid var(--line);
+      padding:12px;
+      font-size:13px;
+      color:#334155;
+    }
+    tbody td{
+      padding:12px;
+      border-bottom:1px solid var(--line);
+      vertical-align:top;
+      font-size:14px;
+    }
+    tbody tr:last-child td{border-bottom:none}
+
+    .badge{
+      display:inline-block;
+      font-size:12px;
+      color:#0f172a;
+      background:var(--soft);
+      border:1px solid var(--line);
+      padding:4px 10px;
+      border-radius:999px;
+      white-space:nowrap;
+    }
+    .badge.external{border-left:4px solid var(--warn)}
+    .badge.internal{border-left:4px solid var(--ok)}
+
+    .muted{color:var(--muted);font-size:13px;margin:0}
+    .panel-title{
+      margin:0 0 6px;
+      font-size:18px;
+      color:var(--brand-900);
+    }
+
+    /* Botões de ano */
+    .year-row{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 0}
+    .year-btn{
+      border:1px solid var(--line);
+      background:#fff;
+      padding:8px 12px;
+      border-radius:999px;
+      cursor:pointer;
+      font:inherit;
+      font-weight:600;
+    }
+    .year-btn:hover{background:var(--soft)}
+    .year-btn.active{background:#eef5fb;border-color:#cfe2f3}
+
+    .empty{
+      padding:14px;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    /* Scroll reveal (igual ao modelo) */
+    .reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+    .reveal.in{opacity:1;transform:none}
+
+    /* Rodapé central (igual ao modelo) */
+    footer.site-footer{background:#0d2636;color:#cbd5e1;margin-top:40px}
+    .footer-wrap{max-width:1200px;margin:0 auto;padding:20px 16px;text-align:center}
+
+    /* Mobile (igual ao modelo + ajuste layout) */
+    @media(max-width:860px){
+      .hamb{display:inline-grid;place-items:center}
+      .menu{
+        display:none;position:absolute;top:64px;right:16px;background:#fff;border:1px solid var(--line);
+        box-shadow:var(--shadow);padding:8px;border-radius:12px;flex-direction:column;min-width:280px
+      }
+      .menu.show{display:flex}
+      .brand .titles h1{font-size:18px}
+      .brand img{width:44px;height:44px}
+      .has-sub .submenu{position:static;box-shadow:none;border:0;padding:0;margin-left:8px;margin-bottom:8px;display:none}
+      .has-sub.open .submenu{display:block}
+
+      .layout{grid-template-columns:1fr}
+      .side{position:relative;top:auto}
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Cabeçalho -->
+  <header class="site-header">
+    <div class="header-wrap">
+      <a class="brand" href="index.html" aria-label="Ir para a página inicial">
+        <img src="brasao.png" alt="Brasão de Mirassol D'Oeste"/>
+        <span class="titles">
+          <h1>Mirassol-Previ</h1>
+          <small>Fundo Municipal de Previdência Social — Mirassol D’Oeste/MT</small>
+        </span>
+      </a>
+
+      <button class="hamb" aria-label="Abrir menu" aria-controls="menu" aria-expanded="false">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <nav class="primary" aria-label="Menu principal">
+        <div id="menu" class="menu" role="menubar">
+          <a role="menuitem" href="index.html">Início</a>
+          <div class="has-sub" role="none">
+            <button aria-haspopup="true" aria-expanded="false">Institucional ▾</button>
+            <div class="submenu" role="menu">
+              <a role="menuitem" href="historia.html">História</a>
+              <a role="menuitem" href="identidade.html">Identidade</a>
+              <a role="menuitem" href="composicao.html">Composição</a>
+              <a role="menuitem" href="organograma.html">Organograma</a>
+            </div>
+          </div>
+          <a role="menuitem" href="aposentadorias.html">Aposentadorias</a>
+          <a role="menuitem" href="transparencia.html">Transparência</a>
+          <a role="menuitem" href="progestao.html">Pró-Gestão</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Conteúdo -->
+  <main>
+    <div class="container">
+      <h1 class="page-title reveal">Consignados</h1>
+      <p class="lead reveal">
+        Consulte os regulamentos e relatórios por ano/mês. Para contratação, utilize os contatos exibidos na imagem do Início.
+      </p>
+
+      <!-- Aviso de links externos -->
+      <div class="notice reveal" role="note" aria-label="Aviso sobre links externos">
+        <strong>🔔 Aviso importante</strong>
+        <p>
+          Documentos hospedados no Google Drive são itens marcados como <code>Portal externo</code>.
+          Por segurança, esses links abrem em nova aba (↗).
+        </p>
+      </div>
+
+      <div class="layout">
+        <!-- Lateral -->
+        <aside class="side reveal" aria-label="Menu lateral de Consignados">
+          <h2>Acesso rápido</h2>
+          <p>Selecione uma opção para visualizar o conteúdo.</p>
+
+          <div class="tabs">
+            <button class="tab-btn active" id="tab-inicio" type="button" onclick="showTab('inicio')">
+              Início <span class="tab-meta">imagem</span>
+            </button>
+            <button class="tab-btn" id="tab-regulamento" type="button" onclick="showTab('regulamento')">
+              Regulamento <span class="tab-meta">tabela</span>
+            </button>
+            <button class="tab-btn" id="tab-relatorios" type="button" onclick="showTab('relatorios')">
+              Relatórios <span class="tab-meta">ano/mês</span>
+            </button>
+          </div>
+        </aside>
+
+        <!-- Painel -->
+        <section class="panel reveal" aria-label="Conteúdo de Consignados">
+          <!-- INÍCIO -->
+          <div id="pane-inicio">
+            <h2 class="panel-title">Contatos para contratação</h2>
+            <p class="muted">A imagem abaixo contém os dados de contato para contratação de consignado.</p>
+
+            <div class="center-card" style="margin-top:12px;">
+              <img src="consignado.jpeg" alt="Consignado — contatos para contratação"/>
+            </div>
+          </div>
+
+          <!-- REGULAMENTO -->
+          <div id="pane-regulamento" style="display:none;">
+            <h2 class="panel-title">Regulamento</h2>
+            <p class="muted">Documentos normativos relacionados ao consignado.</p>
+
+            <div class="table-wrap" aria-label="Tabela de regulamentos">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width:60%;">Documento</th>
+                    <th style="width:20%;">Tipo</th>
+                    <th style="width:20%;">Acesso</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Ata de Alteração do Consignado</td>
+                    <td><span class="badge external">Portal externo</span></td>
+                    <td><a class="ext-link" href="https://drive.google.com/file/d/1398alFuUue0LnfYUrse9dnXQmuTdS9Oi/view?usp=sharing">Abrir</a></td>
+                  </tr>
+                  <tr>
+                    <td>Estudo Atuarial</td>
+                    <td><span class="badge external">Portal externo</span></td>
+                    <td><a class="ext-link" href="https://drive.google.com/file/d/1fsBJk7-yo-mXBcnDTM6O-RSulk0ae9Vh/view?usp=sharing">Abrir</a></td>
+                  </tr>
+                  <tr>
+                    <td>PORTARIA N. 001 de 26 de fevereiro de 2025</td>
+                    <td><span class="badge external">Portal externo</span></td>
+                    <td><a class="ext-link" href="https://drive.google.com/file/d/15rNn73VeF8vkU3dXOOZ7Bqa8bCEk5W5Z/view?usp=sharing">Abrir</a></td>
+                  </tr>
+                  <tr>
+                    <td>PORTARIA N.º 013 de 03 de dezembro de 2024 (Regulamento)</td>
+                    <td><span class="badge external">Portal externo</span></td>
+                    <td><a class="ext-link" href="https://drive.google.com/file/d/1UQef_0Z0Sq2rQH1GZcA3_IbzZTP23PVE/view?usp=sharing">Abrir</a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- RELATÓRIOS -->
+          <div id="pane-relatorios" style="display:none;">
+            <h2 class="panel-title">Relatórios</h2>
+            <p class="muted">Selecione o ano para visualizar os meses disponíveis.</p>
+
+            <div class="year-row" id="year-row" aria-label="Seleção de ano">
+              <!-- preenchido via JS -->
+            </div>
+
+            <div class="table-wrap" style="margin-top:12px;" aria-label="Tabela de relatórios">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width:35%;">Mês</th>
+                    <th style="width:45%;">Descrição</th>
+                    <th style="width:20%;">Acesso</th>
+                  </tr>
+                </thead>
+                <tbody id="reports-body">
+                  <!-- preenchido via JS -->
+                </tbody>
+              </table>
+              <div class="empty" id="reports-empty" style="display:none;">Nenhum relatório cadastrado para este ano.</div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- Rodapé -->
+  <footer class="site-footer">
+    <div class="footer-wrap">
+      <span>© <span id="year"></span> Mirassol-Previ</span>
+    </div>
+  </footer>
+
+  <script>
+    // Ano dinâmico
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Scroll reveal (igual ao modelo)
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, {threshold:.12});
+    document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
+
+    // Menu mobile (igual ao modelo)
+    const hamb = document.querySelector('.hamb');
+    const menu = document.getElementById('menu');
+    hamb?.addEventListener('click', ()=>{
+      const open = menu.classList.toggle('show');
+      hamb.setAttribute('aria-expanded', String(open));
+    });
+
+    // Submenu institucional (mobile) (igual ao modelo)
+    document.querySelectorAll('.has-sub > button').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const parent = btn.closest('.has-sub');
+        const isOpen = parent.classList.toggle('open');
+        btn.setAttribute('aria-expanded', String(isOpen));
+      });
+    });
+
+    // Tabs laterais
+    function setActiveTab(id){
+      ['tab-inicio','tab-regulamento','tab-relatorios'].forEach(t=>{
+        document.getElementById(t).classList.remove('active');
+      });
+      document.getElementById(id).classList.add('active');
+    }
+    function showTab(which){
+      document.getElementById('pane-inicio').style.display = (which==='inicio') ? 'block' : 'none';
+      document.getElementById('pane-regulamento').style.display = (which==='regulamento') ? 'block' : 'none';
+      document.getElementById('pane-relatorios').style.display = (which==='relatorios') ? 'block' : 'none';
+
+      if(which==='inicio') setActiveTab('tab-inicio');
+      if(which==='regulamento') setActiveTab('tab-regulamento');
+      if(which==='relatorios') setActiveTab('tab-relatorios');
+    }
+
+    // Padronização automática de links externos (abre nova aba + noopener + seta ↗ + classe)
+    function markExternalLinks(){
+      const anchors = Array.from(document.querySelectorAll('a.ext-link'));
+      anchors.forEach(a=>{
+        const href = a.getAttribute('href') || '';
+        if(!/^https?:\/\//i.test(href)) return;
+
+        a.setAttribute('target','_blank');
+        a.setAttribute('rel','noopener');
+        if(!a.textContent.includes('↗')){
+          a.textContent = a.textContent.trim() + ' ↗';
+        }
+      });
+    }
+    markExternalLinks();
+
+    // ===== Relatórios via JSON =====
+    const JSON_URL = "consignados.json";
+    let data = null;
+    let selectedYear = null;
+
+    const yearRow = document.getElementById('year-row');
+    const body = document.getElementById('reports-body');
+    const empty = document.getElementById('reports-empty');
+
+    function renderYears(){
+      yearRow.innerHTML = '';
+      const years = Object.keys((data && data.relatorios) ? data.relatorios : {}).sort();
+      years.forEach(y=>{
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'year-btn';
+        btn.textContent = y;
+        btn.addEventListener('click', ()=>selectYear(y));
+        yearRow.appendChild(btn);
+      });
+
+      if(years.length){
+        selectYear(years[years.length - 1]); // ano mais recente
+      }
+    }
+
+    function setActiveYearBtn(year){
+      document.querySelectorAll('.year-btn').forEach(b=>{
+        b.classList.toggle('active', b.textContent === String(year));
+      });
+    }
+
+    function selectYear(year){
+      selectedYear = String(year);
+      setActiveYearBtn(selectedYear);
+
+      body.innerHTML = '';
+      const list = data?.relatorios?.[selectedYear];
+
+      if(!list || !Array.isArray(list) || list.length === 0){
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      list.forEach(item=>{
+        const tr = document.createElement('tr');
+
+        const tdMes = document.createElement('td');
+        tdMes.textContent = item.mes;
+
+        const tdDesc = document.createElement('td');
+        tdDesc.textContent = item.descricao || 'Relatório de consignados';
+
+        const tdLink = document.createElement('td');
+        if(item.url && item.url.trim()){
+          const a = document.createElement('a');
+          a.className = 'ext-link';
+          a.href = item.url;
+          a.textContent = 'Abrir';
+          tdLink.appendChild(a);
+        }else{
+          tdLink.innerHTML = '<span class="badge internal">No portal</span> <span class="muted">Em breve</span>';
+        }
+
+        tr.appendChild(tdMes);
+        tr.appendChild(tdDesc);
+        tr.appendChild(tdLink);
+        body.appendChild(tr);
+      });
+
+      markExternalLinks();
+    }
+
+    async function loadReports(){
+      try{
+        const res = await fetch(JSON_URL, { cache: 'no-store' });
+        if(!res.ok) throw new Error('Falha ao carregar JSON: ' + res.status);
+        data = await res.json();
+        renderYears();
+      }catch(err){
+        console.error(err);
+        yearRow.innerHTML = '<span class="muted">Não foi possível carregar <strong>consignados.json</strong>. Verifique se o arquivo está na mesma pasta.</span>';
+        empty.style.display = 'block';
+      }
+    }
+
+    loadReports();
+  </script>
+</body>
+</html>
