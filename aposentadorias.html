@@ -334,18 +334,18 @@
       });
     });
 
-    // ====== Benefício Concedido: carrega beneficios_publicar.json ======
+    // ====== Benefício Concedido: carrega beneficios.json ======
     let BENEF = null;
     async function ensureBenef(){
       if(BENEF) return true;
       try{
-        const res = await fetch('beneficios_publicar.json', {cache:'no-store'});
+        const res = await fetch('beneficios.json', {cache:'no-store'});
         if(!res.ok) throw new Error('HTTP '+res.status);
         BENEF = await res.json();
         return true;
       }catch(e){
         const container = document.getElementById('benef-container');
-        container.innerHTML = '<div class="page-lead">Não foi possível carregar <code>beneficios_publicar.json</code>. Coloque o arquivo na mesma pasta desta página.</div>';
+        container.innerHTML = '<div class="page-lead">Não foi possível carregar <code>beneficios.json</code>. Coloque o arquivo na mesma pasta desta página.</div>';
         return false;
       }
     }
