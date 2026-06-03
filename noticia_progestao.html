@@ -1,0 +1,335 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Mirassol-Previ conquista certificação no Pró-Gestão RPPS</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root{
+      --brand-900:#01385f; --brand-800:#014c85; --brand-700:#03588c;
+      --bg:#f7fafc; --paper:#ffffff; --ink:#0f172a; --muted:#475569;
+      --line:#e2e8f0; --soft:#f3f7fb; --shadow:0 10px 30px rgba(2,8,23,.08);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+    a{color:var(--brand-800);text-decoration:none}
+    img{max-width:100%;height:auto;display:block}
+
+    header.site-header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--line)}
+    .header-wrap{max-width:1200px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:16px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand img{width:52px;height:52px}
+    .brand .titles{display:flex;flex-direction:column}
+    .brand .titles h1{margin:0;font-size:20px;color:var(--brand-800)}
+    .brand .titles small{font-size:12px;color:var(--muted)}
+
+    nav.primary{margin-left:auto;position:relative}
+    .menu{display:flex;gap:8px;align-items:center}
+    .menu a,.menu button{padding:10px 12px;border-radius:10px;color:var(--ink);background:transparent;border:0;font:inherit;cursor:pointer}
+    .menu a:hover,.menu button:hover{background:#eef5fb}
+    .menu a.active{background:#eef5fb}
+    .hamb{display:none;background:none;border:0;padding:8px;border-radius:10px}
+
+    .has-sub{position:relative}
+    .has-sub > button{display:inline-flex;align-items:center;gap:6px}
+    .submenu{
+      display:none;position:absolute;top:100%;left:0;z-index:101;
+      background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);
+      min-width:260px;padding:6px
+    }
+    .submenu a{display:block;padding:10px 12px;border-radius:8px}
+    .submenu a:hover{background:var(--soft)}
+    .has-sub:hover .submenu,
+    .has-sub:focus-within .submenu{display:block}
+
+    main.section{padding:40px 16px}
+    .container{max-width:1200px;margin:0 auto}
+
+    .content-card{
+      background:var(--paper);
+      border:1px solid var(--line);
+      border-radius:16px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .card-pad{padding:24px}
+
+    h1.page-title{
+      margin:0 0 10px;
+      font-size:clamp(1.6rem,1.1rem + 1.2vw,2.2rem);
+      color:var(--brand-900);
+    }
+
+    .page-lead{margin:6px 0 18px;color:var(--muted)}
+
+    .news-meta{
+      display:inline-block;
+      margin-bottom:18px;
+      padding:6px 12px;
+      border-radius:999px;
+      background:#eef5fb;
+      color:var(--brand-900);
+      font-size:14px;
+      font-weight:600;
+    }
+
+    .news-content{
+      max-width:900px;
+    }
+
+    .news-content p{
+      margin:0 0 18px;
+      font-size:16px;
+      line-height:1.85;
+      text-align:justify;
+    }
+
+    .highlight-box{
+      margin:28px 0;
+      padding:20px;
+      border-left:5px solid var(--brand-800);
+      background:var(--soft);
+      border-radius:12px;
+      color:var(--ink);
+    }
+
+    .highlight-box strong{
+      color:var(--brand-900);
+    }
+
+    .certificado-box{
+      margin-top:30px;
+      padding:22px;
+      background:#eef5fb;
+      border:1px solid var(--line);
+      border-radius:16px;
+      text-align:center;
+    }
+
+    .certificado-box h2{
+      margin:0 0 8px;
+      color:var(--brand-900);
+      font-size:22px;
+    }
+
+    .btn{
+      display:inline-block;
+      margin-top:10px;
+      padding:10px 16px;
+      background:var(--brand-800);
+      color:#fff;
+      border-radius:8px;
+      font-weight:600;
+    }
+
+    .btn:hover{opacity:.9}
+
+    footer.site-footer{background:#0d2636;color:#cbd5e1;margin-top:40px}
+    .footer-wrap{max-width:1200px;margin:0 auto;padding:20px 16px;text-align:center}
+
+    .back{
+      display:inline-block;
+      margin-top:20px;
+      padding:8px 14px;
+      background:var(--brand-800);
+      color:#fff;
+      border-radius:8px;
+    }
+
+    .reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+    .reveal.in{opacity:1;transform:none}
+
+    @media(max-width:860px){
+      .menu{display:none;position:absolute;top:64px;right:16px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);padding:8px;border-radius:12px;flex-direction:column;min-width:280px}
+      .menu.show{display:flex}
+      .hamb{display:inline-grid;place-items:center}
+      .brand .titles h1{font-size:18px}
+      .brand img{width:44px;height:44px}
+      .has-sub .submenu{position:static;box-shadow:none;border:0;padding:0;margin-left:8px;margin-bottom:8px;display:none}
+      .has-sub.open .submenu{display:block}
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header" role="banner">
+    <div class="header-wrap">
+      <a class="brand" href="./index.html" aria-label="Ir para a página inicial">
+        <img src="brasao.png" alt="Brasão de Mirassol D'Oeste"/>
+        <span class="titles">
+          <h1>Mirassol-Previ</h1>
+          <small>Fundo Municipal de Previdência Social — Mirassol D’Oeste/MT</small>
+        </span>
+      </a>
+
+      <button class="hamb" aria-label="Abrir menu" aria-controls="menu" aria-expanded="false">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <nav class="primary" aria-label="Menu principal">
+        <div id="menu" class="menu" role="menubar">
+          <a role="menuitem" href="./index.html">Início</a>
+          <div class="has-sub" role="none">
+            <button aria-haspopup="true" aria-expanded="false">Institucional ▾</button>
+            <div class="submenu" role="menu">
+              <a role="menuitem" href="historia.html">História</a>
+              <a role="menuitem" href="identidade.html">Identidade</a>
+              <a role="menuitem" href="composicao.html">Composição</a>
+              <a role="menuitem" href="organograma.html">Organograma</a>
+            </div>
+          </div>
+          <a role="menuitem" href="aposentadorias.html">Aposentadorias</a>
+          <a role="menuitem" href="transparencia.html">Transparência</a>
+          <a class="active" role="menuitem" href="progestao.html">Pró-Gestão</a>
+          <a role="menuitem" href="https://mirassoldoeste.flowdocs.com.br:2053/public/home/group/5" target="_blank" rel="noopener">Ouvidoria</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <header class="reveal">
+        <h1 class="page-title">Mirassol-Previ conquista certificação no Pró-Gestão RPPS</h1>
+        <p class="page-lead">Reconhecimento institucional fortalece a governança, a transparência e a gestão previdenciária.</p>
+      </header>
+
+      <section class="content-card reveal">
+        <div class="card-pad">
+          <span class="news-meta">Pró-Gestão RPPS • Junho de 2026</span>
+
+          <div class="news-content">
+            <p>
+              O Mirassol-Previ alcançou uma importante conquista institucional ao obter a
+              certificação no Programa de Certificação Institucional e Modernização da Gestão
+              dos Regimes Próprios de Previdência Social – Pró-Gestão RPPS.
+            </p>
+
+            <p>
+              A certificação representa o reconhecimento dos avanços realizados na governança,
+              transparência, controle interno, gestão previdenciária e modernização das práticas
+              administrativas do Instituto, fortalecendo a segurança e a qualidade dos serviços
+              prestados aos segurados.
+            </p>
+
+            <p>
+              Durante o processo de avaliação, o Mirassol-Previ demonstrou evolução em ações
+              fundamentais, como a organização dos órgãos colegiados, fortalecimento dos
+              controles internos, elaboração de normativos, planejamento institucional,
+              transparência das informações e aprimoramento da gestão dos investimentos e
+              benefícios previdenciários.
+            </p>
+
+            <p>
+              A certificação foi precedida por um amplo processo de adequação institucional,
+              envolvendo a elaboração e atualização de normativos internos, fortalecimento dos
+              órgãos colegiados, implementação de mecanismos de controle administrativo,
+              aperfeiçoamento da transparência das informações e desenvolvimento das ações
+              previstas no Plano de Ação Institucional. Como resultado desse trabalho, o
+              Mirassol-Previ alcançou o atendimento de 21 dos 24 critérios avaliados durante
+              o processo de certificação, demonstrando sua evolução contínua na busca pelas
+              melhores práticas de gestão previdenciária.
+            </p>
+
+            <p>
+              A conquista é resultado do esforço conjunto da equipe do Mirassol-Previ, dos
+              Conselhos Previdenciário e Fiscal, do Comitê de Investimentos e da assessoria
+              técnica contratada, que contribuíram para a implementação das ações necessárias
+              ao atendimento dos requisitos de certificação.
+            </p>
+
+            <p>
+              O processo também contou com o apoio técnico especializado da Agenda Assessoria,
+              responsável por auxiliar na implementação e adequação das práticas exigidas pelo
+              Programa Pró-Gestão RPPS, contribuindo para o fortalecimento da governança e da
+              gestão previdenciária do Instituto.
+            </p>
+
+            <div class="highlight-box">
+              <strong>Compromisso com a excelência.</strong><br>
+              A certificação reforça o compromisso do Mirassol-Previ com a transparência,
+              a responsabilidade na gestão dos recursos previdenciários e a melhoria contínua
+              dos serviços prestados aos servidores ativos, aposentados e pensionistas.
+            </div>
+
+            <p>
+              A obtenção da certificação reforça o compromisso institucional do Mirassol-Previ
+              com as boas práticas de gestão pública, garantindo maior credibilidade, segurança
+              e eficiência na administração do Regime Próprio de Previdência Social dos
+              servidores municipais.
+            </p>
+
+            <p>
+              O Instituto seguirá trabalhando para manter e ampliar os padrões de qualidade
+              alcançados, promovendo ações voltadas ao aperfeiçoamento contínuo da gestão,
+              da transparência e da educação previdenciária.
+            </p>
+
+            <div class="certificado-box">
+              <h2>Consulte o certificado</h2>
+              <p>
+                O certificado e demais informações sobre o Pró-Gestão RPPS podem ser consultados
+                na página institucional do programa.
+              </p>
+              <a class="btn" href="https://mirassolprevi.com.br/progestao.html" target="_blank" rel="noopener">
+                Acessar página do Pró-Gestão
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="reveal" style="text-align:center">
+        <a class="back" href="index.html">← Voltar à página inicial</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-wrap">
+      <span>© <span id="year"></span> Mirassol-Previ</span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const hamb = document.querySelector('.hamb');
+    const menu = document.getElementById('menu');
+
+    hamb?.addEventListener('click', ()=>{
+      const open = menu.classList.toggle('show');
+      hamb.setAttribute('aria-expanded', String(open));
+    });
+
+    document.querySelectorAll('.has-sub > button').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const parent = btn.closest('.has-sub');
+        const isOpen = parent.classList.toggle('open');
+        btn.setAttribute('aria-expanded', String(isOpen));
+      });
+    });
+
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, {threshold:.12});
+
+    document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
+  </script>
+</body>
+</html>
+```
