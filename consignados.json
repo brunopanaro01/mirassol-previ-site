@@ -2,118 +2,28 @@
   "observacoes": "Relatórios de consignados organizados por ano e mês. Atualize este arquivo com novos links sempre que necessário.",
   "relatorios": {
     "2024": [
-      {
-        "mes": "Dezembro",
-        "descricao": "Relatório de consignados - Dez/2024",
-        "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing",
-        "id": "cons-2024-12"
-      }
+      { "mes": "Dezembro", "descricao": "Relatório de consignados - Dez/2024", "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing", "id": "cons-2024-12" }
     ],
     "2025": [
-      {
-        "mes": "Janeiro",
-        "descricao": "Relatório de consignados - Jan/2025",
-        "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing",
-        "id": "cons-2025-01"
-      },
-      {
-        "mes": "Fevereiro",
-        "descricao": "Relatório de consignados - Fev/2025",
-        "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing",
-        "id": "cons-2025-02"
-      },
-      {
-        "mes": "Março",
-        "descricao": "Relatório de consignados - Mar/2025",
-        "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing",
-        "id": "cons-2025-03"
-      },
-      {
-        "mes": "Abril",
-        "descricao": "Relatório de consignados - Abr/2025",
-        "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing",
-        "id": "cons-2025-04"
-      },
-      {
-        "mes": "Maio",
-        "descricao": "Relatório de consignados - Mai/2025",
-        "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing",
-        "id": "cons-2025-05"
-      },
-      {
-        "mes": "Junho",
-        "descricao": "Relatório de consignados - Jun/2025",
-        "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing",
-        "id": "cons-2025-06"
-      },
-      {
-        "mes": "Julho",
-        "descricao": "Relatório de consignados - Jul/2025",
-        "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing",
-        "id": "cons-2025-07"
-      },
-      {
-        "mes": "Agosto",
-        "descricao": "Relatório de consignados - Ago/2025",
-        "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing",
-        "id": "cons-2025-08"
-      },
-      {
-        "mes": "Setembro",
-        "descricao": "Relatório de consignados - Set/2025",
-        "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing",
-        "id": "cons-2025-09"
-      },
-      {
-        "mes": "Outubro",
-        "descricao": "Relatório de consignados - Out/2025",
-        "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing",
-        "id": "cons-2025-10"
-      },
-      {
-        "mes": "Novembro",
-        "descricao": "Relatório de consignados - Nov/2025",
-        "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing",
-        "id": "cons-2025-11"
-      },
-      {
-        "mes": "Dezembro",
-        "descricao": "Relatório de consignados - Dez/2025",
-        "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing",
-        "id": "cons-2025-12"
-      }
+      { "mes": "Janeiro", "descricao": "Relatório de consignados - Jan/2025", "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing", "id": "cons-2025-01" },
+      { "mes": "Fevereiro", "descricao": "Relatório de consignados - Fev/2025", "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing", "id": "cons-2025-02" },
+      { "mes": "Março", "descricao": "Relatório de consignados - Mar/2025", "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing", "id": "cons-2025-03" },
+      { "mes": "Abril", "descricao": "Relatório de consignados - Abr/2025", "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing", "id": "cons-2025-04" },
+      { "mes": "Maio", "descricao": "Relatório de consignados - Mai/2025", "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing", "id": "cons-2025-05" },
+      { "mes": "Junho", "descricao": "Relatório de consignados - Jun/2025", "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing", "id": "cons-2025-06" },
+      { "mes": "Julho", "descricao": "Relatório de consignados - Jul/2025", "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing", "id": "cons-2025-07" },
+      { "mes": "Agosto", "descricao": "Relatório de consignados - Ago/2025", "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing", "id": "cons-2025-08" },
+      { "mes": "Setembro", "descricao": "Relatório de consignados - Set/2025", "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing", "id": "cons-2025-09" },
+      { "mes": "Outubro", "descricao": "Relatório de consignados - Out/2025", "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing", "id": "cons-2025-10" },
+      { "mes": "Novembro", "descricao": "Relatório de consignados - Nov/2025", "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing", "id": "cons-2025-11" },
+      { "mes": "Dezembro", "descricao": "Relatório de consignados - Dez/2025", "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing", "id": "cons-2025-12" }
     ],
     "2026": [
-      {
-        "mes": "Janeiro",
-        "descricao": "Relatório de consignados - Jan/2026",
-        "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing",
-        "id": "cons-2026-01"
-      },
-      {
-        "mes": "Fevereiro",
-        "descricao": "Relatório de consignados - Fev/2026",
-        "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing",
-        "id": "cons-2026-02"
-      },
-      {
-        "mes": "Março",
-        "descricao": "Relatório de consignados - Mar/2026",
-        "url": "https://drive.google.com/file/d/1Jp292OOXnzbVsM2a9w76szJcNQEgFBGP/view?usp=sharing",
-        "id": "cons-2026-03"
-      },
-      {
-        "mes": "Abril",
-        "descricao": "Relatório de consignados - Abr/2026",
-        "url": "https://drive.google.com/file/d/1lg_UpWZgR0Ipevrqrpprrn7Coozwa38q/view?usp=sharing",
-        "id": "cons-2026-04"
-      },
-      {
-        "mes": "Maio",
-        "descricao": "Relatório de consignados - Mai/2026",
-        "url": "https://drive.google.com/file/d/1J2_3qAc2b3smDpSSXfXKuWEvfLmxjzyf/view?usp=sharing",
-        "id": "cons-2026-05"
-      }
+      { "mes": "Janeiro", "descricao": "Relatório de consignados - Jan/2026", "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing", "id": "cons-2026-01" },
+      { "mes": "Fevereiro", "descricao": "Relatório de consignados - Fev/2026", "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing", "id": "cons-2026-02" },
+      { "mes": "Março", "descricao": "Relatório de consignados - Mar/2026", "url": "https://drive.google.com/file/d/1Jp292OOXnzbVsM2a9w76szJcNQEgFBGP/view?usp=sharing", "id": "cons-2026-03" },
+      { "mes": "Abril", "descricao": "Relatório de consignados - Abr/2026", "url": "https://drive.google.com/file/d/1lg_UpWZgR0Ipevrqrpprrn7Coozwa38q/view?usp=sharing", "id": "cons-2026-04" },
+      { "mes": "Maio", "descricao": "Relatório de consignados - Mai/2026", "url": "https://drive.google.com/file/d/1J2_3qAc2b3smDpSSXfXKuWEvfLmxjzyf/view?usp=sharing", "id": "cons-2026-05" }
     ]
   }
 }
