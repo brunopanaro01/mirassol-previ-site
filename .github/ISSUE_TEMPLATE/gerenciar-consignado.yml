@@ -24,7 +24,7 @@ body:
     id: identificador
     attributes:
       label: Identificador
-      description: Obrigatório para editar ou excluir. Exemplo: cons-2026-05
+      description: "Obrigatório para editar ou excluir. Exemplo: cons-2026-05"
       placeholder: cons-2026-05
 
   - type: input
