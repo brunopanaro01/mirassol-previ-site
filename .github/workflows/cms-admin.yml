@@ -1,0 +1,187 @@
+name: CMS — processar solicitação
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+jobs:
+  autorizar:
+    if: startsWith(github.event.issue.title, '[CMS]')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    outputs:
+      authorized: ${{ steps.permission.outputs.authorized }}
+    steps:
+      - name: Autorizar proprietário ou administrador explicitamente permitido
+        id: permission
+        env:
+          ACTOR: ${{ github.event.issue.user.login }}
+          ALLOWLIST: ${{ vars.JSON_ADMIN_USERS }}
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          OWNER="${GH_REPO%%/*}"
+          ALLOWLISTED=false
+          if [[ "$ACTOR" == "$OWNER" ]]; then
+            ALLOWLISTED=true
+          else
+            IFS=', ' read -r -a ADMINS <<< "$ALLOWLIST"
+            for ADMIN in "${ADMINS[@]}"; do
+              if [[ -n "$ADMIN" && "$ACTOR" == "$ADMIN" ]]; then
+                ALLOWLISTED=true
+                break
+              fi
+            done
+          fi
+          PERMISSION="$(gh api --method GET -H "Accept: application/vnd.github+json" \
+            "repos/$GH_REPO/collaborators/$ACTOR/permission" --jq '.permission' 2>/dev/null || true)"
+          if [[ "$ALLOWLISTED" == "true" && "$PERMISSION" =~ ^(write|maintain|admin)$ ]]; then
+            echo "authorized=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "authorized=false" >> "$GITHUB_OUTPUT"
+          gh issue close "$ISSUE_NUMBER" --repo "$GH_REPO" \
+            --comment "Solicitação recusada: o usuário não está autorizado a administrar conteúdo neste repositório."
+
+  resolver:
+    needs: autorizar
+    if: needs.autorizar.outputs.authorized == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      module: ${{ steps.request.outputs.module }}
+      data_file: ${{ steps.request.outputs.data_file }}
+    steps:
+      - name: Obter código confiável da branch principal
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Configurar Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - name: Resolver e validar o módulo solicitado
+        id: request
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: node scripts/cms/resolve-request.mjs
+
+  processar:
+    needs: [autorizar, resolver]
+    if: needs.autorizar.outputs.authorized == 'true'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: cms-${{ needs.resolver.outputs.module }}
+      cancel-in-progress: false
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    env:
+      DATA_FILE: ${{ needs.resolver.outputs.data_file }}
+      MODULE: ${{ needs.resolver.outputs.module }}
+      GH_REPO: ${{ github.repository }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+    steps:
+      - name: Impedir alterações simultâneas do mesmo módulo
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          PREFIX="admin/$MODULE-issue-"
+          OPEN_PR="$(gh pr list --repo "$GH_REPO" --state open --json headRefName \
+            | jq --arg prefix "$PREFIX" '[.[] | select(.headRefName | startswith($prefix))] | length')"
+          if [[ "$OPEN_PR" != "0" ]]; then
+            echo "Já existe uma alteração deste módulo em revisão."
+            exit 1
+          fi
+      - name: Obter código confiável da branch principal
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: main
+          persist-credentials: true
+      - name: Configurar Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - name: Validar e processar solicitação
+        id: process
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: node scripts/cms/process-request.mjs
+      - name: Confirmar escopo e integridade da alteração
+        run: |
+          set -euo pipefail
+          CHANGED_FILES="$(git diff --name-only)"
+          if [[ "$CHANGED_FILES" != "$DATA_FILE" ]]; then
+            echo "A automação tentou alterar arquivos fora do escopo permitido:"
+            printf '%s\n' "$CHANGED_FILES"
+            exit 1
+          fi
+          git diff --check
+          node scripts/cms/validate-repository.mjs
+      - name: Criar branch e commit
+        env:
+          OPERATION: ${{ steps.process.outputs.operation }}
+          RECORD_ID: ${{ steps.process.outputs.record_id }}
+        run: |
+          set -euo pipefail
+          BRANCH="admin/$MODULE-issue-$ISSUE_NUMBER-run-$GITHUB_RUN_ATTEMPT"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add -- "$DATA_FILE"
+          git diff --cached --quiet && { echo "A operação não produziu alterações."; exit 1; }
+          git commit -m "admin($MODULE): $OPERATION $RECORD_ID"
+          git push origin "$BRANCH"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+        id: commit
+      - name: Abrir Pull Request em rascunho
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ steps.commit.outputs.branch }}
+          OPERATION: ${{ steps.process.outputs.operation }}
+          RECORD_ID: ${{ steps.process.outputs.record_id }}
+          JUSTIFICATION: ${{ steps.process.outputs.justification }}
+          REQUESTER: ${{ github.event.issue.user.login }}
+        run: |
+          set -euo pipefail
+          BODY_FILE="$RUNNER_TEMP/cms-pr-body.md"
+          {
+            echo "Alteração gerada pelo CMS. Revise o diff antes de retirar o rascunho e mesclar."
+            echo
+            echo "- Módulo: \`$MODULE\`"
+            echo "- Solicitante: @$REQUESTER"
+            echo "- Operação: \`$OPERATION\`"
+            echo "- Registro: \`$RECORD_ID\`"
+            echo "- Justificativa: $JUSTIFICATION"
+            echo
+            echo "Closes #$ISSUE_NUMBER"
+          } > "$BODY_FILE"
+          gh label create "admin-json" --repo "$GH_REPO" --color "0E8A16" \
+            --description "Alteração administrativa de dados JSON" --force
+          gh pr create --repo "$GH_REPO" --base main --head "$BRANCH" --draft \
+            --label "admin-json" --title "admin($MODULE): $OPERATION $RECORD_ID por @$REQUESTER" \
+            --body-file "$BODY_FILE"
+      - name: Informar resultado na solicitação
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          if [[ "$JOB_STATUS" == "success" ]]; then
+            MESSAGE="Solicitação validada. Um Pull Request em rascunho foi criado; o portal só mudará após revisão e mesclagem."
+          else
+            MESSAGE="A solicitação não foi aplicada. Consulte a execução da automação para identificar a validação que falhou."
+          fi
+          gh issue comment "$ISSUE_NUMBER" --repo "$GH_REPO" --body "$MESSAGE"
