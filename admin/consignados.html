@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Administração de Consignados — Mirassol-Previ</title>
+  <style>
+    :root {
+      --brand-900: #01385f;
+      --brand-800: #014c85;
+      --brand-700: #03588c;
+      --bg: #f7fafc;
+      --paper: #fff;
+      --ink: #0f172a;
+      --muted: #475569;
+      --line: #dbe4ee;
+      --warning: #92400e;
+      --warning-bg: #fffbeb;
+      --danger: #b91c1c;
+      --shadow: 0 10px 30px rgba(2, 8, 23, .08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.5;
+    }
+    a { color: var(--brand-800); }
+    button, input, select { font: inherit; }
+
+    .header {
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+    }
+    .header-inner, main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    .header-inner {
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header img { width: 48px; height: 48px; object-fit: contain; }
+    .header strong { display: block; color: var(--brand-900); font-size: 1.1rem; }
+    .header span { color: var(--muted); font-size: .85rem; }
+
+    main { padding: 32px 0 48px; }
+    h1 { margin: 0; color: var(--brand-900); font-size: clamp(1.7rem, 4vw, 2.3rem); }
+    .lead { color: var(--muted); max-width: 72ch; }
+
+    .toolbar, .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+    .toolbar {
+      display: flex;
+      align-items: end;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 16px;
+      margin: 22px 0;
+    }
+    .field { display: grid; gap: 5px; min-width: 170px; }
+    .field.grow { flex: 1; min-width: 240px; }
+    label { font-size: .82rem; font-weight: 700; color: var(--brand-900); }
+    input, select {
+      width: 100%;
+      border: 1px solid #b8c7d8;
+      border-radius: 9px;
+      background: #fff;
+      padding: 10px 11px;
+    }
+    input:focus, select:focus, button:focus, a:focus {
+      outline: 3px solid rgba(3, 88, 140, .22);
+      outline-offset: 2px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 9px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-primary { background: var(--brand-800); color: #fff; }
+    .btn-secondary { background: #eaf2f8; color: var(--brand-900); }
+    .btn-danger { background: #fff1f2; color: var(--danger); }
+    .btn-small { padding: 7px 10px; font-size: .83rem; }
+
+    .notice {
+      border-left: 4px solid #d97706;
+      background: var(--warning-bg);
+      color: var(--warning);
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin: 18px 0;
+    }
+    .status { margin: 14px 0; color: var(--muted); }
+    .status.error { color: var(--danger); }
+
+    .card { overflow: hidden; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 840px; }
+    th, td { padding: 12px 13px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: #eef5fb; color: var(--brand-900); font-size: .84rem; }
+    tbody tr:hover { background: #fafcff; }
+    code { font-size: .78rem; overflow-wrap: anywhere; }
+    .actions { display: flex; gap: 7px; flex-wrap: wrap; }
+    .duplicate { color: var(--warning); font-weight: 700; font-size: .78rem; display: block; margin-top: 4px; }
+    .empty { padding: 28px; text-align: center; color: var(--muted); }
+    .summary { color: var(--muted); margin: 0 0 10px; }
+
+    @media (max-width: 640px) {
+      .header-inner, main { width: min(100% - 20px, 1180px); }
+      main { padding-top: 22px; }
+      .toolbar { align-items: stretch; }
+      .field, .field.grow, .toolbar > .btn { width: 100%; min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <img src="../brasao.png" alt="Brasão de Mirassol D'Oeste">
+      <div>
+        <strong>Mirassol-Previ</strong>
+        <span>Painel administrativo — Relatórios de consignados</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <h1>Gerenciar relatórios de consignados</h1>
+    <p class="lead">
+      Consulte os registros atuais e solicite cadastro, edição ou exclusão por um formulário protegido pela autenticação do GitHub.
+      O portal público continua lendo o mesmo arquivo <code>consignados.json</code>.
+    </p>
+
+    <div class="notice">
+      Somente o proprietário e colaboradores autorizados do repositório podem efetivar alterações.
+      Cada solicitação é validada e permanece registrada no histórico do GitHub.
+    </div>
+
+    <div class="toolbar" aria-label="Filtros e ações">
+      <div class="field">
+        <label for="year-filter">Ano</label>
+        <select id="year-filter">
+          <option value="">Todos os anos</option>
+        </select>
+      </div>
+      <div class="field grow">
+        <label for="search-filter">Pesquisar</label>
+        <input id="search-filter" type="search" placeholder="Mês, descrição ou identificador">
+      </div>
+      <a class="btn btn-primary" id="create-link" target="_blank" rel="noopener noreferrer">
+        Cadastrar relatório
+      </a>
+    </div>
+
+    <p id="summary" class="summary" aria-live="polite"></p>
+    <p id="status" class="status" aria-live="polite">Carregando registros…</p>
+
+    <section class="card" aria-label="Relatórios cadastrados">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Ano</th>
+              <th>Mês</th>
+              <th>Descrição</th>
+              <th>Identificador</th>
+              <th>Documento</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="reports-body"></tbody>
+        </table>
+      </div>
+      <div id="empty" class="empty" hidden>Nenhum registro corresponde aos filtros.</div>
+    </section>
+  </main>
+
+  <script src="consignados-admin.js" defer></script>
+</body>
+</html>
