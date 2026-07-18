@@ -1,0 +1,22 @@
+name: Administrar consignados
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+jobs:
+  administrar:
+    if: startsWith(github.event.issue.title, '[ADMIN CONSIGNADOS]')
+    uses: ./.github/workflows/administrar-json.yml
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    with:
+      module: consignados
+      data-file: consignados.json
+      branch-prefix: admin/consignados-issue-
+      pr-scope: consignados
