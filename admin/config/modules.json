@@ -1,0 +1,5 @@
+---
+layout: null
+permalink: /admin/config/modules.json
+---
+{{ site.data.cms.modules | jsonify }}

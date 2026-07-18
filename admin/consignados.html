@@ -4,72 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,nofollow">
-  <title>Administração de Consignados — Mirassol-Previ</title>
-  <link rel="stylesheet" href="admin.css">
+  <meta http-equiv="refresh" content="0; url=index.html?module=consignados">
+  <title>Redirecionando para o CMS — Mirassol-Previ</title>
+  <link rel="canonical" href="index.html?module=consignados">
 </head>
 <body>
-  <header class="header">
-    <div class="header-inner">
-      <img src="../brasao.png" alt="Brasão de Mirassol D'Oeste">
-      <div>
-        <strong>Mirassol-Previ</strong>
-        <span>Painel administrativo — Relatórios de consignados</span>
-      </div>
-    </div>
-  </header>
-
-  <main>
-    <h1>Gerenciar relatórios de consignados</h1>
-    <p class="lead">
-      Consulte os registros atuais e abra uma solicitação de cadastro, edição ou exclusão no GitHub.
-      O portal público continua lendo o mesmo arquivo <code>consignados.json</code>.
-    </p>
-
-    <div class="notice">
-      O painel não altera o portal imediatamente. Somente usuários incluídos na lista administrativa e com permissão atual
-      de escrita podem gerar um pull request, que permanece em rascunho até ser revisado.
-    </div>
-
-    <div class="toolbar" aria-label="Filtros e ações">
-      <div class="field">
-        <label for="group-filter">Grupo</label>
-        <select id="group-filter">
-          <option value="">Todos</option>
-        </select>
-      </div>
-      <div class="field grow">
-        <label for="search-filter">Pesquisar</label>
-        <input id="search-filter" type="search" placeholder="Mês, descrição ou identificador">
-      </div>
-      <a class="btn btn-primary" id="create-link" target="_blank" rel="noopener noreferrer">
-        Cadastrar relatório
-      </a>
-    </div>
-
-    <p id="summary" class="summary" aria-live="polite"></p>
-    <p id="status" class="status" aria-live="polite">Carregando registros…</p>
-
-    <section class="card" aria-label="Relatórios cadastrados">
-      <div class="table-wrap">
-        <table>
-          <caption class="visually-hidden">Relatórios de consignados cadastrados</caption>
-          <thead>
-            <tr>
-              <th>Ano</th>
-              <th>Mês</th>
-              <th>Descrição</th>
-              <th>Identificador</th>
-              <th>Documento</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="records-body"></tbody>
-        </table>
-      </div>
-      <div id="empty" class="empty" hidden>Nenhum registro corresponde aos filtros.</div>
-    </section>
-  </main>
-
-  <script type="module" src="consignados-admin.js"></script>
+  <p><a href="index.html?module=consignados">Abrir o módulo de consignados no CMS</a>.</p>
+  <script>location.replace("index.html?module=consignados");</script>
 </body>
 </html>
