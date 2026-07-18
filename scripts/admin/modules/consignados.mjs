@@ -6,12 +6,15 @@ export const MONTHS = [
 ];
 
 const OPERATIONS = new Set(["Cadastrar", "Editar", "Excluir"]);
+const ALLOWED_YEARS = new Set(
+  Array.from({ length: 76 }, (_, index) => String(2024 + index))
+);
 const CONFIRMATION =
   "Confirmo que revisei os dados e que o documento não contém informação pessoal ou sigilosa.";
 
 function validateYear(value) {
   const year = String(value ?? "").trim();
-  if (!/^20\d{2}$/.test(year)) fail("O ano deve estar entre 2000 e 2099.");
+  if (!ALLOWED_YEARS.has(year)) fail("O ano deve estar na lista permitida de 2024 a 2099.");
   return year;
 }
 

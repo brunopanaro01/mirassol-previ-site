@@ -111,6 +111,7 @@ test("rejeitar identificadores ausentes, duplicados ou inconsistentes", () => {
 
 test("rejeitar ano, mês, HTML e links fora da lista permitida", () => {
   rejects(body({ "Ano": "1999" }), /ano deve/);
+  rejects(body({ "Ano": "2000" }), /lista permitida/);
   rejects(body({ "Mês": "Décimo terceiro" }), /mês válido/);
   rejects(body({ "Descrição": "<script>alert(1)</script>" }), /HTML/);
   rejects(body({ "URL do documento": "http://drive.google.com/file/d/1ValidDriveIdentifier123/view" }), /Google Drive/);
