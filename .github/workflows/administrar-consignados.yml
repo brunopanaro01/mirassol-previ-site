@@ -8,91 +8,15 @@ permissions:
   contents: read
 
 jobs:
-  rejeitar-nao-autorizado:
-    if: >-
-      startsWith(github.event.issue.title, '[ADMIN CONSIGNADOS]')
-      && !contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.issue.author_association)
-    runs-on: ubuntu-latest
-    permissions:
-      issues: write
-    steps:
-      - name: Informar ausência de permissão
-        env:
-          GH_TOKEN: ${{ github.token }}
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          gh issue close "$ISSUE_NUMBER"             --repo "$GH_REPO"             --comment "Solicitação recusada: somente o proprietário e colaboradores autorizados podem administrar os relatórios."
-
-  processar-solicitacao:
-    if: >-
-      startsWith(github.event.issue.title, '[ADMIN CONSIGNADOS]')
-      && contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.issue.author_association)
-    runs-on: ubuntu-latest
+  administrar:
+    if: startsWith(github.event.issue.title, '[ADMIN CONSIGNADOS]')
+    uses: ./.github/workflows/administrar-json.yml
     permissions:
       contents: write
       issues: write
       pull-requests: write
-
-    steps:
-      - name: Obter código da branch principal
-        uses: actions/checkout@v4
-        with:
-          ref: main
-
-      - name: Configurar Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
-      - name: Validar e processar solicitação
-        id: process
-        env:
-          ISSUE_BODY: ${{ github.event.issue.body }}
-        run: node scripts/processar-consignados-issue.mjs
-
-      - name: Criar branch e commit
-        env:
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
-          OPERATION: ${{ steps.process.outputs.operation }}
-          RECORD_ID: ${{ steps.process.outputs.record_id }}
-        run: |
-          BRANCH="admin/consignados-issue-$ISSUE_NUMBER"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git switch -c "$BRANCH"
-          git add -- consignados.json
-          git diff --cached --quiet && {
-            echo "A operação não produziu alterações."
-            exit 1
-          }
-          git commit -m "admin(consignados): $OPERATION $RECORD_ID"
-          git push origin "$BRANCH"
-
-      - name: Abrir pull request para revisão
-        env:
-          GH_TOKEN: ${{ github.token }}
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
-          OPERATION: ${{ steps.process.outputs.operation }}
-          RECORD_ID: ${{ steps.process.outputs.record_id }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          gh pr create             --repo "$GH_REPO"             --base main             --head "admin/consignados-issue-$ISSUE_NUMBER"             --title "admin(consignados): $OPERATION $RECORD_ID"             --body "Alteração gerada pelo painel administrativo. Revise antes de mesclar.\n\nCloses #$ISSUE_NUMBER"
-
-      - name: Confirmar processamento
-        if: success()
-        env:
-          GH_TOKEN: ${{ github.token }}
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          gh issue comment "$ISSUE_NUMBER"             --repo "$GH_REPO"             --body "Solicitação validada. Um pull request foi criado para revisão; o portal só será atualizado depois da aprovação."
-
-      - name: Informar falha de validação
-        if: failure()
-        env:
-          GH_TOKEN: ${{ github.token }}
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          gh issue comment "$ISSUE_NUMBER"             --repo "$GH_REPO"             --body "A solicitação não foi aplicada. Revise os campos preenchidos e consulte o registro da automação para identificar a validação que falhou."
+    with:
+      module: consignados
+      data-file: consignados.json
+      branch-prefix: admin/consignados-issue-
+      pr-scope: consignados

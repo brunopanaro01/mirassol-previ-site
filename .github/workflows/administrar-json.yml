@@ -1,0 +1,205 @@
+name: Administração reutilizável de JSON
+
+on:
+  workflow_call:
+    inputs:
+      module:
+        description: Chave cadastrada em scripts/processar-admin-issue.mjs
+        required: true
+        type: string
+      data-file:
+        description: Único arquivo que o módulo pode alterar
+        required: true
+        type: string
+      branch-prefix:
+        description: Prefixo das branches automáticas
+        required: true
+        type: string
+      pr-scope:
+        description: Nome curto usado em commits e pull requests
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  autorizar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    outputs:
+      authorized: ${{ steps.permission.outputs.authorized }}
+    steps:
+      - name: Verificar permissão atual e lista administrativa
+        id: permission
+        env:
+          ACTOR: ${{ github.event.issue.user.login }}
+          ALLOWLIST: ${{ vars.JSON_ADMIN_USERS }}
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          OWNER="${GH_REPO%%/*}"
+          ALLOWLISTED=false
+
+          if [[ "$ACTOR" == "$OWNER" ]]; then
+            ALLOWLISTED=true
+          else
+            IFS=', ' read -r -a ADMINS <<< "$ALLOWLIST"
+            for ADMIN in "${ADMINS[@]}"; do
+              if [[ -n "$ADMIN" && "$ACTOR" == "$ADMIN" ]]; then
+                ALLOWLISTED=true
+                break
+              fi
+            done
+          fi
+
+          PERMISSION="$(gh api \
+            --method GET \
+            -H "Accept: application/vnd.github+json" \
+            "repos/$GH_REPO/collaborators/$ACTOR/permission" \
+            --jq '.permission' 2>/dev/null || true)"
+
+          if [[ "$ALLOWLISTED" == "true" ]] \
+            && [[ "$PERMISSION" =~ ^(write|maintain|admin)$ ]]; then
+            echo "authorized=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "authorized=false" >> "$GITHUB_OUTPUT"
+          gh issue close "$ISSUE_NUMBER" \
+            --repo "$GH_REPO" \
+            --comment "Solicitação recusada: o usuário precisa estar na lista administrativa do repositório e possuir permissão atual de escrita ou superior."
+
+  processar:
+    needs: autorizar
+    if: needs.autorizar.outputs.authorized == 'true'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: administrar-${{ inputs.module }}
+      cancel-in-progress: false
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    env:
+      BRANCH_PREFIX: ${{ inputs.branch-prefix }}
+      DATA_FILE: ${{ inputs.data-file }}
+      GH_REPO: ${{ github.repository }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+      PR_SCOPE: ${{ inputs.pr-scope }}
+
+    steps:
+      - name: Impedir solicitações concorrentes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          OPEN_PR="$(gh pr list --repo "$GH_REPO" --state open --json headRefName \
+            | jq --arg prefix "$BRANCH_PREFIX" \
+              '[.[] | select(.headRefName | startswith($prefix))] | length')"
+          if [[ "$OPEN_PR" != "0" ]]; then
+            echo "Já existe uma alteração administrativa deste módulo em revisão."
+            echo "Conclua ou feche o pull request anterior e execute novamente esta automação."
+            exit 1
+          fi
+
+      - name: Obter código da branch principal
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: main
+          persist-credentials: true
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+
+      - name: Validar e processar solicitação
+        id: process
+        env:
+          ADMIN_MODULE: ${{ inputs.module }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: node scripts/processar-admin-issue.mjs
+
+      - name: Confirmar escopo da alteração
+        run: |
+          set -euo pipefail
+          CHANGED_FILES="$(git diff --name-only)"
+          if [[ "$CHANGED_FILES" != "$DATA_FILE" ]]; then
+            echo "A automação tentou alterar arquivos fora do escopo permitido:"
+            printf '%s\n' "$CHANGED_FILES"
+            exit 1
+          fi
+          git diff --check
+          node -e 'JSON.parse(require("node:fs").readFileSync(process.env.DATA_FILE, "utf8"))'
+
+      - name: Criar branch e commit
+        env:
+          OPERATION: ${{ steps.process.outputs.operation }}
+          RECORD_ID: ${{ steps.process.outputs.record_id }}
+        run: |
+          set -euo pipefail
+          BRANCH="${BRANCH_PREFIX}${ISSUE_NUMBER}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add -- "$DATA_FILE"
+          git diff --cached --quiet && {
+            echo "A operação não produziu alterações."
+            exit 1
+          }
+          git commit -m "admin($PR_SCOPE): $OPERATION $RECORD_ID"
+          git push origin "$BRANCH"
+
+      - name: Abrir pull request para revisão
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OPERATION: ${{ steps.process.outputs.operation }}
+          RECORD_ID: ${{ steps.process.outputs.record_id }}
+          JUSTIFICATION: ${{ steps.process.outputs.justification }}
+          REQUESTER: ${{ github.event.issue.user.login }}
+        run: |
+          set -euo pipefail
+          BODY_FILE="$RUNNER_TEMP/admin-pr-body.md"
+          {
+            echo "Alteração gerada pelo painel administrativo. Revise antes de retirar o rascunho e mesclar."
+            echo
+            echo "- Solicitante: @$REQUESTER"
+            echo "- Operação: $OPERATION"
+            echo "- Registro: \`$RECORD_ID\`"
+            echo "- Justificativa: $JUSTIFICATION"
+            echo
+            echo "Closes #$ISSUE_NUMBER"
+          } > "$BODY_FILE"
+
+          gh label create "admin-json" --repo "$GH_REPO" \
+            --color "0E8A16" --description "Alteração administrativa de dados JSON" --force
+          gh pr create \
+            --repo "$GH_REPO" \
+            --base main \
+            --head "${BRANCH_PREFIX}${ISSUE_NUMBER}" \
+            --draft \
+            --label "admin-json" \
+            --title "admin($PR_SCOPE): $OPERATION $RECORD_ID por @$REQUESTER" \
+            --body-file "$BODY_FILE"
+
+      - name: Confirmar processamento
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue comment "$ISSUE_NUMBER" --repo "$GH_REPO" \
+            --body "Solicitação validada. Um pull request em rascunho foi criado; o portal só será atualizado após revisão, retirada do rascunho e mesclagem."
+
+      - name: Informar falha de validação
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue comment "$ISSUE_NUMBER" --repo "$GH_REPO" \
+            --body "A solicitação não foi aplicada. Revise os campos e o registro da automação para identificar a validação que falhou."

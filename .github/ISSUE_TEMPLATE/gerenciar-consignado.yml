@@ -68,6 +68,15 @@ body:
       description: Obrigatória para cadastrar ou editar. Use um link HTTPS do Google Drive.
       placeholder: https://drive.google.com/file/d/.../view
 
+  - type: textarea
+    id: justificativa
+    attributes:
+      label: Justificativa administrativa
+      description: Explique brevemente por que o registro precisa ser cadastrado, editado ou excluído.
+      placeholder: Publicação do relatório mensal validado pelo setor responsável.
+    validations:
+      required: true
+
   - type: checkboxes
     id: confirmacao
     attributes:
