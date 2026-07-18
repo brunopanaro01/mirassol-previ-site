@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "key": "consignados",
+  "name": "Relatórios de consignados",
+  "description": "Cadastro, edição e exclusão dos relatórios mensais de consignados.",
+  "data": {
+    "file": "consignados.json",
+    "publicPage": "consignado.html",
+    "adapter": "grouped",
+    "collectionPath": ["relatorios"],
+    "groups": ["ano"],
+    "sort": [
+      { "field": "ano", "direction": "asc", "type": "number" },
+      { "field": "mes", "direction": "asc", "type": "month" }
+    ]
+  },
+  "identity": {
+    "field": "id",
+    "prefix": "cons",
+    "parts": [
+      { "field": "ano" },
+      { "field": "mes", "transform": "month-number" }
+    ],
+    "immutable": ["ano", "mes"]
+  },
+  "fields": [
+    {
+      "key": "ano",
+      "label": "Ano",
+      "type": "select",
+      "group": true,
+      "required": true,
+      "optionsRange": { "min": 2024, "max": 2099 },
+      "validators": [
+        { "name": "integer", "min": 2024, "max": 2099 }
+      ]
+    },
+    {
+      "key": "mes",
+      "label": "Mês",
+      "type": "select",
+      "required": true,
+      "options": ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
+      "validators": [{ "name": "enum" }]
+    },
+    {
+      "key": "descricao",
+      "label": "Descrição",
+      "type": "textarea",
+      "required": true,
+      "validators": [
+        { "name": "text", "min": 5, "max": 200 },
+        { "name": "no-html" }
+      ]
+    },
+    {
+      "key": "url",
+      "label": "URL do documento",
+      "type": "url",
+      "required": true,
+      "validators": [{ "name": "google-drive-file" }]
+    }
+  ],
+  "ui": {
+    "search": ["id", "ano", "mes", "descricao"],
+    "filters": ["ano"],
+    "columns": [
+      { "field": "ano" },
+      { "field": "mes" },
+      { "field": "descricao" },
+      { "field": "id", "label": "Identificador", "format": "code" },
+      { "field": "url", "label": "Documento", "format": "link", "linkLabel": "Abrir documento", "warnDuplicates": true }
+    ],
+    "sort": [
+      { "field": "ano", "direction": "desc", "type": "number" },
+      { "field": "mes", "direction": "asc", "type": "month" }
+    ]
+  },
+  "operations": ["create", "update", "delete"],
+  "serialization": {
+    "style": "compact-records",
+    "preserveEol": true
+  }
+}

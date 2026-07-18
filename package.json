@@ -1,0 +1,13 @@
+{
+  "name": "mirassol-previ-cms",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test scripts/tests/*.test.mjs",
+    "test:cms": "node --test scripts/tests/cms-*.test.mjs",
+    "validate:cms": "node scripts/cms/validate-repository.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
