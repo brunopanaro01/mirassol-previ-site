@@ -107,6 +107,19 @@ test("rejeitar identificadores ausentes, duplicados ou inconsistentes", () => {
   } finally {
     rmSync(context.directory, { recursive: true, force: true });
   }
+
+  const extraField = fixture();
+  try {
+    const data = JSON.parse(readFileSync(extraField.file, "utf8"));
+    data.relatorios["2026"][0].campoInesperado = "não permitido";
+    writeFileSync(extraField.file, JSON.stringify(data));
+    assert.throws(
+      () => processIssue({ body: body(), config: extraField.config }),
+      /campos não reconhecidos/
+    );
+  } finally {
+    rmSync(extraField.directory, { recursive: true, force: true });
+  }
 });
 
 test("rejeitar ano, mês, HTML e links fora da lista permitida", () => {

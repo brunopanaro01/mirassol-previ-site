@@ -64,8 +64,15 @@ function findById(data, id) {
   return null;
 }
 
+function validateKeys(object, allowedKeys, label) {
+  const allowed = new Set(allowedKeys);
+  const unknown = Object.keys(object).filter((key) => !allowed.has(key));
+  if (unknown.length > 0) fail(`${label} contém campos não reconhecidos: ${unknown.join(", ")}.`);
+}
+
 function validateData(data) {
   if (!data || typeof data !== "object" || Array.isArray(data)) fail("O JSON deve conter um objeto.");
+  validateKeys(data, ["observacoes", "relatorios"], "O JSON");
   if (typeof data.observacoes !== "string" || !data.observacoes.trim()) {
     fail("O campo observacoes é obrigatório.");
   }
@@ -82,6 +89,7 @@ function validateData(data) {
       if (!report || typeof report !== "object" || Array.isArray(report)) {
         fail(`O ano ${year} contém um registro inválido.`);
       }
+      validateKeys(report, ["mes", "descricao", "url", "id"], `O registro do ano ${year}`);
       const id = validateId(report.id);
       const month = validateMonth(report.mes);
       validateDescription(report.descricao);
