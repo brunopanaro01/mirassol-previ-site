@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>CMS — Mirassol-Previ</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <img src="../brasao.png" alt="Brasão de Mirassol D'Oeste">
+      <div><strong>CMS Mirassol-Previ</strong><span id="module-name">Administração de conteúdo</span></div>
+    </div>
+  </header>
+  <main>
+    <section id="module-picker" hidden>
+      <h1>Módulos administrativos</h1>
+      <p class="lead">Escolha o conteúdo que deseja consultar ou administrar.</p>
+      <div id="module-list" class="module-list"></div>
+    </section>
+    <section id="workspace">
+      <h1 id="page-title">Carregando módulo…</h1>
+      <p class="lead">O portal público continua lendo <code id="json-file">o mesmo JSON</code>. Consulte a <a id="public-page" target="_blank" rel="noopener noreferrer">página pública correspondente</a>.</p>
+      <div class="notice"><strong>Este painel não publica alterações imediatamente.</strong> Cada ação abre uma solicitação no GitHub. A automação valida os dados e cria um Pull Request em rascunho, que precisa ser revisado e mesclado pelo mantenedor.</div>
+      <div class="toolbar" aria-label="Filtros e ações">
+        <div id="dynamic-filters" class="dynamic-filters"></div>
+        <div class="field grow"><label for="search-filter">Pesquisar</label><input id="search-filter" type="search" placeholder="Pesquisar nos registros"></div>
+        <button class="btn btn-primary" id="create-button" type="button">Cadastrar registro</button>
+      </div>
+      <p id="summary" class="summary" aria-live="polite"></p>
+      <p id="status" class="status" aria-live="polite">Carregando e validando registros…</p>
+      <section class="card" aria-label="Registros cadastrados">
+        <div class="table-wrap"><table><caption class="visually-hidden">Registros cadastrados</caption><thead id="records-head"></thead><tbody id="records-body"></tbody></table></div>
+        <div id="empty" class="empty" hidden>Nenhum registro corresponde aos filtros.</div>
+      </section>
+    </section>
+  </main>
+  <dialog id="record-dialog" aria-labelledby="dialog-title">
+    <form id="record-form" method="dialog">
+      <div class="dialog-head"><h2 id="dialog-title">Registro</h2><button type="button" class="icon-button" data-close aria-label="Fechar">×</button></div>
+      <p class="dialog-help">Revise os campos. Na próxima tela do GitHub, informe a justificativa e confirme que não há dados pessoais ou sigilosos.</p>
+      <div id="form-fields" class="form-grid"></div>
+      <p id="form-error" class="status error" role="alert"></p>
+      <div class="dialog-actions"><button type="button" class="btn btn-secondary" data-close>Cancelar</button><button type="submit" class="btn btn-primary">Continuar no GitHub</button></div>
+    </form>
+  </dialog>
+  <script type="module" src="cms-admin.js"></script>
+</body>
+</html>

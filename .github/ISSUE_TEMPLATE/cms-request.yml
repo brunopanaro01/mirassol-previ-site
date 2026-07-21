@@ -1,0 +1,65 @@
+name: Solicitação do CMS
+description: Formulário técnico preenchido pelo painel visual do Mirassol-Previ
+title: "[CMS] "
+labels: ["admin-json"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Abra esta solicitação pelo painel administrativo. Os campos técnicos abaixo são preenchidos automaticamente.
+        Alterar manualmente módulo, operação, revisão, identificador ou dados fará a validação falhar.
+
+  - type: input
+    id: modulo
+    attributes:
+      label: Módulo
+      description: Chave técnica preenchida pelo CMS.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: operacao
+    attributes:
+      label: Operação
+      options: [create, update, delete]
+    validations:
+      required: true
+
+  - type: input
+    id: identificador
+    attributes:
+      label: Identificador
+      description: Preenchido pelo CMS; fica vazio somente em um novo cadastro.
+
+  - type: input
+    id: revisao
+    attributes:
+      label: Revisão base
+      description: Controle técnico que impede sobrescrever alterações mais recentes.
+    validations:
+      required: true
+
+  - type: textarea
+    id: dados
+    attributes:
+      label: Dados estruturados
+      description: Conteúdo técnico gerado pelo formulário visual. Não edite manualmente.
+    validations:
+      required: true
+
+  - type: textarea
+    id: justificativa
+    attributes:
+      label: Justificativa administrativa
+      description: Explique por que o conteúdo precisa ser cadastrado, editado ou excluído, sem inserir dados pessoais.
+      placeholder: Publicação revisada e autorizada pelo setor responsável.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmacao
+    attributes:
+      label: Confirmação
+      options:
+        - label: Confirmo que revisei os dados e que o documento não contém informação pessoal ou sigilosa.
+          required: true

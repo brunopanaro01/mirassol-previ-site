@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mirassolprevi.com.br/schemas/cms-request.schema.json",
+  "title": "Solicitação interna do CMS Mirassol-Previ",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["module", "operation", "recordId", "baseRevision", "values", "justification"],
+  "properties": {
+    "module": { "type": "string", "pattern": "^[a-z][a-z0-9-]{1,49}$" },
+    "operation": { "enum": ["create", "update", "delete"] },
+    "recordId": { "type": "string", "maxLength": 120 },
+    "baseRevision": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "values": { "type": "object" },
+    "justification": { "type": "string", "minLength": 10, "maxLength": 500 }
+  }
+}

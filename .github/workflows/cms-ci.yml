@@ -1,0 +1,44 @@
+name: CMS — validação contínua
+
+on:
+  pull_request:
+    paths:
+      - "_data/cms/**"
+      - "admin/**"
+      - "cms/**"
+      - "scripts/cms/**"
+      - "scripts/tests/**"
+      - "*.json"
+      - "package.json"
+      - ".github/workflows/cms-*.yml"
+      - ".github/ISSUE_TEMPLATE/cms-request.yml"
+  push:
+    branches: [main]
+    paths:
+      - "_data/cms/**"
+      - "admin/**"
+      - "cms/**"
+      - "scripts/cms/**"
+      - "scripts/tests/**"
+      - "*.json"
+      - "package.json"
+
+permissions:
+  contents: read
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - name: Validar módulos e executar testes
+        run: npm test
+      - name: Validar todos os JSON registrados no CMS
+        run: npm run validate:cms
+      - name: Verificar espaços e erros de diff
+        run: git diff --check
