@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Legislação e Atos Normativos — Mirassol-Previ</title>
+  <meta name="description" content="Legislação e atos normativos relacionados ao Mirassol-Previ, organizados por tipo e ano.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/legislacao.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="header-wrap">
+      <a class="brand" href="index.html" aria-label="Ir para a página inicial">
+        <img src="brasao.png" alt="Brasão de Mirassol D'Oeste">
+        <span class="titles">
+          <span class="site-name">Mirassol-Previ</span>
+          <small>Fundo Municipal de Previdência Social — Mirassol D’Oeste/MT</small>
+        </span>
+      </a>
+
+      <button class="hamb" type="button" aria-label="Abrir menu" aria-controls="menu" aria-expanded="false">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <nav class="primary" aria-label="Menu principal">
+        <div id="menu" class="menu" role="menubar">
+          <a role="menuitem" href="index.html">Início</a>
+          <div class="has-sub" role="none">
+            <button type="button" aria-haspopup="true" aria-expanded="false">Institucional ▾</button>
+            <div class="submenu" role="menu">
+              <a role="menuitem" href="historia.html">História</a>
+              <a role="menuitem" href="identidade.html">Identidade</a>
+              <a role="menuitem" href="composicao.html">Composição</a>
+              <a role="menuitem" href="organograma.html">Organograma</a>
+            </div>
+          </div>
+          <a role="menuitem" href="aposentadorias.html">Aposentadorias</a>
+          <a role="menuitem" href="transparencia.html">Transparência</a>
+          <a role="menuitem" href="progestao.html">Pró-Gestão</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <nav class="breadcrumb reveal" aria-label="Navegação estrutural">
+        <a href="index.html">Início</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">Legislação e Atos Normativos</span>
+      </nav>
+
+      <h1 class="page-title reveal">Legislação e Atos Normativos</h1>
+      <p class="lead reveal">
+        Consulte toda a legislação relacionada ao Mirassol-Previ, organizada por tipo e ano de publicação.
+      </p>
+
+      <div class="layout">
+        <aside class="side reveal" aria-label="Pesquisa e filtros da legislação">
+          <h2>Pesquisar</h2>
+          <label class="search-label" for="legislation-search">Localize um ato normativo</label>
+          <div class="search-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+              <path d="m16 16 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <input
+              id="legislation-search"
+              type="search"
+              placeholder="Número, ementa, ano ou tipo"
+              autocomplete="off"
+              aria-describedby="search-help"
+            >
+          </div>
+          <p id="search-help">A lista é atualizada enquanto você digita.</p>
+
+          <h2>Filtros rápidos</h2>
+          <div id="quick-filters" class="filters" role="group" aria-label="Filtros rápidos">
+            <button class="filter-btn active" type="button" data-filter="all" aria-pressed="true">Todos</button>
+            <button class="filter-btn" type="button" data-filter="type:Lei" aria-pressed="false">Leis</button>
+            <button class="filter-btn" type="button" data-filter="type:Decreto" aria-pressed="false">Decretos</button>
+            <button class="filter-btn" type="button" data-filter="type:Portaria" aria-pressed="false">Portarias</button>
+            <button class="filter-btn" type="button" data-filter="status:Vigente" aria-pressed="false">Vigentes</button>
+            <button class="filter-btn" type="button" data-filter="status:Revogado" aria-pressed="false">Revogados</button>
+          </div>
+
+          <div class="results-summary" aria-live="polite" aria-atomic="true">
+            <strong id="results-count">0</strong>
+            <span id="results-label">documentos encontrados</span>
+          </div>
+        </aside>
+
+        <section class="panel reveal" aria-labelledby="catalog-title">
+          <div class="panel-heading">
+            <div>
+              <h2 id="catalog-title" class="panel-title">Catálogo de atos normativos</h2>
+              <p class="muted">Expanda uma categoria e selecione o ano desejado.</p>
+            </div>
+            <button id="expand-all" class="pill" type="button">Expandir tudo</button>
+          </div>
+
+          <div id="loading-state" class="state-message" role="status">
+            Carregando legislação…
+          </div>
+          <div id="error-state" class="state-message state-error" role="alert" hidden></div>
+          <div id="legislation-catalog" class="catalog" aria-live="polite"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-wrap">
+      <span>© <span id="footer-year"></span> Mirassol-Previ</span>
+    </div>
+  </footer>
+
+  <script type="module" src="js/legislacao.js"></script>
+</body>
+</html>
