@@ -22,7 +22,7 @@ async function context(overrides = {}) {
   const source = readFileSync(sourceFile, "utf8");
   writeFileSync(dataFile, source);
   const values = {
-    ano: "2026", mes: "Junho", descricao: "Relatório de consignados - Jun/2026",
+    ano: "2099", mes: "Dezembro", descricao: "Relatório de consignados - Dez/2099",
     url: "https://drive.google.com/file/d/1ValidDriveIdentifier123/view"
   };
   const fields = {
@@ -57,14 +57,27 @@ async function rejects(overrides, pattern) {
 test("processador cadastra, edita e exclui com escrita atômica", async () => {
   const created = await run();
   assert.equal(created.result.dataFile, "consignados.json");
-  assert.equal(created.data.relatorios["2026"].at(-1).id, "cons-2026-06");
-  assert.match(created.text, /\{ "mes": "Junho"/);
+  assert.equal(
+  created.data.relatorios["2099"].at(-1).id,
+  "cons-2099-12"
+);
+
+assert.match(
+  created.text,
+  /\{ "mes": "Dezembro"/
+);
 
   const editedValues = { ano: "2026", mes: "Maio", descricao: "Relatório — versão \"final\" com acentuação",
     url: "https://drive.google.com/file/d/1AnotherValidDriveId99/view" };
   const edited = await run({ [ISSUE_LABELS.operation]: "update", [ISSUE_LABELS.recordId]: "cons-2026-05",
     [ISSUE_LABELS.payload]: JSON.stringify(editedValues) });
-  assert.equal(edited.data.relatorios["2026"].at(-1).descricao, editedValues.descricao);
+  const editedRecord = edited.data.relatorios["2026"]
+  .find((record) => record.id === "cons-2026-05");
+
+assert.equal(
+  editedRecord.descricao,
+  editedValues.descricao
+);
 
   const deleted = await run({ [ISSUE_LABELS.operation]: "delete", [ISSUE_LABELS.recordId]: "cons-2026-05",
     [ISSUE_LABELS.payload]: "{}" });

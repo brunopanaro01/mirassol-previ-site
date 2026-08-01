@@ -21,8 +21,19 @@ test("configuração declarativa descreve e valida o módulo homologado", () => 
 
 test("adaptador agrupado normaliza e recompõe o JSON sem perder metadados", () => {
   const records = normalizeAndValidateRecords(config, readRecords(config, data));
-  assert.equal(records.length, 18);
-  assert.equal(new Set(records.map((record) => record.id)).size, 18);
+  const expectedCount = Object.values(data.relatorios)
+  .reduce(
+    (total, recordsForYear) =>
+      total + recordsForYear.length,
+    0
+  );
+
+assert.equal(records.length, expectedCount);
+
+assert.equal(
+  new Set(records.map((record) => record.id)).size,
+  expectedCount
+);
   const copy = structuredClone(data);
   writeRecords(config, copy, records);
   assert.deepEqual(copy, data);
@@ -50,11 +61,14 @@ test("operações são determinísticas e preservam identificadores", () => {
   const records = normalizeAndValidateRecords(config, readRecords(config, data));
   const created = applyRecordOperation(config, records, {
     operation: "create", values: {
-      ano: "2026", mes: "Junho", descricao: "Relatório de consignados - Jun/2026",
+      ano: "2099", mes: "Dezembro", descricao: "Relatório de consignados - Dez/2099",
       url: "https://drive.google.com/file/d/1ValidDriveIdentifier123/view"
     }
   });
-  assert.equal(created.some((record) => record.id === "cons-2026-06"), true);
+  assert.equal(
+  created.some((record) => record.id === "cons-2099-12"),
+  true
+);
   const updated = applyRecordOperation(config, records, {
     operation: "update", recordId: "cons-2026-05", values: {
       ano: "2026", mes: "Maio", descricao: "Relatório de consignados — Mai/2026, versão \"final\"",
