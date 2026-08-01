@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+
+  <title>SIGPREVI — Mirassol-Previ</title>
+
+  <link rel="stylesheet" href="sigprevi.css">
+</head>
+
+<body class="admin-page">
+  <header class="admin-header">
+    <div class="admin-brand">
+      <img
+        src="../brasao.png"
+        alt="Brasão do Município de Mirassol D'Oeste"
+      >
+
+      <div>
+        <strong>SIGPREVI</strong>
+        <span>Mirassol-Previ</span>
+      </div>
+    </div>
+
+    <div class="user-area">
+      <span id="user-email">Carregando usuário...</span>
+
+      <button
+        id="logout-button"
+        class="button button-secondary"
+        type="button"
+      >
+        Sair
+      </button>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <aside class="sidebar" aria-label="Módulos do SIGPREVI">
+      <nav>
+        <a class="sidebar-link active" href="sigprevi.html">
+          Visão geral
+        </a>
+
+        <a
+          class="sidebar-link"
+          href="sigprevi.html?module=legislacao"
+        >
+          Legislação
+        </a>
+
+        <span class="sidebar-link disabled">
+          Consignados
+        </span>
+
+        <span class="sidebar-link disabled">
+          COMPREV
+        </span>
+      </nav>
+    </aside>
+
+    <main class="admin-content">
+      <section id="dashboard-view">
+        <p class="eyebrow">Painel administrativo</p>
+
+        <h1>Bem-vindo ao SIGPREVI</h1>
+
+        <p class="page-description">
+          Escolha um módulo no menu lateral para iniciar.
+        </p>
+
+        <div class="module-grid">
+          <a
+            class="module-card"
+            href="sigprevi.html?module=legislacao"
+          >
+            <strong>Legislação</strong>
+
+            <span>
+              Cadastre, edite e publique leis, decretos,
+              portarias e outros atos normativos.
+            </span>
+          </a>
+
+          <article class="module-card unavailable">
+            <strong>Consignados</strong>
+            <span>Módulo em preparação para integração.</span>
+          </article>
+
+          <article class="module-card unavailable">
+            <strong>COMPREV</strong>
+            <span>Módulo em preparação para integração.</span>
+          </article>
+        </div>
+      </section>
+
+      <section id="module-view" hidden></section>
+
+      <p
+        id="application-status"
+        class="form-status"
+        role="status"
+        aria-live="polite"
+      ></p>
+    </main>
+  </div>
+
+  <script
+    type="module"
+    src="./modules/dashboard.js"
+  ></script>
+</body>
+</html>
