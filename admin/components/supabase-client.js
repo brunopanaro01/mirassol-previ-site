@@ -2,7 +2,7 @@ import { createClient } from
   "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 import { SIGPREVI_CONFIG } from
-  "../sigprevi-config.local.js";
+  "../sigprevi-config.js";
 
 function validateConfig() {
   const {
