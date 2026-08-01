@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta name="robots" content="noindex,nofollow">
+
+  <title>Acesso ao SIGPREVI — Mirassol-Previ</title>
+
+  <link rel="stylesheet" href="sigprevi.css">
+</head>
+
+<body class="login-page">
+  <main class="login-container">
+    <section
+      class="login-card"
+      aria-labelledby="login-title"
+    >
+      <div class="login-brand">
+        <img
+          src="../brasao.png"
+          alt="Brasão do Município de Mirassol D'Oeste"
+        >
+
+        <div>
+          <strong>Mirassol-Previ</strong>
+          <span>Sistema de Gestão Previdenciária</span>
+        </div>
+      </div>
+
+      <h1 id="login-title">Acesso administrativo</h1>
+
+      <p class="login-description">
+        Informe seu e-mail e sua senha para acessar
+        os módulos autorizados.
+      </p>
+
+      <form
+  id="login-form"
+  method="post"
+  action="#"
+  onsubmit="return false;"
+        <div class="form-field">
+          <label for="email">E-mail</label>
+
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="username"
+            required
+          >
+        </div>
+
+        <div class="form-field">
+          <label for="password">Senha</label>
+
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            minlength="8"
+            required
+          >
+        </div>
+
+        <p
+          id="login-status"
+          class="form-status"
+          role="alert"
+          aria-live="polite"
+        ></p>
+
+        <button
+          id="login-button"
+          class="button button-primary"
+          type="submit"
+        >
+          Entrar
+        </button>
+      </form>
+    </section>
+  </main>
+
+  <script
+    type="module"
+    src="modules/login.js"
+  ></script>
+</body>
+</html>
