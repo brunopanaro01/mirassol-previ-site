@@ -5,6 +5,10 @@ import {
   configureLegislationForm
 } from "./legislacao-form.js";
 
+import {
+  configureLegislationEdit
+} from "./legislacao-edit.js";
+
 const STATUS_LABELS = Object.freeze({
   in_force: "Em vigor",
   revoked: "Revogado",
@@ -15,6 +19,7 @@ const STATUS_LABELS = Object.freeze({
 
 let documentTypes = [];
 let formController = null;
+let editController = null;
 
 function createCell(label, value) {
   const cell = document.createElement("td");
@@ -144,9 +149,25 @@ function renderDocuments(documents) {
       documentRecord.id;
 
     actionsCell.append(
-      editButton,
-      publicationButton
-    );
+  editButton,
+  publicationButton
+);
+
+if (!documentRecord.is_published) {
+  const deleteButton = document.createElement(
+    "button"
+  );
+
+  deleteButton.type = "button";
+  deleteButton.className =
+    "button button-small button-danger";
+
+  deleteButton.textContent = "Excluir";
+  deleteButton.dataset.action = "delete";
+  deleteButton.dataset.id = documentRecord.id;
+
+  actionsCell.append(deleteButton);
+}
 
     row.append(actionsCell);
     tableBody.append(row);
@@ -281,6 +302,84 @@ async function setDocumentPublication(
   );
 }
 
+async function deleteDraft(documentId) {
+  const { data: documentRecord, error: readError } =
+    await supabase.rpc(
+      "legislation_admin_get_document",
+      {
+        p_document_id: documentId
+      }
+    );
+
+  if (readError) {
+    throw readError;
+  }
+
+  const confirmed = window.confirm(
+    "Deseja realmente excluir este rascunho? " +
+    "Essa operação não poderá ser desfeita."
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  const reason = window.prompt(
+    "Informe a justificativa da exclusão:"
+  );
+
+  if (reason === null) {
+    return;
+  }
+
+  const normalizedReason = reason.trim();
+
+  if (normalizedReason.length < 5) {
+    throw new Error(
+      "Informe uma justificativa com pelo menos " +
+      "cinco caracteres."
+    );
+  }
+
+  setStatus("Excluindo o rascunho...");
+
+  const { error: deleteError } = await supabase.rpc(
+    "legislation_delete_draft",
+    {
+      p_document_id: documentId,
+      p_reason: normalizedReason
+    }
+  );
+
+  if (deleteError) {
+    throw deleteError;
+  }
+
+  let storageWarning = false;
+
+  if (documentRecord?.file_path) {
+    const { error: storageError } =
+      await supabase.storage
+        .from("legislation-documents")
+        .remove([documentRecord.file_path]);
+
+    if (storageError) {
+      console.error(storageError);
+      storageWarning = true;
+    }
+  }
+
+  await loadDocuments();
+
+  setStatus(
+    storageWarning
+      ? "Registro excluído, mas o PDF não pôde " +
+        "ser removido do armazenamento."
+      : "Rascunho excluído com sucesso.",
+    storageWarning ? "error" : ""
+  );
+}
+
 function bindEvents() {
   const filterForm = document.querySelector(
     "#legislation-filters"
@@ -340,12 +439,53 @@ function bindEvents() {
   }
 
   if (action === "edit") {
+  if (!editController) {
     setStatus(
-      "A edição será implementada na próxima etapa."
+      "O formulário de edição ainda não foi carregado.",
+      "error"
     );
 
     return;
   }
+
+  button.disabled = true;
+
+  try {
+    await editController.open(documentId);
+  } catch (error) {
+    console.error(error);
+
+    setStatus(
+      error?.message ??
+        "Não foi possível abrir a edição.",
+      "error"
+    );
+  } finally {
+    button.disabled = false;
+  }
+
+  return;
+}
+
+  if (action === "delete") {
+  button.disabled = true;
+
+  try {
+    await deleteDraft(documentId);
+  } catch (error) {
+    console.error(error);
+
+    setStatus(
+      error?.message ??
+        "Não foi possível excluir o rascunho.",
+      "error"
+    );
+  } finally {
+    button.disabled = false;
+  }
+
+  return;
+}
 
   if (
     action !== "publish" &&
@@ -553,18 +693,34 @@ export async function initializeLegislationModule() {
   await loadDocumentTypes();
 
   formController = configureLegislationForm({
-    documentTypes,
+  documentTypes,
 
-    onSaved: async () => {
-      setStatus(
-        "Documento cadastrado com sucesso."
-      );
+  onSaved: async () => {
+    setStatus(
+      "Documento cadastrado com sucesso."
+    );
 
-      await loadDocuments();
-    }
-  });
+    await loadDocuments();
+  }
+});
 
-  await loadDocuments();
+editController = configureLegislationEdit({
+  documentTypes,
+
+  onSaved: async ({ oldFileWarning }) => {
+    await loadDocuments();
+
+    setStatus(
+      oldFileWarning
+        ? "Documento atualizado, mas o PDF antigo " +
+          "não pôde ser removido."
+        : "Documento atualizado com sucesso.",
+      oldFileWarning ? "error" : ""
+    );
+  }
+});
+
+await loadDocuments();
 } catch (error) {
 
     setStatus(
