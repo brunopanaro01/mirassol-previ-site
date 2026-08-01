@@ -190,15 +190,24 @@ h1.page-title {
   background: transparent;
 }
 
-.filters { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 6px;
+}
+
 .filter-btn {
   width: 100%;
+  min-height: 0;
   text-align: left;
-  padding: 9px 12px;
-  border-radius: 12px;
+  padding: 6px 10px;
+  border-radius: 9px;
   border: 1px solid var(--line);
   background: #fff;
   color: var(--ink);
+  font-size: 0.92rem;
+  line-height: 1.25;
   cursor: pointer;
 }
 .filter-btn:hover { background: var(--soft); }

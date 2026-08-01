@@ -1,63 +1,179 @@
-const DATA_SOURCE_URL = 'json/legislacao.json';
-const CATEGORIES = ['Lei', 'Decreto', 'Portaria'];
+import { supabase } from "../admin/components/supabase-client.js";
+
+const STORAGE_BUCKET = "legislation-documents";
+
+const CATEGORIES = [
+  "Lei",
+  "Lei Complementar",
+  "Decreto",
+  "Portaria",
+  "Resolução",
+  "Instrução Normativa",
+  "Outro ato normativo"
+];
+
 const CATEGORY_LABELS = {
-  Lei: 'Leis',
-  Decreto: 'Decretos',
-  Portaria: 'Portarias'
+  Lei: "Leis",
+  "Lei Complementar": "Leis Complementares",
+  Decreto: "Decretos",
+  Portaria: "Portarias",
+  Resolução: "Resoluções",
+  "Instrução Normativa": "Instruções Normativas",
+  "Outro ato normativo": "Outros atos normativos"
+};
+
+const TYPE_NAMES = {
+  law: "Lei",
+  complementary_law: "Lei Complementar",
+  decree: "Decreto",
+  ordinance: "Portaria",
+  resolution: "Resolução",
+  normative_instruction: "Instrução Normativa",
+  other: "Outro ato normativo"
+};
+
+const STATUS_LABELS = {
+  in_force: "Em vigor",
+  revoked: "Revogado",
+  amended: "Alterado",
+  suspended: "Suspenso",
+  without_effect: "Sem efeito"
 };
 
 class LegislationRepository {
-  constructor(sourceUrl = DATA_SOURCE_URL) {
-    this.sourceUrl = sourceUrl;
-  }
-
   async list() {
-    const response = await fetch(this.sourceUrl, {
-      cache: 'no-store',
-      headers: { Accept: 'application/json' }
-    });
+    const { data, error } = await supabase.rpc(
+      "legislation_list_published"
+    );
 
-    if (!response.ok) {
-      throw new Error(`Não foi possível carregar a legislação (${response.status}).`);
+    if (error) {
+      throw new Error(
+        `Não foi possível carregar a legislação: ${error.message}`
+      );
     }
 
-    const payload = await response.json();
-    if (!Array.isArray(payload)) {
-      throw new TypeError('O arquivo de legislação deve conter uma lista de documentos.');
+    if (!Array.isArray(data)) {
+      throw new TypeError(
+        "A API de legislação retornou um formato inválido."
+      );
     }
 
-    return payload.map(normalizeRecord).filter(Boolean);
+    return data.map(normalizeRecord).filter(Boolean);
   }
 }
 
-const normalizeText = (value) => String(value ?? '').trim();
-const normalizeForSearch = (value) => normalizeText(value)
-  .normalize('NFD')
-  .replace(/[\u0300-\u036f]/g, '')
-  .toLocaleLowerCase('pt-BR');
+const normalizeText = (value) => String(value ?? "").trim();
+
+const normalizeForSearch = (value) =>
+  normalizeText(value)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("pt-BR");
+
+function formatPublicationDate(value) {
+  const normalizedValue = normalizeText(value);
+
+  if (!normalizedValue) {
+    return "";
+  }
+
+  const match = normalizedValue.match(
+    /^(\d{4})-(\d{2})-(\d{2})/
+  );
+
+  if (!match) {
+    return normalizedValue;
+  }
+
+  const [, year, month, day] = match;
+
+  return `${day}/${month}/${year}`;
+}
+
+function buildDocumentUrl(record) {
+  const externalUrl = normalizeText(record.external_url);
+
+  if (externalUrl) {
+    return externalUrl;
+  }
+
+  const filePath = normalizeText(record.file_path);
+
+  if (!filePath) {
+    return "";
+  }
+
+  const { data } = supabase.storage
+    .from(STORAGE_BUCKET)
+    .getPublicUrl(filePath);
+
+  return normalizeText(data?.publicUrl);
+}
 
 function normalizeRecord(record) {
-  if (!record || typeof record !== 'object') return null;
-
-  const tipo = normalizeText(record.tipo);
-  const numero = normalizeText(record.numero);
-  const ano = Number(record.ano);
-  const data = normalizeText(record.data);
-  const ementa = normalizeText(record.ementa);
-  const situacao = normalizeText(record.situacao);
-  const arquivo = normalizeText(record.arquivo);
-
-  if (!CATEGORIES.includes(tipo) || !numero || !Number.isInteger(ano) || !ementa) {
-    console.warn('Registro de legislação ignorado por estar incompleto:', record);
+  if (!record || typeof record !== "object") {
     return null;
   }
 
-  return { tipo, numero, ano, data, ementa, situacao, arquivo };
+  const tipo =
+    normalizeText(record.type_name) ||
+    TYPE_NAMES[normalizeText(record.type_code)];
+
+  const numero = normalizeText(record.number);
+  const ano = Number(record.year);
+  const data = formatPublicationDate(
+    record.publication_date
+  );
+
+  const ementa = normalizeText(record.summary);
+  const situacao =
+    STATUS_LABELS[normalizeText(record.status)] ||
+    normalizeText(record.status);
+
+  const arquivo = buildDocumentUrl(record);
+
+  if (
+    !CATEGORIES.includes(tipo) ||
+    !numero ||
+    !Number.isInteger(ano) ||
+    !ementa
+  ) {
+    console.warn(
+      "Registro de legislação ignorado por estar incompleto:",
+      record
+    );
+
+    return null;
+  }
+
+  return {
+    tipo,
+    numero,
+    ano,
+    data,
+    ementa,
+    situacao,
+    arquivo
+  };
 }
 
-function isSafePdfPath(path) {
-  if (!path || path.startsWith('/') || path.includes('..') || /[?#]/.test(path)) return false;
-  return /^documentos\/(?:leis|decretos|portarias)\/\d{4}\/[A-Za-z0-9._-]+\.pdf$/i.test(path);
+function isSafeDocumentUrl(value) {
+  if (!value) {
+    return false;
+  }
+
+  try {
+    const url = new URL(value, window.location.origin);
+
+    const isLocalDevelopment =
+      url.hostname === "127.0.0.1" ||
+      url.hostname === "localhost";
+
+    return url.protocol === "https:" ||
+      (url.protocol === "http:" && isLocalDevelopment);
+  } catch {
+    return false;
+  }
 }
 
 class LegislationCatalog {
@@ -292,19 +408,19 @@ class LegislationCatalog {
 
     article.append(title, data);
 
-    if (isSafePdfPath(record.arquivo)) {
+    if (isSafeDocumentUrl(record.arquivo)) {
       const link = document.createElement('a');
       link.className = 'document-link';
       link.href = record.arquivo;
       link.target = '_blank';
       link.rel = 'noopener';
       link.setAttribute('aria-label', `Visualizar PDF: ${record.tipo} nº ${record.numero}`);
-      link.textContent = 'Visualizar PDF ↗';
+      link.textContent = 'Abrir documento ↗';
       article.appendChild(link);
     } else {
       const unavailable = document.createElement('span');
       unavailable.className = 'muted';
-      unavailable.textContent = 'PDF indisponível.';
+      unavailable.textContent = 'Documento indisponível.';
       article.appendChild(unavailable);
     }
 
