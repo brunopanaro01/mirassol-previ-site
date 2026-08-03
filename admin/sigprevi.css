@@ -693,3 +693,187 @@ tbody tr:last-child td {
   border-radius: 9px;
   font-size: 0.86rem;
 }
+
+/* ==========================================================================
+   USUÁRIOS E ACESSOS
+   ========================================================================== */
+
+.access-management {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.access-page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.access-toolbar {
+  display: grid;
+  gap: 8px;
+  padding: 22px;
+  margin-bottom: 18px;
+  background: #ffffff;
+  border: 1px solid #d7e1ea;
+  border-radius: 16px;
+  box-shadow: 0 14px 35px rgba(0, 55, 92, 0.08);
+}
+
+.access-toolbar label {
+  color: #003b64;
+  font-weight: 700;
+}
+
+.access-toolbar input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #afc4d6;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #172638;
+  font: inherit;
+}
+
+.access-toolbar input:focus {
+  border-color: #00649d;
+  outline: 3px solid rgba(0, 100, 157, 0.14);
+}
+
+.access-users-list {
+  display: grid;
+  gap: 18px;
+  margin-top: 16px;
+}
+
+.access-user-card {
+  padding: 22px;
+  background: #ffffff;
+  border: 1px solid #d7e1ea;
+  border-radius: 16px;
+  box-shadow: 0 14px 35px rgba(0, 55, 92, 0.08);
+}
+
+.access-user-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #e1e8ee;
+}
+
+.access-user-identity {
+  display: grid;
+  gap: 4px;
+}
+
+.access-user-identity h2 {
+  margin: 0;
+  color: #003b64;
+  font-size: 1.25rem;
+}
+
+.access-user-identity span {
+  color: #536a82;
+}
+
+.access-account-status {
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: #f1f3f5;
+  color: #59636e;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.access-account-status.active {
+  background: #e5f7ef;
+  color: #08764f;
+}
+
+.access-section-title {
+  margin: 20px 0 10px;
+  color: #003b64;
+  font-size: 1rem;
+}
+
+.access-current-roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.access-role-badge {
+  padding: 7px 10px;
+  border: 1px solid #b9d2e5;
+  border-radius: 999px;
+  background: #edf6fc;
+  color: #004f7c;
+  font-size: 0.88rem;
+}
+
+.access-role-empty,
+.access-empty-message {
+  color: #61758a;
+}
+
+.access-role-controls {
+  display: grid;
+  gap: 10px;
+}
+
+.access-role-control {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: 14px;
+  border: 1px solid #dce5ec;
+  border-radius: 12px;
+  background: #f8fbfd;
+}
+
+.access-role-information {
+  display: grid;
+  gap: 3px;
+}
+
+.access-role-information strong {
+  color: #003b64;
+}
+
+.access-role-information span {
+  color: #61758a;
+  font-size: 0.9rem;
+}
+
+.button-danger {
+  background: #fff0f0;
+  border-color: #efb5b5;
+  color: #a32222;
+}
+
+.button-danger:hover {
+  background: #ffe2e2;
+}
+
+@media (max-width: 700px) {
+  .access-page-heading,
+  .access-user-header,
+  .access-role-control {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .access-role-control .button {
+    width: 100%;
+  }
+}
+
+.sidebar-link[hidden],
+.module-card[hidden] {
+  display: none !important;
+}
