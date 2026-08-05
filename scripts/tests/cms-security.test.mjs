@@ -4,8 +4,24 @@ import test from "node:test";
 import { buildRequestUrl } from "../../admin/core/request-builder.js";
 import { loadModuleConfig } from "../cms/config-loader.mjs";
 
-const workflow = readFileSync(new URL("../../.github/workflows/cms-admin.yml", import.meta.url), "utf8");
-const ci = readFileSync(new URL("../../.github/workflows/cms-ci.yml", import.meta.url), "utf8");
+function readText(url) {
+  return readFileSync(url, "utf8")
+    .replace(/\r\n/g, "\n");
+}
+
+const workflow = readText(
+  new URL(
+    "../../.github/workflows/cms-admin.yml",
+    import.meta.url
+  )
+);
+
+const ci = readText(
+  new URL(
+    "../../.github/workflows/cms-ci.yml",
+    import.meta.url
+  )
+);
 
 test("workflow evita eventos privilegiados e executa autorização antes do checkout", () => {
   assert.doesNotMatch(workflow, /pull_request_target|issue_comment/);
@@ -28,7 +44,12 @@ test("CI usa somente leitura e ações fixadas por SHA", () => {
 });
 
 test("catálogo publicado é derivado de _data pelo Jekyll", () => {
-  const manifest = readFileSync(new URL("../../admin/config/modules.json", import.meta.url), "utf8");
+  const manifest = readText(
+  new URL(
+    "../../admin/config/modules.json",
+    import.meta.url
+  )
+);
   assert.match(manifest, /^---\nlayout: null\npermalink: \/admin\/config\/modules\.json\n---/);
   assert.match(manifest, /site\.data\.cms\.modules \| jsonify/);
 });

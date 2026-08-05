@@ -877,3 +877,549 @@ tbody tr:last-child td {
 .module-card[hidden] {
   display: none !important;
 }
+
+/* ==========================================================================
+   MÓDULO COMPREV
+   ========================================================================== */
+
+.module-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.module-header > div {
+  min-width: 0;
+}
+
+.module-header .button {
+  flex: 0 0 auto;
+  width: auto;
+  margin-top: 8px;
+}
+
+.filter-panel {
+  padding: 24px;
+  margin-bottom: 18px;
+  border: 1px solid #d7e2ec;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 18px 45px rgba(18, 61, 91, 0.08);
+}
+
+.filter-panel .form-grid {
+  display: grid;
+  grid-template-columns:
+    minmax(220px, 0.8fr)
+    minmax(320px, 1.6fr)
+    auto;
+  align-items: end;
+  gap: 18px;
+}
+
+.filter-panel .field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.filter-panel .field > span,
+.filter-panel .checkbox-field > span {
+  color: #003f67;
+  font-weight: 700;
+}
+
+.filter-panel input[type="search"],
+.filter-panel select {
+  width: 100%;
+  min-height: 58px;
+  padding: 12px 16px;
+  border: 1px solid #adc3d6;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #102a43;
+  font: inherit;
+}
+
+.filter-panel input[type="search"]:focus,
+.filter-panel select:focus {
+  border-color: #0878b9;
+  outline: 3px solid rgba(8, 120, 185, 0.15);
+}
+
+.checkbox-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 0 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.checkbox-field input {
+  width: 19px;
+  height: 19px;
+  margin: 0;
+  accent-color: #005b91;
+}
+
+.filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.table-container {
+  overflow-x: auto;
+  border: 1px solid #d7e2ec;
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 15px 16px;
+  border-bottom: 1px solid #d7e2ec;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.admin-table th {
+  background: #eaf3f9;
+  color: #003f67;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.table-link {
+  color: #005b91;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.table-link:hover {
+  text-decoration: underline;
+}
+
+.empty-state {
+  padding: 32px 20px;
+  margin: 0;
+  color: #516b84;
+  text-align: center;
+}
+
+#comprev-status {
+  margin: 14px 0;
+}
+
+/* O botão será habilitado quando o formulário estiver conectado. */
+#comprev-create-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+@media (max-width: 1100px) {
+  .filter-panel .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .checkbox-field {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .module-header {
+    flex-direction: column;
+  }
+
+  .module-header .button {
+    width: 100%;
+  }
+
+  .filter-panel .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-actions {
+    flex-direction: column;
+  }
+
+  .filter-actions .button {
+    width: 100%;
+  }
+}
+
+/* Formulário COMPREV mais compacto */
+#comprev-create-dialog {
+  width: min(1100px, calc(100vw - 40px));
+  max-height: 90vh;
+  padding: 0;
+  border: 0;
+  border-radius: 18px;
+}
+
+#comprev-create-dialog .admin-dialog-content {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
+#comprev-create-dialog .admin-dialog-header,
+#comprev-create-dialog .admin-dialog-footer {
+  flex: 0 0 auto;
+}
+
+#comprev-create-dialog .admin-dialog-body {
+  overflow-y: auto;
+  padding: 20px 26px;
+}
+
+#comprev-create-dialog .dialog-form-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 14px 18px;
+  align-items: end;
+}
+
+#comprev-create-dialog .dialog-form-grid > label {
+  grid-column: span 4;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+#comprev-create-dialog .dialog-form-grid > .field-full {
+  grid-column: 1 / -1;
+}
+
+#comprev-create-dialog input,
+#comprev-create-dialog select,
+#comprev-create-dialog textarea {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+}
+
+#comprev-create-dialog textarea {
+  min-height: 84px;
+  resize: vertical;
+}
+
+/* Campos que precisam de mais espaço */
+#comprev-create-dialog label:has(
+  [name="beneficiary_name"]
+),
+#comprev-create-dialog label:has(
+  [name="source_benefit_description"]
+),
+#comprev-create-dialog label:has(
+  [name="grant_document_url"]
+),
+#comprev-create-dialog label:has(
+  [name="origin_regime_name"]
+) {
+  grid-column: span 8;
+}
+
+/* Campos curtos */
+#comprev-create-dialog label:has(
+  [name="source_benefit_year"]
+),
+#comprev-create-dialog label:has(
+  [name="source_benefit_month"]
+),
+#comprev-create-dialog label:has(
+  [name="tce_process_year"]
+) {
+  grid-column: span 2;
+}
+
+#comprev-create-dialog label:has(
+  [name="beneficiary_cpf"]
+),
+#comprev-create-dialog label:has(
+  [name="benefit_type"]
+),
+#comprev-create-dialog label:has(
+  [name="benefit_number"]
+),
+#comprev-create-dialog label:has(
+  [name="benefit_start_date"]
+),
+#comprev-create-dialog label:has(
+  [name="benefit_grant_date"]
+),
+#comprev-create-dialog label:has(
+  [name="tce_process_number"]
+),
+#comprev-create-dialog label:has(
+  [name="compensation_direction"]
+),
+#comprev-create-dialog label:has(
+  [name="origin_regime"]
+),
+#comprev-create-dialog label:has(
+  [name="origin_regime_cnpj"]
+) {
+  grid-column: span 4;
+}
+
+@media (max-width: 850px) {
+  #comprev-create-dialog .dialog-form-grid > label,
+  #comprev-create-dialog
+    .dialog-form-grid
+    > label:has(input),
+  #comprev-create-dialog
+    .dialog-form-grid
+    > label:has(select) {
+    grid-column: span 6;
+  }
+
+  #comprev-create-dialog .dialog-form-grid > .field-full {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+  #comprev-create-dialog {
+    width: calc(100vw - 20px);
+  }
+
+  #comprev-create-dialog .admin-dialog-body {
+    padding: 16px;
+  }
+
+  #comprev-create-dialog .dialog-form-grid > label {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* Ajustes finais do modal COMPREV */
+#comprev-create-dialog .admin-dialog-header {
+  position: relative;
+  padding: 22px 72px 18px 28px;
+  border-bottom: 1px solid var(--line);
+}
+
+#comprev-create-dialog .admin-dialog-header h2 {
+  margin: 6px 0 0;
+}
+
+#comprev-create-dialog .dialog-close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+#comprev-create-dialog .admin-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 14px 26px;
+  background: #fff;
+  border-top: 1px solid var(--line);
+}
+
+#comprev-create-dialog .admin-dialog-footer .button {
+  width: auto;
+  min-width: 150px;
+}
+
+#comprev-create-dialog .admin-dialog-footer .button-primary {
+  min-width: 190px;
+}
+
+/* Modal de detalhes do COMPREV */
+#comprev-details-dialog {
+  width: min(1100px, calc(100vw - 40px));
+  max-height: 90vh;
+  padding: 0;
+  border: 0;
+  border-radius: 18px;
+}
+
+#comprev-details-dialog::backdrop {
+  background: rgba(15, 36, 55, 0.58);
+}
+
+#comprev-details-dialog .admin-dialog-content {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  background: #fff;
+}
+
+#comprev-details-dialog .admin-dialog-header {
+  position: relative;
+  flex: 0 0 auto;
+  padding: 22px 76px 18px 28px;
+  border-bottom: 1px solid var(--line);
+}
+
+#comprev-details-dialog .admin-dialog-header h2 {
+  margin: 6px 0 0;
+}
+
+#comprev-details-dialog .dialog-close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+#comprev-details-dialog form {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+}
+
+#comprev-details-dialog .admin-dialog-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 28px;
+}
+
+#comprev-details-dialog .dialog-form-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 14px 18px;
+  align-items: end;
+}
+
+#comprev-details-dialog .dialog-form-grid > label {
+  display: flex;
+  grid-column: span 4;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#comprev-details-dialog
+  .dialog-form-grid
+  > .field-full {
+  grid-column: 1 / -1;
+}
+
+#comprev-details-dialog input,
+#comprev-details-dialog select,
+#comprev-details-dialog textarea {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+}
+
+#comprev-details-dialog textarea {
+  min-height: 84px;
+  resize: vertical;
+}
+
+/* Nome do beneficiário ocupa toda a linha */
+#comprev-details-dialog label:has(
+  [name="beneficiary_name"]
+) {
+  grid-column: 1 / -1;
+}
+
+/* Campos curtos */
+#comprev-details-dialog label:has(
+  [name="tce_process_year"]
+),
+#comprev-details-dialog label:has(
+  [name="origin_regime"]
+),
+#comprev-details-dialog label:has(
+  [name="status"]
+) {
+  grid-column: span 3;
+}
+
+/* Campos que precisam de mais espaço */
+#comprev-details-dialog label:has(
+  [name="origin_regime_name"]
+),
+#comprev-details-dialog label:has(
+  [name="comprev_protocol_number"]
+) {
+  grid-column: span 6;
+}
+
+#comprev-details-dialog .admin-dialog-footer {
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 14px 28px;
+  background: #fff;
+  border-top: 1px solid var(--line);
+}
+
+#comprev-details-dialog
+  .admin-dialog-footer
+  .button {
+  width: auto;
+  min-width: 150px;
+}
+
+#comprev-details-dialog
+  .admin-dialog-footer
+  .button-primary {
+  min-width: 190px;
+}
+
+@media (max-width: 850px) {
+  #comprev-details-dialog
+    .dialog-form-grid
+    > label {
+    grid-column: span 6;
+  }
+
+  #comprev-details-dialog
+    .dialog-form-grid
+    > .field-full {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+  #comprev-details-dialog {
+    width: calc(100vw - 20px);
+  }
+
+  #comprev-details-dialog .admin-dialog-body {
+    padding: 16px;
+  }
+
+  #comprev-details-dialog
+    .dialog-form-grid
+    > label {
+    grid-column: 1 / -1 !important;
+  }
+
+  #comprev-details-dialog .admin-dialog-footer {
+    padding: 12px 16px;
+  }
+}

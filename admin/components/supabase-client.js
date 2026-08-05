@@ -1,8 +1,18 @@
 import { createClient } from
   "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-import { SIGPREVI_CONFIG } from
-  "../sigprevi-config.js";
+const isLocalEnvironment = [
+  "localhost",
+  "127.0.0.1"
+].includes(window.location.hostname);
+
+const configModule = await import(
+  isLocalEnvironment
+    ? "../sigprevi-config.local.js"
+    : "../sigprevi-config.js"
+);
+
+const { SIGPREVI_CONFIG } = configModule;
 
 function validateConfig() {
   const {

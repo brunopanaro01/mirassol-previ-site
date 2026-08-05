@@ -33,6 +33,35 @@ async function configureAdministratorAccess() {
   return true;
 }
 
+async function configureComprevAccess() {
+  const { error } = await supabase.rpc(
+    "comprev_admin_list_cases",
+    {
+      p_status: null,
+      p_search: null,
+      p_include_archived: false
+    }
+  );
+
+  if (error) {
+    console.info(
+      "Módulo COMPREV indisponível para este usuário."
+    );
+
+    return false;
+  }
+
+  document.querySelector(
+    "#comprev-link"
+  )?.removeAttribute("hidden");
+
+  document.querySelector(
+    "#comprev-card"
+  )?.removeAttribute("hidden");
+
+  return true;
+}
+
 async function initializeDashboard() {
   try {
     const user = await requireAuthenticatedUser();
@@ -49,8 +78,14 @@ async function initializeDashboard() {
     );
 
     const moduleName = parameters.get("module");
-    const isAdministrator =
-      await configureAdministratorAccess();
+
+    const [
+      isAdministrator,
+      hasComprevAccess
+    ] = await Promise.all([
+      configureAdministratorAccess(),
+      configureComprevAccess()
+    ]);
 
     if (moduleName === "legislacao") {
       const { initializeLegislationModule } = await import(
@@ -75,6 +110,23 @@ async function initializeDashboard() {
       );
 
       await initializeAccessManagement();
+      return;
+    }
+
+    if (moduleName === "comprev") {
+      if (!hasComprevAccess) {
+        statusElement.textContent =
+          "Você não possui acesso ao módulo COMPREV.";
+
+        statusElement.classList.add("error");
+        return;
+      }
+
+      const { initializeComprevModule } = await import(
+        "./comprev.js"
+      );
+
+      await initializeComprevModule();
     }
   } catch (error) {
     console.error(error);
