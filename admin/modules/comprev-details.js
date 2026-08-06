@@ -1,6 +1,10 @@
 import { supabase } from
   "../components/supabase-client.js";
 
+import {
+  configureComprevTceSearch
+} from "./comprev-tce-search.js";
+
 const STATUS_OPTIONS = Object.freeze({
   draft: "Rascunho",
   document_collection: "Coleta de documentos",
@@ -164,6 +168,33 @@ function createDialog() {
                 max="2200"
               >
             </label>
+
+            <div class="tce-search-panel">
+  <div class="tce-search-panel-heading">
+    <div>
+      <strong>Consulta ao TCE-MT</strong>
+
+      <span>
+        Localize o processo pelo nome e CPF do
+        beneficiário.
+      </span>
+    </div>
+
+    <button
+      id="comprev-tce-search-button"
+      class="button button-secondary"
+      type="button"
+    >
+      Buscar processo no TCE
+    </button>
+  </div>
+
+  <div
+    id="comprev-tce-search-results"
+    class="tce-search-results"
+    hidden
+  ></div>
+</div>
 
             <label>
               Regime de origem
@@ -371,11 +402,22 @@ export function configureComprevDetails({
 
   let currentCaseId = null;
 
-  function close() {
-    dialog.close();
-  }
+const tceSearchController =
+  configureComprevTceSearch({
+    dialog,
+    form,
+    statusElement,
 
-  dialog.querySelector(".dialog-close")
+    async onLinked() {
+      await onUpdated?.();
+    }
+  });
+
+function close() {
+  dialog.close();
+}
+
+dialog.querySelector(".dialog-close")
     .addEventListener("click", close);
 
   form.querySelector('[data-action="cancel"]')
@@ -388,8 +430,9 @@ export function configureComprevDetails({
   });
 
   async function open(caseId) {
-    currentCaseId = caseId;
-    form.reset();
+  currentCaseId = caseId;
+  tceSearchController.setCase(caseId);
+  form.reset();
     statusElement.textContent = "";
     statusElement.className = "form-status";
 

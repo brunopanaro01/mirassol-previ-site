@@ -123,7 +123,7 @@ async function initializeDashboard() {
       }
 
       const { initializeComprevModule } = await import(
-        "./comprev.js"
+        "./comprev.js?v=20260806-tce-search-1"
       );
 
       await initializeComprevModule();
