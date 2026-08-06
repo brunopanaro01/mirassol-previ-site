@@ -30,10 +30,44 @@ FINDING_STATUS = {
 }
 
 
+def repair_mojibake(value: str) -> str:
+    result = value
+
+    markers = (
+        "Ã",
+        "Â",
+        "â",
+        "ð",
+        "�"
+    )
+
+    for _ in range(2):
+        if not any(marker in result for marker in markers):
+            break
+
+        try:
+            repaired = result.encode(
+                "cp1252"
+            ).decode("utf-8")
+        except (UnicodeEncodeError, UnicodeDecodeError):
+            break
+
+        if repaired == result:
+            break
+
+        result = repaired
+
+    return result
+
+
 def clean(value: Any) -> str | None:
     if value is None:
         return None
-    result = str(value).strip()
+
+    result = repair_mojibake(
+        str(value).strip()
+    )
+
     return result or None
 
 
@@ -74,12 +108,22 @@ def sql(value: Any, cast: str | None = None) -> str:
 def json_value(value: Any) -> Any:
     if value is None or value == "":
         return {}
+
     if isinstance(value, (dict, list)):
         return value
+
+    repaired = repair_mojibake(
+        str(value)
+    )
+
     try:
-        return json.loads(str(value))
-    except (TypeError, ValueError, json.JSONDecodeError):
-        return {"raw": str(value)}
+        return json.loads(repaired)
+    except (
+        TypeError,
+        ValueError,
+        json.JSONDecodeError
+    ):
+        return {"raw": repaired}
 
 
 def ref(table: str, legacy_id: Any) -> str:
