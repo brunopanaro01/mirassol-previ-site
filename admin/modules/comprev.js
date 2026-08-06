@@ -7,7 +7,7 @@ import {
 
 import {
   configureComprevDetails
-} from "./comprev-details.js";
+} from "./comprev-details.js?v=20260806-tce-search-1";
 
 const STATUS_LABELS = Object.freeze({
   draft: "Rascunho",
