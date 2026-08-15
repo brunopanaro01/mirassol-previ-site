@@ -62,6 +62,29 @@ async function configureComprevAccess() {
   return true;
 }
 
+async function configurePublicationsAccess() {
+  const { error } = await supabase.rpc(
+    "publications_admin_snapshot"
+  );
+
+  if (error) {
+    console.info(
+      "Módulo Publicações indisponível para este usuário."
+    );
+    return false;
+  }
+
+  document.querySelector(
+    "#publications-link"
+  )?.removeAttribute("hidden");
+
+  document.querySelector(
+    "#publications-card"
+  )?.removeAttribute("hidden");
+
+  return true;
+}
+
 async function initializeDashboard() {
   try {
     const user = await requireAuthenticatedUser();
@@ -81,10 +104,12 @@ async function initializeDashboard() {
 
     const [
       isAdministrator,
-      hasComprevAccess
+      hasComprevAccess,
+      hasPublicationsAccess
     ] = await Promise.all([
       configureAdministratorAccess(),
-      configureComprevAccess()
+      configureComprevAccess(),
+      configurePublicationsAccess()
     ]);
 
     if (moduleName === "legislacao") {
@@ -110,6 +135,23 @@ async function initializeDashboard() {
       );
 
       await initializeAccessManagement();
+      return;
+    }
+
+    if (moduleName === "publicacoes") {
+      if (!hasPublicationsAccess) {
+        statusElement.textContent =
+          "Você não possui acesso ao módulo Publicações.";
+
+        statusElement.classList.add("error");
+        return;
+      }
+
+      const { initializePublicationsModule } = await import(
+        "./publicacoes.js?v=20260815-1"
+      );
+
+      await initializePublicationsModule();
       return;
     }
 
