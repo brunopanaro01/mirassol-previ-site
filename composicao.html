@@ -1,237 +1,138 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Composição</title>
-
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-H8TT7E77K7"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-H8TT7E77K7');
-  
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Composição — Mirassol-Previ</title>
+  <meta name="description" content="Direção Executiva e Coordenação de Benefícios do Mirassol-Previ.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/transparencia.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-H8TT7E77K7"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "G-H8TT7E77K7");
+  </script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
+    .composition-main { padding: 46px 0 10px; }
+    .composition-heading { max-width: 760px; margin-bottom: 28px; }
+    .composition-heading h1 { margin: 6px 0 10px; color: var(--brand-900); font-size: clamp(2rem, 5vw, 3rem); line-height: 1.1; }
+    .composition-heading p:last-child { margin: 0; color: var(--muted); font-size: 1.05rem; }
+    .management-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+    .profile-card { display: grid; justify-items: center; padding: 28px; text-align: center; }
+    .profile-card h2 { margin: 18px 0 14px; color: var(--brand-900); font-size: 1.2rem; }
+    .profile-card h3 { margin: 0 0 5px; font-size: 1rem; }
+    .profile-card p { margin: 0; color: var(--muted); }
+    .profile-photo { width: 180px; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 14px; box-shadow: var(--shadow); }
+    .collegiate-card { margin-top: 24px; padding: 26px; }
+    .collegiate-card h2 { margin: 0 0 8px; color: var(--brand-900); }
+    .collegiate-card p { margin: 0; color: var(--muted); }
+    .collegiate-card .actions { margin-top: 18px; }
+    @media (max-width: 650px) {
+      .composition-main { padding-top: 32px; }
+      .management-grid { grid-template-columns: 1fr; }
+      .profile-card { padding: 22px; }
     }
-
-    header {
-      background-color: #014c85;
-      color: white;
-      text-align: center;
-      padding: 15px 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    header img {
-      height: 60px;
-      margin-right: 15px;
-    }
-
-    header div {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 24px;
-    }
-
-    header span {
-      font-size: 14px;
-    }
-
-    .voltar {
-      text-align: center;
-      margin: 20px 0;
-    }
-
-    .voltar a {
-      background-color: #014c85;
-      color: white;
-      text-decoration: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-    }
-
-    .secao {
-      padding: 30px 20px;
-    }
-
-    .secao h2 {
-      text-align: center;
-      color: #014c85;
-      margin-bottom: 20px;
-    }
-
-    .card-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-    }
-
-    .gestao-grid {
-      width: min(760px, 100%);
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      align-items: start;
-    }
-
-    @media (max-width: 560px) {
-      .gestao-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .card {
-      width: 150px;
-      text-align: center;
-    }
-
-    .card img {
-      width: 100%;
-      height: auto;
-      border-radius: 6px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.2);
-    }
-
-    .card h3 {
-      margin: 10px 0 5px;
-      font-size: 16px;
-    }
-
-    .card p {
-      font-size: 14px;
-      color: #333;
-    }
-  
-/* ===== Correções visuais padrão ===== */
-.topo{
-  background:var(--prim, #014c85);
-  color:#fff;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:10px 12px;
-}
-.topo .brand{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  text-decoration:none;
-  color:#fff;
-}
-.topo img{ height:56px; display:block; }
-.topo .titles h1{ margin:0; font-size:22px; }
-.topo .titles p{ margin:0; font-size:13px; }
-
-/* Botões de anos com espaçamento (Benefício Concedido) */
-.years{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin:10px 0 16px;
-}
-.year-btn{
-  padding:8px 12px;
-  border:1px solid var(--borda, #e5e7eb);
-  border-radius:8px;
-  background:#fff;
-  cursor:pointer;
-  font-size:14px;
-}
-.year-btn.active{
-  background:var(--prim, #014c85);
-  color:#fff;
-  border-color:var(--prim, #014c85);
-}
-
-/* Padronização das fotos em cards (inclusive Diretor/Coordenador) */
-.card-container .card img,
-.card-container .photo img{
-  width:100%;
-  height:auto;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
-  display:block;
-  border:0;
-}
-/* Caso existam imagens diretas sem wrapper .card (reforço) */
-.secao img{
-  max-width:100%;
-  height:auto;
-}
-
-</style>
+  </style>
 </head>
-<body>
+<body id="top">
+  <header class="site-header" role="banner">
+    <div class="header-wrap">
+      <a class="brand" href="index.html" aria-label="Ir para a página inicial">
+        <img src="brasao.png" alt="Brasão de Mirassol D'Oeste">
+        <span>
+          <strong>Mirassol-Previ</strong>
+          <small>Fundo Municipal de Previdência Social — Mirassol D’Oeste/MT</small>
+        </span>
+      </a>
 
-  <header class="topo">
-  <a href="index.html" class="brand">
-    <img src="brasao.png" alt="Brasão">
-    <div class="titles">
-      <h1>Mirassol‑Previ</h1>
-      <p>Fundo Municipal de Previdência Social</p>
+      <button class="hamb" type="button" aria-label="Abrir menu" aria-controls="menu" aria-expanded="false">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <nav class="primary" aria-label="Menu principal">
+        <div id="menu" class="menu">
+          <a href="index.html">Início</a>
+          <div class="has-sub">
+            <button type="button" aria-haspopup="true" aria-expanded="false">Institucional ▾</button>
+            <div class="submenu">
+              <a href="historia.html">História</a>
+              <a href="identidade.html">Identidade</a>
+              <a class="active" href="composicao.html" aria-current="page">Composição</a>
+              <a href="organograma.html">Organograma</a>
+            </div>
+          </div>
+          <a href="aposentadorias.html">Aposentadorias</a>
+          <a href="transparencia.html">Transparência</a>
+          <a href="progestao.html">Pró-Gestão</a>
+          <a href="https://mirassoldoeste.flowdocs.com.br:2053/public/home/group/5" target="_blank" rel="noopener">Ouvidoria</a>
+        </div>
+      </nav>
     </div>
-  </a>
-</header>
+  </header>
 
-  <div class="gestao-grid">
-    <!-- DIREÇÃO EXECUTIVA -->
-    <div class="secao">
-      <h2>Direção Executiva</h2>
-      <div class="card-container">
-        <div class="card">
-          <img src="bruno.diretor.jpg" alt="Bruno Vilas Boas Panaro Leite">
+  <main class="composition-main">
+    <div class="container">
+      <header class="composition-heading">
+        <p class="eyebrow">Institucional</p>
+        <h1>Composição</h1>
+        <p>Conheça os responsáveis pela Direção Executiva e pela Coordenação de Benefícios do Mirassol-Previ.</p>
+      </header>
+
+      <section class="management-grid" aria-label="Gestão do Mirassol-Previ">
+        <article class="card profile-card">
+          <img class="profile-photo" src="bruno.diretor.jpg" alt="Bruno Vilas Boas Panaro Leite">
+          <h2>Direção Executiva</h2>
           <h3>Bruno Vilas Boas Panaro Leite</h3>
           <p>Diretor Executivo</p>
-        </div>
-      </div>
-    </div>
+        </article>
 
-    <!-- COORDENAÇÃO DE BENEFÍCIOS -->
-    <div class="secao">
-      <h2>Coordenação de Benefícios</h2>
-      <div class="card-container">
-        <div class="card">
-          <img src="rodrigo.coordenado.jpg" alt="Rodrigo Donizete Terradas">
+        <article class="card profile-card">
+          <img class="profile-photo" src="rodrigo.coordenado.jpg" alt="Rodrigo Donizete Terradas">
+          <h2>Coordenação de Benefícios</h2>
           <h3>Rodrigo Donizete Terradas</h3>
           <p>Coordenador de Benefícios</p>
+        </article>
+      </section>
+
+      <section class="card collegiate-card">
+        <p class="eyebrow">Governança colegiada</p>
+        <h2>Colegiados</h2>
+        <p>A composição do Conselho Previdenciário, do Conselho Fiscal e do Comitê de Investimentos está reunida na página de Transparência, junto às respectivas agendas de reuniões.</p>
+        <div class="actions">
+          <a class="button button-primary" href="transparencia.html#colegiados">Consultar colegiados</a>
         </div>
-      </div>
+      </section>
     </div>
-  </div>
+  </main>
 
-  <div class="secao">
-    <h2>Colegiados</h2>
-    <p style="max-width:760px;margin:0 auto 20px;text-align:center;color:#475569">
-      A composição do Conselho Previdenciário, do Conselho Fiscal e do Comitê de
-      Investimentos está reunida na página de Transparência, junto às respectivas
-      agendas de reuniões.
-    </p>
-    <div class="voltar">
-      <a href="transparencia.html#colegiados">Consultar colegiados</a>
+  <footer class="site-footer">
+    <div class="footer-wrap">
+      <span>© <span id="year"></span> Mirassol-Previ</span>
+      <a href="#top">Voltar ao topo</a>
     </div>
-  </div>
+  </footer>
 
-<!-- BOTÃO VOLTAR -->
-<div class="voltar">
-  <a href="index.html">← Voltar à página principal</a>
-</div>
-
+  <script>
+    document.querySelector("#year").textContent = new Date().getFullYear();
+    const hamburger = document.querySelector(".hamb");
+    const menu = document.querySelector("#menu");
+    hamburger.addEventListener("click", () => {
+      const open = menu.classList.toggle("show");
+      hamburger.setAttribute("aria-expanded", String(open));
+    });
+    document.querySelectorAll(".has-sub > button").forEach((button) => {
+      button.addEventListener("click", () => {
+        const parent = button.closest(".has-sub");
+        const open = parent.classList.toggle("open");
+        button.setAttribute("aria-expanded", String(open));
+      });
+    });
+  </script>
 </body>
 </html>
-
