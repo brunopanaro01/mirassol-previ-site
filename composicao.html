@@ -82,6 +82,20 @@
       gap: 20px;
     }
 
+    .gestao-grid {
+      width: min(760px, 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+    }
+
+    @media (max-width: 560px) {
+      .gestao-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .card {
       width: 150px;
       text-align: center;
@@ -175,26 +189,28 @@
   </a>
 </header>
 
-  <!-- DIREÇÃO EXECUTIVA -->
-  <div class="secao">
-    <h2>Direção Executiva</h2>
-    <div class="card-container">
-      <div class="card">
-        <img src="bruno.diretor.jpg" alt="Bruno Vilas Boas Panaro Leite">
-        <h3>Bruno Vilas Boas Panaro Leite</h3>
-        <p>Diretor Executivo</p>
+  <div class="gestao-grid">
+    <!-- DIREÇÃO EXECUTIVA -->
+    <div class="secao">
+      <h2>Direção Executiva</h2>
+      <div class="card-container">
+        <div class="card">
+          <img src="bruno.diretor.jpg" alt="Bruno Vilas Boas Panaro Leite">
+          <h3>Bruno Vilas Boas Panaro Leite</h3>
+          <p>Diretor Executivo</p>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- COORDENAÇÃO DE BENEFÍCIOS -->
-  <div class="secao">
-    <h2>Coordenação de Benefícios</h2>
-    <div class="card-container">
+    <!-- COORDENAÇÃO DE BENEFÍCIOS -->
+    <div class="secao">
+      <h2>Coordenação de Benefícios</h2>
+      <div class="card-container">
         <div class="card">
-        <img src="rodrigo.coordenado.jpg" alt="Rodrigo Donizete Terradas">
-        <h3>Rodrigo Donizete Terradas</h3>
-        <p>Coordenador de Benefícios</p>
+          <img src="rodrigo.coordenado.jpg" alt="Rodrigo Donizete Terradas">
+          <h3>Rodrigo Donizete Terradas</h3>
+          <p>Coordenador de Benefícios</p>
+        </div>
       </div>
     </div>
   </div>
@@ -218,5 +234,4 @@
 
 </body>
 </html>
-
 
