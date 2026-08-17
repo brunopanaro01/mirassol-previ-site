@@ -1,3 +1,5 @@
+import { safeHttps } from "./url-utils.js";
+
 const FALLBACK_URL = "./publicacoes.json";
 const STORAGE_BUCKET = "publication-documents";
 
@@ -19,16 +21,6 @@ let snapshot = null;
 
 function text(value) {
   return String(value ?? "").trim();
-}
-
-function safeHttps(value) {
-  try {
-    const url = new URL(value, window.location.origin);
-    if (url.protocol !== "https:" && url.origin !== window.location.origin) return "";
-    return url.toString();
-  } catch {
-    return "";
-  }
 }
 
 function formatDate(value) {
