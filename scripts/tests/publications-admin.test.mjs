@@ -6,6 +6,10 @@ const source = await readFile(
   new URL("../../admin/modules/publicacoes.js", import.meta.url),
   "utf8"
 );
+const transparencySource = await readFile(
+  new URL("../../js/transparencia.js", import.meta.url),
+  "utf8"
+);
 
 test("modal de configuração de colegiado possui os campos preenchidos por openDialog", () => {
   const bodyDialog = source.match(
@@ -23,4 +27,11 @@ test("modal de configuração de colegiado possui os campos preenchidos por open
   ]) {
     assert.match(bodyDialog, new RegExp(`name="${field}"`));
   }
+});
+
+test("composição ativa é exibida mesmo com situação cadastral pendente", () => {
+  assert.match(
+    transparencySource,
+    /body\.status === "pending" && !members\.length/
+  );
 });

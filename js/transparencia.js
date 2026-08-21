@@ -237,13 +237,13 @@ function collegiateBlock(body) {
     head.append(info);
   }
   content.append(head);
-  if (body.status === "pending") {
+  const members = (snapshot.members ?? [])
+    .filter((record) => record.is_active && record.body_code === body.code)
+    .sort((a, b) => Number(a.display_order ?? 0) - Number(b.display_order ?? 0));
+  if (body.status === "pending" && !members.length) {
     content.append(element("div", "empty", "O Conselho Fiscal ainda não está formalmente constituído. A composição, os atos e o calendário serão disponibilizados após sua instituição e publicação oficial."));
   } else {
     content.append(element("h3", "", "Composição"));
-    const members = (snapshot.members ?? [])
-      .filter((record) => record.is_active && record.body_code === body.code)
-      .sort((a, b) => Number(a.display_order ?? 0) - Number(b.display_order ?? 0));
     const memberGrid = element("div", "members");
     members.forEach((record) => memberGrid.append(memberCard(record)));
     content.append(members.length ? memberGrid : element("div", "empty", "Composição ainda não publicada."));
