@@ -512,7 +512,7 @@ function dialogMarkup() {
     </form></dialog>
     <dialog id="body-dialog" class="document-dialog"><form method="dialog" class="document-form" data-kind="body">
       <div class="dialog-heading"><div><p class="eyebrow">Colegiado</p><h2>Configurar colegiado</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">×</button></div>
-      <input type="hidden" name="body_code"><div class="document-form-grid">
+      <input type="hidden" name="record_id"><input type="hidden" name="body_code"><div class="document-form-grid">
         <div class="form-field form-field-wide"><label>Nome</label><input name="body_name" readonly></div><div class="form-field"><label>Situação</label><select name="body_status"><option value="active">Ativo</option><option value="pending">Não constituído</option></select></div><div class="form-field"><label>Última revisão</label><input name="last_reviewed_on" type="date" required></div>
         <div class="form-field form-field-wide"><label>Link oficial na Transparência externa</label><input name="official_url" type="url" pattern="https://.*"></div>
       </div><div class="dialog-actions"><button type="button" class="button button-secondary" data-close-dialog>Cancelar</button><button type="submit" class="button button-primary button-auto">Salvar</button></div>
