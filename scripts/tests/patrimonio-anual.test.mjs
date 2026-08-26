@@ -39,4 +39,5 @@ test("gráfico cria uma coluna para cada ano sem quebrar a série", async () => 
     index,
     /chart\.style\.setProperty\('--bar-count', dados\.length\)/
   );
+  assert.doesNotMatch(index, /grid-template-columns:repeat\(8,/);
 });
