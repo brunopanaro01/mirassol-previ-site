@@ -228,7 +228,7 @@
     }
     .bar-chart{
       display:grid;
-      grid-template-columns:repeat(8, minmax(0, 1fr));
+      grid-template-columns:repeat(var(--bar-count, 8), minmax(0, 1fr));
       gap:14px;
       align-items:stretch;
       height:clamp(360px, 32vw, 420px);
@@ -666,6 +666,7 @@
         const max = Math.max(...dados.map(d => Number(d.valor || 0)));
 
         chart.innerHTML = '';
+        chart.style.setProperty('--bar-count', dados.length);
         dados.forEach(d => {
           const ano = d.ano;
           const valor = Number(d.valor || 0);
