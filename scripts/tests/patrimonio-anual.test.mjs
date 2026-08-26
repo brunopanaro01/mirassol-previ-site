@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const path = new URL("../../patrimonio_anual.json", import.meta.url);
+const indexPath = new URL("../../index.html", import.meta.url);
 
 test("patrimônio anual contém JSON válido e uma série cronológica", async () => {
   const data = JSON.parse(await readFile(path, "utf8"));
@@ -24,5 +25,18 @@ test("patrimônio de 2026 está disponível para o gráfico", async () => {
   assert.deepEqual(
     data.dados.find(({ ano }) => ano === 2026),
     { ano: 2026, valor: 76504801.17 }
+  );
+});
+
+test("gráfico cria uma coluna para cada ano sem quebrar a série", async () => {
+  const index = await readFile(indexPath, "utf8");
+
+  assert.match(
+    index,
+    /grid-template-columns:repeat\(var\(--bar-count, 8\), minmax\(0, 1fr\)\)/
+  );
+  assert.match(
+    index,
+    /chart\.style\.setProperty\('--bar-count', dados\.length\)/
   );
 });
