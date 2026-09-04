@@ -139,6 +139,53 @@ function createDialog() {
             </label>
 
             <label>
+              Ano da publicação no portal
+              <input
+                name="source_benefit_year"
+                type="number"
+                min="1900"
+                max="2200"
+              >
+            </label>
+
+            <label>
+              Mês da publicação no portal
+              <select name="source_benefit_month">
+                <option value="">Não informado</option>
+                <option value="1">Janeiro</option>
+                <option value="2">Fevereiro</option>
+                <option value="3">Março</option>
+                <option value="4">Abril</option>
+                <option value="5">Maio</option>
+                <option value="6">Junho</option>
+                <option value="7">Julho</option>
+                <option value="8">Agosto</option>
+                <option value="9">Setembro</option>
+                <option value="10">Outubro</option>
+                <option value="11">Novembro</option>
+                <option value="12">Dezembro</option>
+              </select>
+            </label>
+
+            <label class="field-full">
+              Descrição publicada do benefício
+              <textarea
+                name="source_benefit_description"
+                rows="3"
+                maxlength="1000"
+              ></textarea>
+            </label>
+
+            <label class="field-full">
+              Link do ato de concessão
+              <input
+                name="grant_document_url"
+                type="url"
+                placeholder="https://..."
+              >
+            </label>
+
+            <label>
               Direção
               <select name="compensation_direction">
                 <option value="receivable">
@@ -464,6 +511,10 @@ dialog.querySelector(".dialog-close")
       "benefit_number",
       "benefit_start_date",
       "benefit_grant_date",
+      "source_benefit_year",
+      "source_benefit_month",
+      "source_benefit_description",
+      "grant_document_url",
       "compensation_direction",
       "tce_process_number",
       "tce_process_year",
@@ -554,6 +605,18 @@ dialog.querySelector(".dialog-close")
       ),
       benefit_grant_date: nullable(
         formData.get("benefit_grant_date")
+      ),
+      source_benefit_year: nullable(
+        formData.get("source_benefit_year")
+      ),
+      source_benefit_month: nullable(
+        formData.get("source_benefit_month")
+      ),
+      source_benefit_description: nullable(
+        formData.get("source_benefit_description")
+      ),
+      grant_document_url: nullable(
+        formData.get("grant_document_url")
       ),
       compensation_direction: formData.get(
         "compensation_direction"

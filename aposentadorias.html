@@ -334,18 +334,75 @@
       });
     });
 
-    // ====== Benefício Concedido: carrega beneficios.json ======
+    // ====== Benefício Concedido: Supabase principal e JSON de contingência ======
     let BENEF = null;
+
+    function validHttps(value){
+      if(!value) return true;
+      try{ return new URL(value).protocol === 'https:'; }
+      catch{ return false; }
+    }
+
+    function validateBeneficios(data){
+      if(!data || typeof data !== 'object' || Array.isArray(data)){
+        throw new TypeError('Resposta de benefícios inválida.');
+      }
+
+      Object.entries(data).forEach(([year, rows])=>{
+        if(!/^\d{4}$/.test(year) || !Array.isArray(rows)){
+          throw new TypeError('Estrutura anual de benefícios inválida.');
+        }
+
+        rows.forEach((item)=>{
+          if(
+            !item || typeof item !== 'object' ||
+            typeof item.mes !== 'string' ||
+            typeof item.descricao !== 'string' ||
+            !validHttps(item.link) ||
+            !validHttps(item.processo_tce)
+          ){
+            throw new TypeError('Registro público de benefício inválido.');
+          }
+        });
+      });
+
+      return data;
+    }
+
+    async function loadBeneficiosFromDatabase(){
+      const module = await import('./admin/components/supabase-client.js');
+      const {data, error} = await module.supabase.rpc(
+        'comprev_public_benefits_snapshot'
+      );
+      if(error) throw error;
+      return validateBeneficios(data);
+    }
+
+    async function loadBeneficiosFallback(){
+      const res = await fetch('beneficios.json', {cache:'no-store'});
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      return validateBeneficios(await res.json());
+    }
+
     async function ensureBenef(){
       if(BENEF) return true;
       try{
-        const res = await fetch('beneficios.json', {cache:'no-store'});
-        if(!res.ok) throw new Error('HTTP '+res.status);
-        BENEF = await res.json();
+        BENEF = await loadBeneficiosFromDatabase();
         return true;
-      }catch(e){
+      }catch(databaseError){
+        console.info(
+          'Benefícios carregados da fonte de contingência.',
+          databaseError
+        );
+      }
+
+      try{
+        BENEF = await loadBeneficiosFallback();
+        return true;
+      }catch(fallbackError){
+        console.error(fallbackError);
         const container = document.getElementById('benef-container');
-        container.innerHTML = '<div class="page-lead">Não foi possível carregar <code>beneficios.json</code>. Coloque o arquivo na mesma pasta desta página.</div>';
+        container.innerHTML = '<div class="page-lead">Não foi possível carregar os benefícios neste momento.</div>';
         return false;
       }
     }
