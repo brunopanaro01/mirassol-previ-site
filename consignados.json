@@ -1,5 +1,5 @@
 {
-  "observacoes": "Relatórios de consignados organizados por ano e mês. Atualize este arquivo com novos links sempre que necessário.",
+  "observacoes": "Relatórios de consignados organizados por ano e mês. Fonte de contingência do portal.",
   "relatorios": {
     "2024": [
       { "mes": "Dezembro", "descricao": "Relatório de consignados - Dez/2024", "url": "https://drive.google.com/file/d/1Xe3K8zOGvoIkCsuBxjDB5xj5DI2wmFzW/view?usp=sharing", "id": "cons-2024-12" }

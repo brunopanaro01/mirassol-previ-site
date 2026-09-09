@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,nofollow">
   <title>CMS — Mirassol-Previ</title>
+  <script>
+    if (new URLSearchParams(location.search).get("module") === "consignados") {
+      location.replace("sigprevi.html?module=consignados");
+    }
+  </script>
   <link rel="stylesheet" href="admin.css">
 </head>
 <body>

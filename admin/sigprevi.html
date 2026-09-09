@@ -69,9 +69,14 @@
           Usuários e acessos
         </a>
 
-        <span class="sidebar-link disabled">
+        <a
+          id="consignments-link"
+          class="sidebar-link"
+          href="sigprevi.html?module=consignados"
+          hidden
+        >
           Consignados
-        </span>
+        </a>
 
         <a
           id="comprev-link"
@@ -135,10 +140,15 @@
             </span>
           </a>
 
-          <article class="module-card unavailable">
+          <a
+            id="consignments-card"
+            class="module-card"
+            href="sigprevi.html?module=consignados"
+            hidden
+          >
             <strong>Consignados</strong>
-            <span>Módulo em preparação para integração.</span>
-          </article>
+            <span>Cadastre e publique os relatórios mensais de consignados.</span>
+          </a>
 
           <a
   id="comprev-card"
@@ -169,7 +179,7 @@
 
   <script
     type="module"
-    src="./modules/dashboard.js?v=20260815-publicacoes-1"
+    src="./modules/dashboard.js?v=20260909-consignados-1"
   ></script>
 </body>
 </html>
