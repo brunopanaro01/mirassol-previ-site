@@ -407,7 +407,7 @@
           <!-- RELATÓRIOS -->
           <div id="pane-relatorios" style="display:none;">
             <h2 class="panel-title">Relatórios</h2>
-            <p class="muted">Selecione o ano para visualizar os meses disponíveis (dados carregados de <strong>consignados.json</strong>).</p>
+            <p class="muted">Selecione o ano para visualizar os relatórios mensais disponíveis.</p>
 
             <div class="year-row" id="year-row" aria-label="Seleção de ano"></div>
 
@@ -432,8 +432,8 @@
               <div>
                 <strong id="pdf-title">Documento</strong>
                 <div class="muted" style="margin-top:2px;">
-                  Conteúdo hospedado em <span class="badge external">Portal externo</span>.
-                  Se preferir, use <strong>Abrir em nova aba</strong> (↗).
+                  Documento público. Se preferir, use
+                  <strong>Abrir em nova aba</strong> (↗).
                 </div>
               </div>
 
@@ -553,8 +553,9 @@
       }
     }
 
-    // ===== Relatórios via JSON =====
+    // ===== Relatórios: Supabase principal e JSON de contingência =====
     const JSON_URL = "consignados.json";
+    const REPORT_BUCKET = "consignment-reports";
     let data = null;
     let selectedYear = null;
 
@@ -627,15 +628,83 @@
       });
     }
 
+    function validateReports(value){
+      if(!value || typeof value !== 'object' || Array.isArray(value)){
+        throw new TypeError('Resposta de relatórios inválida.');
+      }
+
+      const groups = value.relatorios;
+      if(!groups || typeof groups !== 'object' || Array.isArray(groups)){
+        throw new TypeError('Estrutura anual de relatórios inválida.');
+      }
+
+      Object.entries(groups).forEach(([year, rows])=>{
+        if(!/^\d{4}$/.test(year) || !Array.isArray(rows)){
+          throw new TypeError('Estrutura anual de relatórios inválida.');
+        }
+        rows.forEach((item)=>{
+          let parsedUrl;
+          try{ parsedUrl = new URL(item?.url); }catch{ parsedUrl = null; }
+          if(
+            !item || typeof item !== 'object' ||
+            typeof item.id !== 'string' ||
+            typeof item.mes !== 'string' ||
+            typeof item.descricao !== 'string' ||
+            parsedUrl?.protocol !== 'https:'
+          ){
+            throw new TypeError('Registro público de relatório inválido.');
+          }
+        });
+      });
+
+      return value;
+    }
+
+    async function loadReportsFromDatabase(){
+      const module = await import('./admin/components/supabase-client.js');
+      const {data: snapshot, error} = await module.supabase.rpc(
+        'consignments_public_reports_snapshot'
+      );
+      if(error) throw error;
+
+      Object.values(snapshot?.relatorios ?? {}).forEach((rows)=>{
+        rows.forEach((item)=>{
+          if(!item.url && item.file_path){
+            item.url = module.supabase.storage
+              .from(REPORT_BUCKET)
+              .getPublicUrl(item.file_path).data.publicUrl;
+          }
+          delete item.file_path;
+        });
+      });
+
+      return validateReports(snapshot);
+    }
+
+    async function loadReportsFallback(){
+      const res = await fetch(JSON_URL, {cache:'no-store'});
+      if(!res.ok) throw new Error('Falha ao carregar contingência: ' + res.status);
+      return validateReports(await res.json());
+    }
+
     async function loadReports(){
       try{
-        const res = await fetch(JSON_URL, { cache: 'no-store' });
-        if(!res.ok) throw new Error('Falha ao carregar JSON: ' + res.status);
-        data = await res.json();
+        data = await loadReportsFromDatabase();
         renderYears();
-      }catch(err){
-        console.error(err);
-        yearRow.innerHTML = '<span class="muted">Não foi possível carregar <strong>consignados.json</strong>. Verifique se o arquivo está na mesma pasta.</span>';
+        return;
+      }catch(databaseError){
+        console.info(
+          'Relatórios de consignados carregados da fonte de contingência.',
+          databaseError
+        );
+      }
+
+      try{
+        data = await loadReportsFallback();
+        renderYears();
+      }catch(fallbackError){
+        console.error(fallbackError);
+        yearRow.innerHTML = '<span class="muted">Não foi possível carregar os relatórios neste momento.</span>';
         empty.style.display = 'block';
       }
     }

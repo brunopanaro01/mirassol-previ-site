@@ -85,6 +85,29 @@ async function configurePublicationsAccess() {
   return true;
 }
 
+async function configureConsignmentsAccess() {
+  const { error } = await supabase.rpc(
+    "consignments_admin_snapshot"
+  );
+
+  if (error) {
+    console.info(
+      "Módulo Consignados indisponível para este usuário."
+    );
+    return false;
+  }
+
+  document.querySelector(
+    "#consignments-link"
+  )?.removeAttribute("hidden");
+
+  document.querySelector(
+    "#consignments-card"
+  )?.removeAttribute("hidden");
+
+  return true;
+}
+
 async function initializeDashboard() {
   try {
     const user = await requireAuthenticatedUser();
@@ -105,11 +128,13 @@ async function initializeDashboard() {
     const [
       isAdministrator,
       hasComprevAccess,
-      hasPublicationsAccess
+      hasPublicationsAccess,
+      hasConsignmentsAccess
     ] = await Promise.all([
       configureAdministratorAccess(),
       configureComprevAccess(),
-      configurePublicationsAccess()
+      configurePublicationsAccess(),
+      configureConsignmentsAccess()
     ]);
 
     if (moduleName === "legislacao") {
@@ -169,6 +194,23 @@ async function initializeDashboard() {
       );
 
       await initializeComprevModule();
+      return;
+    }
+
+    if (moduleName === "consignados") {
+      if (!hasConsignmentsAccess) {
+        statusElement.textContent =
+          "Você não possui acesso ao módulo Consignados.";
+
+        statusElement.classList.add("error");
+        return;
+      }
+
+      const { initializeConsignmentsModule } = await import(
+        "./consignados.js?v=20260909-1"
+      );
+
+      await initializeConsignmentsModule();
     }
   } catch (error) {
     console.error(error);
