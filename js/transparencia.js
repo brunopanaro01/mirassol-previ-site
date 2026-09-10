@@ -1,6 +1,7 @@
 import { safeHttps } from "./url-utils.js";
 
 const FALLBACK_URL = "./publicacoes.json";
+const EDUCATION_FALLBACK_URL = "./educacao.json";
 const STORAGE_BUCKET = "publication-documents";
 
 const CATEGORY_LABELS = Object.freeze({
@@ -167,6 +168,120 @@ function renderPublications() {
     ["action_plan", "action_plan_monitoring"],
     "Nenhum documento de planejamento foi cadastrado."
   );
+}
+
+function normalizeEducationFallback(data) {
+  return Object.entries(data ?? {}).flatMap(([year, rows]) => {
+    if (!Array.isArray(rows)) return [];
+    return rows.map((row, index) => ({
+      id: `edu-${year}-${String(index + 1).padStart(3, "0")}`,
+      reference_year: Number(year),
+      course_title: text(row["O QUE (CURSO)"]),
+      location: text(row.ONDE),
+      planned_start: text(row["INÍCIO PREVISTO"]),
+      planned_end: text(row["FIM PREVISTO"]),
+      participants: text(row.PARTICIPANTES),
+      objective: text(row.OBJETIVO),
+      estimated_cost: text(row["QUANTO? (CUSTO ESTIMADO)"]),
+      workload: text(row["CARGA HORÁRIA"]),
+      status: text(row.STATUS),
+      display_order: index + 1
+    }));
+  });
+}
+
+function trainingStatusClass(value) {
+  const normalized = text(value).normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+  if (normalized === "realizado") return "valid";
+  if (normalized === "em andamento") return "current";
+  if (normalized === "cancelado" || normalized === "nao realizado") return "expired";
+  return "expiring";
+}
+
+function trainingDetail(label, value) {
+  const item = element("div", "training-detail");
+  item.append(element("strong", "", label), element("span", "", value || "Não informado"));
+  return item;
+}
+
+function trainingCard(record) {
+  const details = element("details", "card training-card");
+  const summary = document.createElement("summary");
+  const title = element("div", "training-title");
+  title.append(element("h4", "", record.course_title));
+  const meta = element("div", "card-meta");
+  meta.append(
+    badge(record.status, trainingStatusClass(record.status)),
+    badge(record.workload ? `${record.workload}` : "Carga horária não informada"),
+    badge(`${record.planned_start} a ${record.planned_end}`)
+  );
+  title.append(meta);
+  summary.append(title);
+
+  const content = element("div", "training-content");
+  const grid = element("div", "training-details");
+  grid.append(
+    trainingDetail("Local / modalidade", record.location),
+    trainingDetail("Participantes", record.participants),
+    trainingDetail("Objetivo", record.objective)
+  );
+  if (record.estimated_cost) {
+    grid.append(trainingDetail("Custo estimado", record.estimated_cost));
+  }
+  content.append(grid);
+  details.append(summary, content);
+  return details;
+}
+
+function renderTrainings(activities) {
+  const target = document.querySelector("#training-list");
+  target.replaceChildren();
+  if (!activities.length) {
+    target.append(element("div", "empty", "Nenhuma ação de capacitação foi publicada."));
+    return;
+  }
+  const years = [...new Set(activities.map((record) => Number(record.reference_year)))]
+    .sort((a, b) => b - a);
+  const buttons = element("div", "year-buttons");
+  const list = element("div", "training-list");
+  function selectYear(year) {
+    buttons.querySelectorAll("button").forEach((button) => {
+      button.classList.toggle("active", Number(button.dataset.year) === year);
+    });
+    const records = activities
+      .filter((record) => Number(record.reference_year) === year)
+      .sort((a, b) => Number(a.display_order ?? 0) - Number(b.display_order ?? 0));
+    list.replaceChildren(...records.map(trainingCard));
+  }
+  years.forEach((year) => {
+    const button = element("button", "year-button", String(year));
+    button.type = "button";
+    button.dataset.year = String(year);
+    button.addEventListener("click", () => selectYear(year));
+    buttons.append(button);
+  });
+  target.append(buttons, list);
+  selectYear(years[0]);
+}
+
+async function loadTrainings() {
+  try {
+    if (!supabaseClient) {
+      const module = await import("../admin/components/supabase-client.js");
+      supabaseClient = module.supabase;
+    }
+    const { data, error } = await supabaseClient.rpc("education_public_training_snapshot");
+    if (error) throw error;
+    if (!Array.isArray(data?.activities)) throw new TypeError("Resposta inválida das capacitações.");
+    return { activities: data.activities, source: "database" };
+  } catch (error) {
+    console.info("Capacitações carregadas da fonte de contingência.", error);
+    const response = await fetch(EDUCATION_FALLBACK_URL, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Falha ao carregar ${EDUCATION_FALLBACK_URL}.`);
+    return { activities: normalizeEducationFallback(await response.json()), source: "fallback" };
+  }
 }
 
 function memberCard(record) {
@@ -372,6 +487,11 @@ async function initialize() {
     renderPublications();
     renderCollegiates();
     renderAudiences();
+    const trainingSnapshot = await loadTrainings();
+    renderTrainings(trainingSnapshot.activities);
+    document.querySelector("#training-status").textContent = trainingSnapshot.source === "database"
+      ? `${trainingSnapshot.activities.length} ação(ões) publicada(s).`
+      : `${trainingSnapshot.activities.length} ação(ões) exibida(s) pela contingência.`;
     document.querySelector("#publication-status").textContent = `Informações atualizadas em ${formatDate(snapshot.meta?.updated_at)}.`;
   } catch (error) {
     console.error(error);
