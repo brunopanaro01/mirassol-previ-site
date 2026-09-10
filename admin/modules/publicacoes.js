@@ -23,7 +23,7 @@ const BODY_LABELS = Object.freeze({
 });
 
 let snapshot = {
-  documents: [], bodies: [], members: [], meetings: [], audiences: []
+  documents: [], bodies: [], members: [], meetings: [], audiences: [], trainings: []
 };
 
 function setStatus(message, type = "") {
@@ -75,7 +75,17 @@ async function loadSnapshot(message = "Carregando publicações...") {
   setStatus(message);
   const { data, error } = await supabase.rpc("publications_admin_snapshot");
   if (error) throw error;
-  snapshot = { ...snapshot, ...(data ?? {}) };
+  const { data: educationData, error: educationError } = await supabase.rpc(
+    "education_admin_snapshot"
+  );
+  if (educationError) throw educationError;
+  snapshot = {
+    ...snapshot,
+    ...(data ?? {}),
+    trainings: Array.isArray(educationData?.activities)
+      ? educationData.activities
+      : []
+  };
   renderAll();
   setStatus("Conteúdo atualizado.");
 }
@@ -194,12 +204,62 @@ function renderAudiences() {
   });
 }
 
+function renderTrainings() {
+  const body = document.querySelector("#publication-training-records");
+  const empty = document.querySelector("#publication-training-empty");
+  const year = document.querySelector("#publication-training-year-filter")?.value ?? "";
+  const records = snapshot.trainings.filter(
+    (item) => !year || String(item.reference_year) === year
+  );
+  body.replaceChildren();
+  empty.hidden = records.length > 0;
+  records.forEach((record) => {
+    const row = document.createElement("tr");
+    row.append(
+      createCell("Ano", record.reference_year),
+      createCell("Curso ou ação", record.course_title),
+      createCell("Período", `${record.planned_start} a ${record.planned_end}`),
+      createCell("Situação", record.status),
+      createCell("Portal", record.is_published ? "Publicado" : "Rascunho")
+    );
+    const actions = document.createElement("td");
+    actions.dataset.label = "Ações";
+    actions.className = "table-actions";
+    actions.append(
+      actionButton("Editar", "edit-training", record.id),
+      actionButton(
+        record.is_published ? "Despublicar" : "Publicar",
+        "toggle-training",
+        record.id
+      )
+    );
+    if (!record.is_published) {
+      actions.append(actionButton("Excluir", "delete-training", record.id, true));
+    }
+    row.append(actions);
+    body.append(row);
+  });
+}
+
+function updateTrainingYearFilter() {
+  const filter = document.querySelector("#publication-training-year-filter");
+  if (!filter) return;
+  const selected = filter.value;
+  const years = [...new Set(snapshot.trainings.map((item) => item.reference_year))]
+    .sort((a, b) => b - a);
+  filter.replaceChildren(new Option("Todos os anos", ""));
+  years.forEach((year) => filter.add(new Option(String(year), String(year))));
+  filter.value = years.includes(Number(selected)) ? selected : "";
+}
+
 function renderAll() {
   renderDocuments();
   renderBodies();
   renderMembers();
   renderMeetings();
   renderAudiences();
+  updateTrainingYearFilter();
+  renderTrainings();
 }
 
 function switchTab(tabName) {
@@ -260,6 +320,19 @@ function openDialog(kind, record = null) {
     form.elements.description.value = record?.description ?? "";
     form.elements.youtube_url.value = record?.youtube_url ?? "";
     form.elements.is_published.checked = record?.is_published ?? false;
+  } else if (kind === "training") {
+    const year = record?.reference_year ?? new Date().getFullYear();
+    form.elements.reference_year.value = year;
+    form.elements.course_title.value = record?.course_title ?? "";
+    form.elements.location.value = record?.location ?? "";
+    form.elements.planned_start.value = record?.planned_start ?? "";
+    form.elements.planned_end.value = record?.planned_end ?? "";
+    form.elements.participants.value = record?.participants ?? "";
+    form.elements.objective.value = record?.objective ?? "";
+    form.elements.estimated_cost.value = record?.estimated_cost ?? "";
+    form.elements.workload.value = record?.workload ?? "";
+    form.elements.status.value = record?.status ?? "A AGENDAR";
+    form.elements.display_order.value = record?.display_order ?? nextTrainingOrder(year);
   } else if (kind === "body") {
     form.elements.body_code.value = record.code;
     form.elements.body_name.value = record.name;
@@ -268,6 +341,13 @@ function openDialog(kind, record = null) {
     form.elements.last_reviewed_on.value = record.last_reviewed_on ?? "";
   }
   dialog.showModal();
+}
+
+function nextTrainingOrder(year) {
+  const orders = snapshot.trainings
+    .filter((item) => Number(item.reference_year) === Number(year))
+    .map((item) => Number(item.display_order ?? 0));
+  return Math.max(0, ...orders) + 1;
 }
 
 function closeDialog(form) {
@@ -327,7 +407,7 @@ async function submitDocument(form) {
 
 function recordPublicId(id, prefix, label) {
   if (!id) return publicId(prefix, label);
-  const collections = [...snapshot.documents, ...snapshot.members, ...snapshot.meetings, ...snapshot.audiences];
+  const collections = [...snapshot.documents, ...snapshot.members, ...snapshot.meetings, ...snapshot.audiences, ...snapshot.trainings];
   return collections.find((item) => item.id === id)?.public_id ?? publicId(prefix, label);
 }
 
@@ -335,7 +415,26 @@ async function submitSimple(kind, form) {
   const id = form.elements.record_id?.value || null;
   let rpc;
   let payload;
-  if (kind === "member") {
+  if (kind === "training") {
+    const { error } = await supabase.rpc("education_admin_save_training", {
+      p_id: id,
+      p_payload: {
+        reference_year: Number(form.elements.reference_year.value),
+        course_title: form.elements.course_title.value.trim(),
+        location: form.elements.location.value.trim(),
+        planned_start: form.elements.planned_start.value.trim(),
+        planned_end: form.elements.planned_end.value.trim(),
+        participants: form.elements.participants.value.trim(),
+        objective: form.elements.objective.value.trim(),
+        estimated_cost: form.elements.estimated_cost.value.trim() || null,
+        workload: form.elements.workload.value.trim(),
+        status: form.elements.status.value.trim(),
+        display_order: Number(form.elements.display_order.value || 0)
+      }
+    });
+    if (error) throw error;
+    return;
+  } else if (kind === "member") {
     rpc = "publications_admin_save_member";
     payload = {
       public_id: recordPublicId(id, "membro", form.elements.name.value),
@@ -389,12 +488,25 @@ async function deleteRecord(entity, id) {
   await loadSnapshot("Atualizando listagem...");
 }
 
+async function deleteTraining(id) {
+  const record = snapshot.trainings.find((item) => item.id === id);
+  if (!record || !window.confirm(
+    `Excluir “${record.course_title}”? A informação deixará de aparecer no portal.`
+  )) return;
+  const { error } = await supabase.rpc("education_admin_delete_training", {
+    p_id: id
+  });
+  if (error) throw error;
+  await loadSnapshot("Atualizando capacitações...");
+}
+
 function bindEvents() {
   document.querySelector("#publication-tabs").addEventListener("click", (event) => {
     const button = event.target.closest("[data-publication-tab]");
     if (button) switchTab(button.dataset.publicationTab);
   });
   document.querySelector("#publication-category-filter").addEventListener("change", renderDocuments);
+  document.querySelector("#publication-training-year-filter").addEventListener("change", renderTrainings);
   document.querySelectorAll("[data-create-kind]").forEach((button) => {
     button.addEventListener("click", () => openDialog(button.dataset.createKind));
   });
@@ -410,6 +522,14 @@ function bindEvents() {
   documentForm.elements.external_url.addEventListener("input", () => {
     if (documentForm.elements.external_url.value.trim()) documentForm.elements.pdf_file.value = "";
   });
+  const trainingForm = document.querySelector('#training-dialog form');
+  trainingForm.elements.reference_year.addEventListener("change", () => {
+    if (!trainingForm.elements.record_id.value) {
+      trainingForm.elements.display_order.value = nextTrainingOrder(
+        trainingForm.elements.reference_year.value
+      );
+    }
+  });
 
   document.querySelector("#module-view").addEventListener("click", async (event) => {
     const button = event.target.closest("button[data-action]");
@@ -421,10 +541,12 @@ function bindEvents() {
       if (button.dataset.action === "edit-member") openDialog("member", find(snapshot.members));
       if (button.dataset.action === "edit-meeting") openDialog("meeting", find(snapshot.meetings));
       if (button.dataset.action === "edit-audience") openDialog("audience", find(snapshot.audiences));
+      if (button.dataset.action === "edit-training") openDialog("training", find(snapshot.trainings));
       if (button.dataset.action === "edit-body") openDialog("body", find(snapshot.bodies));
       if (button.dataset.action === "delete-document") await deleteRecord("document", id);
       if (button.dataset.action === "delete-meeting") await deleteRecord("meeting", id);
       if (button.dataset.action === "delete-audience") await deleteRecord("audience", id);
+      if (button.dataset.action === "delete-training") await deleteTraining(id);
       if (button.dataset.action === "toggle-document") {
         const record = find(snapshot.documents);
         const verb = record.is_published ? "despublicar" : "publicar";
@@ -432,6 +554,18 @@ function bindEvents() {
           const { error } = await supabase.rpc("publications_admin_set_document_publication", { p_id: id, p_publish: !record.is_published });
           if (error) throw error;
           await loadSnapshot("Atualizando publicação...");
+        }
+      }
+      if (button.dataset.action === "toggle-training") {
+        const record = find(snapshot.trainings);
+        const verb = record.is_published ? "despublicar" : "publicar";
+        if (window.confirm(`Deseja ${verb} esta capacitação?`)) {
+          const { error } = await supabase.rpc(
+            "education_admin_set_training_publication",
+            { p_id: id, p_publish: !record.is_published }
+          );
+          if (error) throw error;
+          await loadSnapshot("Atualizando capacitações...");
         }
       }
     } catch (error) {
@@ -510,6 +644,19 @@ function dialogMarkup() {
         <div class="form-field form-field-wide"><label>Link do YouTube</label><input name="youtube_url" type="url" pattern="https://(www\.)?(youtube\.com|youtu\.be)/.*" required></div><label class="checkbox-field form-field-wide"><input name="is_published" type="checkbox"> Publicar no portal</label>
       </div><div class="dialog-actions"><button type="button" class="button button-secondary" data-close-dialog>Cancelar</button><button type="submit" class="button button-primary button-auto">Salvar</button></div>
     </form></dialog>
+    <dialog id="training-dialog" class="document-dialog"><form method="dialog" class="document-form" data-kind="training">
+      <div class="dialog-heading"><div><p class="eyebrow">Educação Previdenciária</p><h2>Cadastrar capacitação</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">×</button></div>
+      <input type="hidden" name="record_id"><div class="document-form-grid">
+        <div class="form-field"><label>Ano</label><input name="reference_year" type="number" min="2020" max="2200" required></div><div class="form-field"><label>Ordem de exibição</label><input name="display_order" type="number" min="0" max="10000" required></div>
+        <div class="form-field form-field-wide"><label>Curso ou ação</label><input name="course_title" minlength="3" maxlength="300" required></div>
+        <div class="form-field form-field-wide"><label>Local / modalidade</label><input name="location" minlength="2" maxlength="200" required></div>
+        <div class="form-field"><label>Início previsto</label><input name="planned_start" maxlength="80" required></div><div class="form-field"><label>Fim previsto</label><input name="planned_end" maxlength="80" required></div>
+        <div class="form-field"><label>Carga horária</label><input name="workload" maxlength="80" required></div><div class="form-field"><label>Situação</label><select name="status" required><option value="A AGENDAR">A AGENDAR</option><option value="EM ANDAMENTO">EM ANDAMENTO</option><option value="REALIZADO">REALIZADO</option><option value="NÃO REALIZADO">NÃO REALIZADO</option><option value="CANCELADO">CANCELADO</option></select></div>
+        <div class="form-field form-field-wide"><label>Participantes</label><textarea name="participants" minlength="2" maxlength="500" required></textarea></div>
+        <div class="form-field form-field-wide"><label>Objetivo</label><textarea name="objective" minlength="3" maxlength="1500" required></textarea></div>
+        <div class="form-field form-field-wide"><label>Custo estimado (opcional)</label><input name="estimated_cost" maxlength="100" placeholder="Ex.: R$ 4.560,00"></div>
+      </div><div class="dialog-actions"><button type="button" class="button button-secondary" data-close-dialog>Cancelar</button><button type="submit" class="button button-primary button-auto">Salvar</button></div>
+    </form></dialog>
     <dialog id="body-dialog" class="document-dialog"><form method="dialog" class="document-form" data-kind="body">
       <div class="dialog-heading"><div><p class="eyebrow">Colegiado</p><h2>Configurar colegiado</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">×</button></div>
       <input type="hidden" name="record_id"><input type="hidden" name="body_code"><div class="document-form-grid">
@@ -526,15 +673,16 @@ export async function initializePublicationsModule() {
   document.querySelectorAll(".sidebar-link").forEach((link) => link.classList.remove("active"));
   document.querySelector('#publications-link')?.classList.add("active");
   moduleView.innerHTML = `
-    <div class="module-heading"><div><p class="eyebrow">Módulo administrativo</p><h1>Publicações do portal</h1><p class="page-description">Gerencie documentos, composição dos colegiados, agenda de reuniões e audiências públicas em um único local.</p></div><a class="button button-secondary button-auto admin-portal-link" href="../transparencia.html" target="_blank" rel="noopener">Ver Transparência</a></div>
+    <div class="module-heading"><div><p class="eyebrow">Módulo administrativo</p><h1>Publicações do portal</h1><p class="page-description">Gerencie documentos, composição dos colegiados, agenda, audiências e capacitações em um único local.</p></div><a class="button button-secondary button-auto admin-portal-link" href="../transparencia.html" target="_blank" rel="noopener">Ver Transparência</a></div>
     <div id="publication-tabs" class="publication-tabs" role="tablist">
-      <button type="button" class="active" data-publication-tab="documents" role="tab" aria-selected="true">Documentos</button><button type="button" data-publication-tab="members" role="tab" aria-selected="false">Composição</button><button type="button" data-publication-tab="meetings" role="tab" aria-selected="false">Agenda</button><button type="button" data-publication-tab="audiences" role="tab" aria-selected="false">Audiências</button>
+      <button type="button" class="active" data-publication-tab="documents" role="tab" aria-selected="true">Documentos</button><button type="button" data-publication-tab="members" role="tab" aria-selected="false">Composição</button><button type="button" data-publication-tab="meetings" role="tab" aria-selected="false">Agenda</button><button type="button" data-publication-tab="audiences" role="tab" aria-selected="false">Audiências</button><button type="button" data-publication-tab="trainings" role="tab" aria-selected="false">Capacitações</button>
     </div>
     <p id="publications-status" class="form-status" role="status" aria-live="polite">Carregando módulo...</p>
     <section data-publication-panel="documents"><div class="publication-panel-heading"><div class="form-field"><label for="publication-category-filter">Filtrar categoria</label><select id="publication-category-filter"></select></div><button class="button button-primary button-auto" type="button" data-create-kind="document">Cadastrar documento</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Categoria</th><th>Título</th><th>Ano</th><th>Versão</th><th>Portal</th><th>Ações</th></tr></thead><tbody id="publication-document-records"></tbody></table></div><p id="publication-document-empty" class="empty-state" hidden>Nenhum documento encontrado.</p></section></section>
     <section data-publication-panel="members" hidden><div id="publication-body-cards" class="publication-body-grid"></div><div class="publication-panel-heading"><h2>Composição e histórico</h2><button class="button button-primary button-auto" type="button" data-create-kind="member">Cadastrar membro</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Colegiado</th><th>Nome</th><th>Função</th><th>Situação</th><th>Ações</th></tr></thead><tbody id="publication-member-records"></tbody></table></div><p id="publication-member-empty" class="empty-state" hidden>Nenhum membro encontrado.</p></section></section>
     <section data-publication-panel="meetings" hidden><div class="publication-panel-heading"><h2>Agenda de reuniões por ano</h2><button class="button button-primary button-auto" type="button" data-create-kind="meeting">Cadastrar reunião</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Colegiado</th><th>Data</th><th>Tipo</th><th>Pauta</th><th>Portal</th><th>Ações</th></tr></thead><tbody id="publication-meeting-records"></tbody></table></div><p id="publication-meeting-empty" class="empty-state" hidden>Nenhuma reunião encontrada.</p></section></section>
     <section data-publication-panel="audiences" hidden><div class="publication-panel-heading"><h2>Audiências públicas</h2><button class="button button-primary button-auto" type="button" data-create-kind="audience">Cadastrar audiência</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Ano</th><th>Título</th><th>Data</th><th>Portal</th><th>Ações</th></tr></thead><tbody id="publication-audience-records"></tbody></table></div><p id="publication-audience-empty" class="empty-state" hidden>Nenhuma audiência encontrada.</p></section></section>
+    <section data-publication-panel="trainings" hidden><div class="publication-panel-heading"><div class="form-field"><label for="publication-training-year-filter">Filtrar ano</label><select id="publication-training-year-filter"><option value="">Todos os anos</option></select></div><button class="button button-primary button-auto" type="button" data-create-kind="training">Cadastrar capacitação</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Ano</th><th>Curso ou ação</th><th>Período</th><th>Situação</th><th>Portal</th><th>Ações</th></tr></thead><tbody id="publication-training-records"></tbody></table></div><p id="publication-training-empty" class="empty-state" hidden>Nenhuma capacitação encontrada.</p></section></section>
     ${dialogMarkup()}`;
   fillSelect(document.querySelector("#publication-category-filter"), Object.entries(CATEGORIES), "Todas as categorias");
   bindEvents();

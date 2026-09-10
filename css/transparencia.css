@@ -194,6 +194,25 @@ main { padding: 34px 0 56px; }
 
 .publication-group + .publication-group { margin-top: 18px; }
 .publication-group > h3 { margin: 0 0 10px; color: #263b4c; font-size: 1rem; }
+.training-section { margin-top: 24px; }
+.training-heading { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 12px; }
+.training-heading h3 { margin: 0; color: var(--brand-900); }
+.training-heading p { margin: 5px 0 0; color: var(--muted); }
+.training-list { display: grid; gap: 10px; }
+.training-card { padding: 0; overflow: hidden; }
+.training-card > summary { display: flex; align-items: center; gap: 12px; padding: 16px 18px; cursor: pointer; list-style: none; }
+.training-card > summary::-webkit-details-marker { display: none; }
+.training-card > summary::after { content: "+"; margin-left: auto; color: var(--brand-800); font-size: 1.35rem; font-weight: 800; }
+.training-card[open] > summary::after { content: "−"; }
+.training-title { min-width: 0; }
+.training-title h4 { margin: 0; color: var(--brand-900); font-size: 1rem; }
+.training-title .card-meta { margin-bottom: 0; }
+.training-content { padding: 0 18px 18px; border-top: 1px solid var(--line); }
+.training-details { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px 18px; padding-top: 15px; }
+.training-detail { min-width: 0; }
+.training-detail strong, .training-detail span { display: block; }
+.training-detail strong { margin-bottom: 3px; color: var(--brand-900); font-size: .82rem; }
+.training-detail span { color: var(--muted); overflow-wrap: anywhere; }
 .empty {
   padding: 16px;
   color: var(--muted);
@@ -284,6 +303,8 @@ main { padding: 34px 0 56px; }
   .grid-2, .grid-3 { grid-template-columns: 1fr; }
   .hero { padding-top: 36px; }
   .section-heading { align-items: start; flex-direction: column; }
+  .training-heading { align-items: start; flex-direction: column; }
+  .training-details { grid-template-columns: 1fr; }
   .footer-wrap { align-items: flex-start; flex-direction: column; }
   .document-frame { height: 68vh; }
 }
