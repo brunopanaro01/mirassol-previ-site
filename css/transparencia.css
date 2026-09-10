@@ -194,6 +194,9 @@ main { padding: 34px 0 56px; }
 
 .publication-group + .publication-group { margin-top: 18px; }
 .publication-group > h3 { margin: 0 0 10px; color: #263b4c; font-size: 1rem; }
+.education-access-card { margin-top: 18px; }
+.training-hero { padding-block: 42px; }
+.training-page { min-height: 55vh; }
 .training-section { margin-top: 24px; }
 .training-heading { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 12px; }
 .training-heading h3 { margin: 0; color: var(--brand-900); }
@@ -205,7 +208,8 @@ main { padding: 34px 0 56px; }
 .training-card > summary::after { content: "+"; margin-left: auto; color: var(--brand-800); font-size: 1.35rem; font-weight: 800; }
 .training-card[open] > summary::after { content: "−"; }
 .training-title { min-width: 0; }
-.training-title h4 { margin: 0; color: var(--brand-900); font-size: 1rem; }
+.training-title h2, .training-title h4 { margin: 0; color: var(--brand-900); font-size: 1rem; }
+.selected-year { margin: 20px 0 12px; color: var(--brand-900); font-size: 1.18rem; }
 .training-title .card-meta { margin-bottom: 0; }
 .training-content { padding: 0 18px 18px; border-top: 1px solid var(--line); }
 .training-details { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px 18px; padding-top: 15px; }

@@ -17,6 +17,14 @@ const portalScript = await readFile(
   new URL("../../js/transparencia.js", import.meta.url),
   "utf8"
 );
+const trainingPage = await readFile(
+  new URL("../../capacitacoes.html", import.meta.url),
+  "utf8"
+);
+const trainingScript = await readFile(
+  new URL("../../js/capacitacoes.js", import.meta.url),
+  "utf8"
+);
 const adminModule = await readFile(
   new URL("../../admin/modules/publicacoes.js", import.meta.url),
   "utf8"
@@ -46,7 +54,7 @@ test("todos os campos públicos das capacitações são preservados", () => {
     "participants", "objective", "estimated_cost", "workload", "status"
   ]) {
     assert.match(migration, new RegExp(`'${field}'`));
-    assert.match(portalScript, new RegExp(field));
+    assert.match(trainingScript, new RegExp(field));
   }
 });
 
@@ -72,23 +80,24 @@ test("RPC pública não expõe autoria nem abre a tabela ao visitante", () => {
   assert.match(migration, /FORCE ROW LEVEL SECURITY/);
 });
 
-test("portal usa Supabase como fonte principal e JSON como contingência", () => {
-  const databaseCall = portalScript.indexOf(
+test("página de capacitações usa Supabase primeiro e JSON como contingência", () => {
+  const databaseCall = trainingScript.indexOf(
     'rpc("education_public_training_snapshot")'
   );
-  const fallbackCall = portalScript.indexOf(
-    "fetch(EDUCATION_FALLBACK_URL",
+  const fallbackCall = trainingScript.indexOf(
+    "fetch(FALLBACK_URL",
     databaseCall
   );
   assert.ok(databaseCall >= 0, "consulta ao banco não encontrada");
   assert.ok(fallbackCall > databaseCall, "JSON deve ser usado só após falha do banco");
-  assert.match(portal, /id="training-list"/);
-  assert.match(portal, /href="#educacao">Educação</);
+  assert.match(trainingPage, /id="training-list"/);
+  assert.match(portal, /href="capacitacoes\.html">Consultar capacitações</);
+  assert.doesNotMatch(portal, /id="training-list"/);
 });
 
 test("portal mantém o acesso aos documentos oficiais de educação", () => {
   assert.match(
-    portal,
+    trainingPage,
     /https:\/\/www\.consultatransparencia\.com\.br\/mirassoldoestenovo\/Transparencia\/Documentos\?tipo=158&amp;Pag2=CompostoProGestao/
   );
   assert.match(portal, />Documentos oficiais ↗<\/a>/);
@@ -114,5 +123,6 @@ test("SIGPREVI oferece cadastro, edição, publicação e exclusão", () => {
 test("identificadores de cache carregam a versão com capacitações", () => {
   assert.match(dashboard, /publicacoes\.js\?v=20260910-capacitacoes-1/);
   assert.match(adminShell, /dashboard\.js\?v=20260910-capacitacoes-1/);
-  assert.match(portal, /transparencia\.js\?v=20260910-capacitacoes-1/);
+  assert.match(portal, /transparencia\.js\?v=20260910-capacitacoes-2/);
+  assert.match(trainingPage, /capacitacoes\.js\?v=20260910-capacitacoes-2/);
 });
