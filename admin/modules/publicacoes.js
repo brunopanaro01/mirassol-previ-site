@@ -94,7 +94,9 @@ function renderDocuments() {
   const body = document.querySelector("#publication-document-records");
   const empty = document.querySelector("#publication-document-empty");
   const category = document.querySelector("#publication-category-filter")?.value ?? "";
-  const records = snapshot.documents.filter((item) => !category || item.category === category);
+  const records = snapshot.documents.filter(
+    (item) => item.category !== "certificate" && (!category || item.category === category)
+  );
   body.replaceChildren();
   empty.hidden = records.length > 0;
   records.forEach((record) => {
@@ -114,6 +116,49 @@ function renderDocuments() {
       actionButton(record.is_published ? "Despublicar" : "Publicar", "toggle-document", record.id)
     );
     if (!record.is_published) actions.append(actionButton("Excluir", "delete-document", record.id, true));
+    row.append(actions);
+    body.append(row);
+  });
+}
+
+function certificateSituation(record) {
+  if (!record.is_published) return "Rascunho";
+  if (!record.valid_until) return "Validade não informada";
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const expiry = new Date(`${record.valid_until}T12:00:00`);
+  return expiry < today ? "Vencida" : "Válida";
+}
+
+function renderCertificates() {
+  const body = document.querySelector("#publication-certificate-records");
+  const empty = document.querySelector("#publication-certificate-empty");
+  const records = snapshot.documents.filter((item) => item.category === "certificate");
+  body.replaceChildren();
+  empty.hidden = records.length > 0;
+  records.forEach((record) => {
+    const row = document.createElement("tr");
+    row.append(
+      createCell("Título", record.title),
+      createCell("Emissão", formatDate(record.issued_at)),
+      createCell("Validade", formatDate(record.valid_until)),
+      createCell("Situação", certificateSituation(record)),
+      createCell("Portal", record.is_published ? "Publicado" : "Rascunho")
+    );
+    const actions = document.createElement("td");
+    actions.dataset.label = "Ações";
+    actions.className = "table-actions";
+    actions.append(
+      actionButton("Editar", "edit-certificate", record.id),
+      actionButton(
+        record.is_published ? "Despublicar" : "Publicar",
+        "toggle-document",
+        record.id
+      )
+    );
+    if (!record.is_published) {
+      actions.append(actionButton("Excluir", "delete-document", record.id, true));
+    }
     row.append(actions);
     body.append(row);
   });
@@ -254,6 +299,7 @@ function updateTrainingYearFilter() {
 
 function renderAll() {
   renderDocuments();
+  renderCertificates();
   renderBodies();
   renderMembers();
   renderMeetings();
@@ -273,7 +319,7 @@ function switchTab(tabName) {
   });
 }
 
-function openDialog(kind, record = null) {
+function openDialog(kind, record = null, options = {}) {
   const dialog = document.querySelector(`#${kind}-dialog`);
   const form = dialog.querySelector("form");
   form.reset();
@@ -281,7 +327,13 @@ function openDialog(kind, record = null) {
   dialog.querySelector("h2").textContent = record ? "Editar registro" : "Cadastrar registro";
 
   if (kind === "document") {
-    form.elements.category.value = record?.category ?? "";
+    const category = record?.category ?? options.category ?? "";
+    form.elements.category.disabled = false;
+    form.elements.category.value = category;
+    form.elements.category.disabled = category === "certificate";
+    dialog.querySelector("h2").textContent = category === "certificate"
+      ? (record ? "Editar certidão" : "Cadastrar certidão")
+      : (record ? "Editar documento" : "Cadastrar documento");
     form.elements.title.value = record?.title ?? "";
     form.elements.description.value = record?.description ?? "";
     form.elements.reference_year.value = record?.reference_year ?? "";
@@ -351,6 +403,7 @@ function nextTrainingOrder(year) {
 }
 
 function closeDialog(form) {
+  if (form.dataset.kind === "document") form.elements.category.disabled = false;
   form.closest("dialog").close();
 }
 
@@ -508,7 +561,11 @@ function bindEvents() {
   document.querySelector("#publication-category-filter").addEventListener("change", renderDocuments);
   document.querySelector("#publication-training-year-filter").addEventListener("change", renderTrainings);
   document.querySelectorAll("[data-create-kind]").forEach((button) => {
-    button.addEventListener("click", () => openDialog(button.dataset.createKind));
+    button.addEventListener("click", () => openDialog(
+      button.dataset.createKind,
+      null,
+      { category: button.dataset.documentCategory }
+    ));
   });
   document.querySelectorAll(".document-dialog").forEach((dialog) => {
     dialog.addEventListener("click", (event) => {
@@ -538,6 +595,11 @@ function bindEvents() {
     const find = (items) => items.find((item) => item.id === id || item.code === id);
     try {
       if (button.dataset.action === "edit-document") openDialog("document", find(snapshot.documents));
+      if (button.dataset.action === "edit-certificate") openDialog(
+        "document",
+        find(snapshot.documents),
+        { category: "certificate" }
+      );
       if (button.dataset.action === "edit-member") openDialog("member", find(snapshot.members));
       if (button.dataset.action === "edit-meeting") openDialog("meeting", find(snapshot.meetings));
       if (button.dataset.action === "edit-audience") openDialog("audience", find(snapshot.audiences));
@@ -673,18 +735,23 @@ export async function initializePublicationsModule() {
   document.querySelectorAll(".sidebar-link").forEach((link) => link.classList.remove("active"));
   document.querySelector('#publications-link')?.classList.add("active");
   moduleView.innerHTML = `
-    <div class="module-heading"><div><p class="eyebrow">Módulo administrativo</p><h1>Publicações do portal</h1><p class="page-description">Gerencie documentos, composição dos colegiados, agenda, audiências e capacitações em um único local.</p></div><a class="button button-secondary button-auto admin-portal-link" href="../transparencia.html" target="_blank" rel="noopener">Ver Transparência</a></div>
+    <div class="module-heading"><div><p class="eyebrow">Módulo administrativo</p><h1>Publicações do portal</h1><p class="page-description">Gerencie documentos, certidões, composição dos colegiados, agenda, audiências e capacitações em um único local.</p></div><a class="button button-secondary button-auto admin-portal-link" href="../transparencia.html" target="_blank" rel="noopener">Ver Transparência</a></div>
     <div id="publication-tabs" class="publication-tabs" role="tablist">
-      <button type="button" class="active" data-publication-tab="documents" role="tab" aria-selected="true">Documentos</button><button type="button" data-publication-tab="members" role="tab" aria-selected="false">Composição</button><button type="button" data-publication-tab="meetings" role="tab" aria-selected="false">Agenda</button><button type="button" data-publication-tab="audiences" role="tab" aria-selected="false">Audiências</button><button type="button" data-publication-tab="trainings" role="tab" aria-selected="false">Capacitações</button>
+      <button type="button" class="active" data-publication-tab="documents" role="tab" aria-selected="true">Documentos</button><button type="button" data-publication-tab="certificates" role="tab" aria-selected="false">Certidões</button><button type="button" data-publication-tab="members" role="tab" aria-selected="false">Composição</button><button type="button" data-publication-tab="meetings" role="tab" aria-selected="false">Agenda</button><button type="button" data-publication-tab="audiences" role="tab" aria-selected="false">Audiências</button><button type="button" data-publication-tab="trainings" role="tab" aria-selected="false">Capacitações</button>
     </div>
     <p id="publications-status" class="form-status" role="status" aria-live="polite">Carregando módulo...</p>
     <section data-publication-panel="documents"><div class="publication-panel-heading"><div class="form-field"><label for="publication-category-filter">Filtrar categoria</label><select id="publication-category-filter"></select></div><button class="button button-primary button-auto" type="button" data-create-kind="document">Cadastrar documento</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Categoria</th><th>Título</th><th>Ano</th><th>Versão</th><th>Portal</th><th>Ações</th></tr></thead><tbody id="publication-document-records"></tbody></table></div><p id="publication-document-empty" class="empty-state" hidden>Nenhum documento encontrado.</p></section></section>
+    <section data-publication-panel="certificates" hidden><div class="publication-panel-heading"><div><h2>Certidões e certificados de regularidade</h2><p>Cadastre o PDF ou link oficial e informe emissão e validade para atualização automática da situação no portal.</p></div><button class="button button-primary button-auto" type="button" data-create-kind="document" data-document-category="certificate">Cadastrar certidão</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Título</th><th>Emissão</th><th>Validade</th><th>Situação</th><th>Portal</th><th>Ações</th></tr></thead><tbody id="publication-certificate-records"></tbody></table></div><p id="publication-certificate-empty" class="empty-state" hidden>Nenhuma certidão encontrada.</p></section></section>
     <section data-publication-panel="members" hidden><div id="publication-body-cards" class="publication-body-grid"></div><div class="publication-panel-heading"><h2>Composição e histórico</h2><button class="button button-primary button-auto" type="button" data-create-kind="member">Cadastrar membro</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Colegiado</th><th>Nome</th><th>Função</th><th>Situação</th><th>Ações</th></tr></thead><tbody id="publication-member-records"></tbody></table></div><p id="publication-member-empty" class="empty-state" hidden>Nenhum membro encontrado.</p></section></section>
     <section data-publication-panel="meetings" hidden><div class="publication-panel-heading"><h2>Agenda de reuniões por ano</h2><button class="button button-primary button-auto" type="button" data-create-kind="meeting">Cadastrar reunião</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Colegiado</th><th>Data</th><th>Tipo</th><th>Pauta</th><th>Portal</th><th>Ações</th></tr></thead><tbody id="publication-meeting-records"></tbody></table></div><p id="publication-meeting-empty" class="empty-state" hidden>Nenhuma reunião encontrada.</p></section></section>
     <section data-publication-panel="audiences" hidden><div class="publication-panel-heading"><h2>Audiências públicas</h2><button class="button button-primary button-auto" type="button" data-create-kind="audience">Cadastrar audiência</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Ano</th><th>Título</th><th>Data</th><th>Portal</th><th>Ações</th></tr></thead><tbody id="publication-audience-records"></tbody></table></div><p id="publication-audience-empty" class="empty-state" hidden>Nenhuma audiência encontrada.</p></section></section>
     <section data-publication-panel="trainings" hidden><div class="publication-panel-heading"><div class="form-field"><label for="publication-training-year-filter">Filtrar ano</label><select id="publication-training-year-filter"><option value="">Todos os anos</option></select></div><button class="button button-primary button-auto" type="button" data-create-kind="training">Cadastrar capacitação</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Ano</th><th>Curso ou ação</th><th>Período</th><th>Situação</th><th>Portal</th><th>Ações</th></tr></thead><tbody id="publication-training-records"></tbody></table></div><p id="publication-training-empty" class="empty-state" hidden>Nenhuma capacitação encontrada.</p></section></section>
     ${dialogMarkup()}`;
-  fillSelect(document.querySelector("#publication-category-filter"), Object.entries(CATEGORIES), "Todas as categorias");
+  fillSelect(
+    document.querySelector("#publication-category-filter"),
+    Object.entries(CATEGORIES).filter(([value]) => value !== "certificate"),
+    "Todas as categorias"
+  );
   bindEvents();
   await loadSnapshot();
 }

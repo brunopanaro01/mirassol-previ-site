@@ -173,7 +173,7 @@ async function initializeDashboard() {
       }
 
       const { initializePublicationsModule } = await import(
-        "./publicacoes.js?v=20260910-capacitacoes-1"
+        "./publicacoes.js?v=20260921-certidoes-1"
       );
 
       await initializePublicationsModule();

@@ -121,8 +121,8 @@ test("SIGPREVI oferece cadastro, edição, publicação e exclusão", () => {
 });
 
 test("identificadores de cache carregam a versão com capacitações", () => {
-  assert.match(dashboard, /publicacoes\.js\?v=20260910-capacitacoes-1/);
-  assert.match(adminShell, /dashboard\.js\?v=20260910-capacitacoes-1/);
+  assert.match(dashboard, /publicacoes\.js\?v=20260921-certidoes-1/);
+  assert.match(adminShell, /dashboard\.js\?v=20260921-certidoes-1/);
   assert.match(portal, /transparencia\.js\?v=20260910-capacitacoes-2/);
   assert.match(trainingPage, /capacitacoes\.js\?v=20260910-capacitacoes-2/);
 });
