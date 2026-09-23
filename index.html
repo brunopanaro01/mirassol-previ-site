@@ -418,7 +418,7 @@
       <div class="grafico-card">
         <div class="grafico-head">
           <h3>Patrimônio por ano</h3>
-          <p>Este gráfico é gerado automaticamente a partir do arquivo <strong>patrimonio_anual.json</strong>.</p>
+          <p>Dados anuais de patrimônio líquido publicados pelo Mirassol-Previ.</p>
         </div>
 
         <div id="patrimonio-chart" class="bar-chart" aria-label="Gráfico de evolução patrimonial anual"></div>
@@ -549,19 +549,55 @@
     }, {threshold:.12});
     document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
 
-    // ===================== DADOS (dados.json, sem CORS) =======================
+    // =============== INDICADORES DO SIGPREVI + CONTINGÊNCIA JSON =============
     async function fetchDados(){
       const status = document.getElementById('sheet-status');
+      const patrimonioStatus = document.getElementById('patrimonio-status');
       try{
-        const res = await fetch('./dados.json', { cache:'no-store' });
-        const dados = await res.json();
-        renderKPIs(dados);
-        renderTable(dados);
-        if(status) status.textContent = 'Dados carregados de dados.json (local).';
+        const { supabase } = await import('./admin/components/supabase-client.js');
+        const { data, error } = await supabase.rpc('portal_public_indicators_snapshot');
+        if(error) throw error;
+        if(!Array.isArray(data?.years) || !data.years.length) throw new Error('Resposta inválida dos indicadores.');
+        const normalized = normalizeDatabaseIndicators(data.years);
+        renderKPIs(normalized.people);
+        renderTable(normalized.people);
+        renderPatrimonio(normalized.assets);
+        if(status) status.textContent = 'Indicadores atualizados pelo SIGPREVI.';
+        if(patrimonioStatus) patrimonioStatus.textContent = 'Patrimônio atualizado pelo SIGPREVI.';
       }catch(err){
-        console.warn('Erro ao carregar dados.json', err);
-        if(status) status.textContent = 'Não foi possível carregar dados.json.';
+        console.info('Indicadores carregados das fontes de contingência.', err);
+        try{
+          const [peopleResponse, assetsResponse] = await Promise.all([
+            fetch('./dados.json', { cache:'no-store' }),
+            fetch('./patrimonio_anual.json', { cache:'no-store' })
+          ]);
+          if(!peopleResponse.ok || !assetsResponse.ok) throw new Error('Falha nas fontes de contingência.');
+          const people = await peopleResponse.json();
+          const assets = await assetsResponse.json();
+          renderKPIs(people);
+          renderTable(people);
+          renderPatrimonio(Array.isArray(assets?.dados) ? assets.dados : []);
+          if(status) status.textContent = 'Indicadores exibidos pela contingência.';
+          if(patrimonioStatus) patrimonioStatus.textContent = 'Patrimônio exibido pela contingência.';
+        }catch(fallbackError){
+          console.warn('Não foi possível carregar os indicadores.', fallbackError);
+          if(status) status.textContent = 'Não foi possível carregar os indicadores.';
+          if(patrimonioStatus) patrimonioStatus.textContent = 'Não foi possível carregar o patrimônio.';
+        }
       }
+    }
+
+    function normalizeDatabaseIndicators(rows){
+      const people = { aposentados:{}, pensionistas:{}, segurados:{} };
+      const assets = [];
+      rows.forEach(row => {
+        const year = String(row.reference_year);
+        if(row.retirees != null) people.aposentados[year] = Number(row.retirees);
+        if(row.pensioners != null) people.pensionistas[year] = Number(row.pensioners);
+        if(row.insured != null) people.segurados[year] = Number(row.insured);
+        if(row.net_assets != null) assets.push({ ano:Number(year), valor:Number(row.net_assets) });
+      });
+      return { people, assets };
     }
 
     // Último valor numérico (ano mais recente -> mais antigo)
@@ -646,21 +682,14 @@
       }
     }
 
-    async function carregarPatrimonio(){
-      const status = document.getElementById('patrimonio-status');
+    function renderPatrimonio(dados){
       const chart = document.getElementById('patrimonio-chart');
       if(!chart) return;
 
-      try{
-        const res = await fetch('./patrimonio_anual.json', { cache:'no-store' });
-        if(!res.ok) throw new Error('Não foi possível carregar patrimonio_anual.json');
-        const json = await res.json();
-
-        const dados = Array.isArray(json?.dados) ? json.dados : [];
-        if(!dados.length){
-          if(status) status.textContent = 'Sem dados para exibir.';
-          return;
-        }
+      if(!Array.isArray(dados) || !dados.length){
+        chart.innerHTML = '';
+        return;
+      }
 
         dados.sort((a,b)=>(a.ano||0)-(b.ano||0));
         const max = Math.max(...dados.map(d => Number(d.valor || 0)));
@@ -701,19 +730,12 @@
           chart.appendChild(item);
         });
 
-        if(status) status.textContent = 'Gráfico carregado de patrimonio_anual.json.';
-      }catch(err){
-        console.warn('Erro ao carregar patrimonio_anual.json', err);
-        if(status) status.textContent = 'Não foi possível carregar patrimonio_anual.json.';
-        chart.innerHTML = '';
-      }
     }
 
 
 
     // Inicia
     fetchDados();
-    carregarPatrimonio();
   </script>
 <script src="js/external-links.js?v=20260912"></script>
 </body>
