@@ -23,7 +23,7 @@ const BODY_LABELS = Object.freeze({
 });
 
 let snapshot = {
-  documents: [], bodies: [], members: [], meetings: [], audiences: [], trainings: []
+  documents: [], bodies: [], members: [], meetings: [], audiences: [], trainings: [], indicators: []
 };
 
 function setStatus(message, type = "") {
@@ -79,15 +79,48 @@ async function loadSnapshot(message = "Carregando publicações...") {
     "education_admin_snapshot"
   );
   if (educationError) throw educationError;
+  const { data: indicatorData, error: indicatorError } = await supabase.rpc(
+    "portal_indicators_admin_snapshot"
+  );
+  if (indicatorError) throw indicatorError;
   snapshot = {
     ...snapshot,
     ...(data ?? {}),
     trainings: Array.isArray(educationData?.activities)
       ? educationData.activities
-      : []
+      : [],
+    indicators: Array.isArray(indicatorData?.years) ? indicatorData.years : []
   };
   renderAll();
   setStatus("Conteúdo atualizado.");
+}
+
+function formatCurrency(value) {
+  if (value === null || value === undefined || value === "") return "—";
+  return Number(value).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+function renderIndicators() {
+  const body = document.querySelector("#publication-indicator-records");
+  const empty = document.querySelector("#publication-indicator-empty");
+  body.replaceChildren();
+  empty.hidden = snapshot.indicators.length > 0;
+  snapshot.indicators.forEach((record) => {
+    const row = document.createElement("tr");
+    row.append(
+      createCell("Ano", record.reference_year),
+      createCell("Segurados", record.insured),
+      createCell("Aposentados", record.retirees),
+      createCell("Pensionistas", record.pensioners),
+      createCell("Patrimônio líquido", formatCurrency(record.net_assets))
+    );
+    const actions = document.createElement("td");
+    actions.dataset.label = "Ações";
+    actions.className = "table-actions";
+    actions.append(actionButton("Editar", "edit-indicator", String(record.reference_year)));
+    row.append(actions);
+    body.append(row);
+  });
 }
 
 function renderDocuments() {
@@ -300,6 +333,7 @@ function updateTrainingYearFilter() {
 function renderAll() {
   renderDocuments();
   renderCertificates();
+  renderIndicators();
   renderBodies();
   renderMembers();
   renderMeetings();
@@ -385,6 +419,16 @@ function openDialog(kind, record = null, options = {}) {
     form.elements.workload.value = record?.workload ?? "";
     form.elements.status.value = record?.status ?? "A AGENDAR";
     form.elements.display_order.value = record?.display_order ?? nextTrainingOrder(year);
+  } else if (kind === "indicator") {
+    form.elements.reference_year.value = record?.reference_year ?? new Date().getFullYear();
+    form.elements.reference_year.readOnly = Boolean(record);
+    form.elements.insured.value = record?.insured ?? "";
+    form.elements.retirees.value = record?.retirees ?? "";
+    form.elements.pensioners.value = record?.pensioners ?? "";
+    form.elements.net_assets.value = record?.net_assets ?? "";
+    dialog.querySelector("h2").textContent = record
+      ? `Editar indicadores de ${record.reference_year}`
+      : "Cadastrar indicadores anuais";
   } else if (kind === "body") {
     form.elements.body_code.value = record.code;
     form.elements.body_name.value = record.name;
@@ -468,7 +512,19 @@ async function submitSimple(kind, form) {
   const id = form.elements.record_id?.value || null;
   let rpc;
   let payload;
-  if (kind === "training") {
+  if (kind === "indicator") {
+    const { error } = await supabase.rpc("portal_indicators_admin_save", {
+      p_payload: {
+        reference_year: Number(form.elements.reference_year.value),
+        insured: form.elements.insured.value,
+        retirees: form.elements.retirees.value,
+        pensioners: form.elements.pensioners.value,
+        net_assets: form.elements.net_assets.value
+      }
+    });
+    if (error) throw error;
+    return;
+  } else if (kind === "training") {
     const { error } = await supabase.rpc("education_admin_save_training", {
       p_id: id,
       p_payload: {
@@ -604,6 +660,10 @@ function bindEvents() {
       if (button.dataset.action === "edit-meeting") openDialog("meeting", find(snapshot.meetings));
       if (button.dataset.action === "edit-audience") openDialog("audience", find(snapshot.audiences));
       if (button.dataset.action === "edit-training") openDialog("training", find(snapshot.trainings));
+      if (button.dataset.action === "edit-indicator") openDialog(
+        "indicator",
+        snapshot.indicators.find((item) => String(item.reference_year) === id)
+      );
       if (button.dataset.action === "edit-body") openDialog("body", find(snapshot.bodies));
       if (button.dataset.action === "delete-document") await deleteRecord("document", id);
       if (button.dataset.action === "delete-meeting") await deleteRecord("meeting", id);
@@ -719,6 +779,18 @@ function dialogMarkup() {
         <div class="form-field form-field-wide"><label>Custo estimado (opcional)</label><input name="estimated_cost" maxlength="100" placeholder="Ex.: R$ 4.560,00"></div>
       </div><div class="dialog-actions"><button type="button" class="button button-secondary" data-close-dialog>Cancelar</button><button type="submit" class="button button-primary button-auto">Salvar</button></div>
     </form></dialog>
+    <dialog id="indicator-dialog" class="document-dialog"><form method="dialog" class="document-form" data-kind="indicator">
+      <div class="dialog-heading"><div><p class="eyebrow">Página inicial</p><h2>Cadastrar indicadores anuais</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">×</button></div>
+      <input type="hidden" name="record_id">
+      <div class="document-form-grid">
+        <div class="form-field"><label>Ano de referência</label><input name="reference_year" type="number" min="2000" max="2200" required></div>
+        <div class="form-field"><label>Segurados ativos</label><input name="insured" type="number" min="0" step="1"></div>
+        <div class="form-field"><label>Aposentados</label><input name="retirees" type="number" min="0" step="1"></div>
+        <div class="form-field"><label>Pensionistas</label><input name="pensioners" type="number" min="0" step="1"></div>
+        <div class="form-field form-field-wide"><label>Patrimônio líquido (R$)</label><input name="net_assets" type="number" min="0" step="0.01" placeholder="Ex.: 78160227.17"></div>
+        <p class="form-field-wide">Use números sem separador de milhar. Para centavos, utilize ponto ou a formatação aceita pelo navegador.</p>
+      </div><div class="dialog-actions"><button type="button" class="button button-secondary" data-close-dialog>Cancelar</button><button type="submit" class="button button-primary button-auto">Salvar</button></div>
+    </form></dialog>
     <dialog id="body-dialog" class="document-dialog"><form method="dialog" class="document-form" data-kind="body">
       <div class="dialog-heading"><div><p class="eyebrow">Colegiado</p><h2>Configurar colegiado</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">×</button></div>
       <input type="hidden" name="record_id"><input type="hidden" name="body_code"><div class="document-form-grid">
@@ -735,13 +807,14 @@ export async function initializePublicationsModule() {
   document.querySelectorAll(".sidebar-link").forEach((link) => link.classList.remove("active"));
   document.querySelector('#publications-link')?.classList.add("active");
   moduleView.innerHTML = `
-    <div class="module-heading"><div><p class="eyebrow">Módulo administrativo</p><h1>Publicações do portal</h1><p class="page-description">Gerencie documentos, certidões, composição dos colegiados, agenda, audiências e capacitações em um único local.</p></div><a class="button button-secondary button-auto admin-portal-link" href="../transparencia.html" target="_blank" rel="noopener">Ver Transparência</a></div>
+    <div class="module-heading"><div><p class="eyebrow">Módulo administrativo</p><h1>Publicações do portal</h1><p class="page-description">Gerencie indicadores, documentos, certidões, composição dos colegiados, agenda, audiências e capacitações em um único local.</p></div><a class="button button-secondary button-auto admin-portal-link" href="../transparencia.html" target="_blank" rel="noopener">Ver Transparência</a></div>
     <div id="publication-tabs" class="publication-tabs" role="tablist">
-      <button type="button" class="active" data-publication-tab="documents" role="tab" aria-selected="true">Documentos</button><button type="button" data-publication-tab="certificates" role="tab" aria-selected="false">Certidões</button><button type="button" data-publication-tab="members" role="tab" aria-selected="false">Composição</button><button type="button" data-publication-tab="meetings" role="tab" aria-selected="false">Agenda</button><button type="button" data-publication-tab="audiences" role="tab" aria-selected="false">Audiências</button><button type="button" data-publication-tab="trainings" role="tab" aria-selected="false">Capacitações</button>
+      <button type="button" class="active" data-publication-tab="documents" role="tab" aria-selected="true">Documentos</button><button type="button" data-publication-tab="certificates" role="tab" aria-selected="false">Certidões</button><button type="button" data-publication-tab="indicators" role="tab" aria-selected="false">Indicadores</button><button type="button" data-publication-tab="members" role="tab" aria-selected="false">Composição</button><button type="button" data-publication-tab="meetings" role="tab" aria-selected="false">Agenda</button><button type="button" data-publication-tab="audiences" role="tab" aria-selected="false">Audiências</button><button type="button" data-publication-tab="trainings" role="tab" aria-selected="false">Capacitações</button>
     </div>
     <p id="publications-status" class="form-status" role="status" aria-live="polite">Carregando módulo...</p>
     <section data-publication-panel="documents"><div class="publication-panel-heading"><div class="form-field"><label for="publication-category-filter">Filtrar categoria</label><select id="publication-category-filter"></select></div><button class="button button-primary button-auto" type="button" data-create-kind="document">Cadastrar documento</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Categoria</th><th>Título</th><th>Ano</th><th>Versão</th><th>Portal</th><th>Ações</th></tr></thead><tbody id="publication-document-records"></tbody></table></div><p id="publication-document-empty" class="empty-state" hidden>Nenhum documento encontrado.</p></section></section>
     <section data-publication-panel="certificates" hidden><div class="publication-panel-heading"><div><h2>Certidões e certificados de regularidade</h2><p>Cadastre o PDF ou link oficial e informe emissão e validade para atualização automática da situação no portal.</p></div><button class="button button-primary button-auto" type="button" data-create-kind="document" data-document-category="certificate">Cadastrar certidão</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Título</th><th>Emissão</th><th>Validade</th><th>Situação</th><th>Portal</th><th>Ações</th></tr></thead><tbody id="publication-certificate-records"></tbody></table></div><p id="publication-certificate-empty" class="empty-state" hidden>Nenhuma certidão encontrada.</p></section></section>
+    <section data-publication-panel="indicators" hidden><div class="publication-panel-heading"><div><h2>Indicadores da página inicial</h2><p>Atualize anualmente as quantidades e o patrimônio líquido. O ano mais recente alimenta os cartões de destaque; todo o histórico permanece nos gráficos e na tabela.</p></div><button class="button button-primary button-auto" type="button" data-create-kind="indicator">Cadastrar ano</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Ano</th><th>Segurados</th><th>Aposentados</th><th>Pensionistas</th><th>Patrimônio líquido</th><th>Ações</th></tr></thead><tbody id="publication-indicator-records"></tbody></table></div><p id="publication-indicator-empty" class="empty-state" hidden>Nenhum indicador encontrado.</p></section></section>
     <section data-publication-panel="members" hidden><div id="publication-body-cards" class="publication-body-grid"></div><div class="publication-panel-heading"><h2>Composição e histórico</h2><button class="button button-primary button-auto" type="button" data-create-kind="member">Cadastrar membro</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Colegiado</th><th>Nome</th><th>Função</th><th>Situação</th><th>Ações</th></tr></thead><tbody id="publication-member-records"></tbody></table></div><p id="publication-member-empty" class="empty-state" hidden>Nenhum membro encontrado.</p></section></section>
     <section data-publication-panel="meetings" hidden><div class="publication-panel-heading"><h2>Agenda de reuniões por ano</h2><button class="button button-primary button-auto" type="button" data-create-kind="meeting">Cadastrar reunião</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Colegiado</th><th>Data</th><th>Tipo</th><th>Pauta</th><th>Portal</th><th>Ações</th></tr></thead><tbody id="publication-meeting-records"></tbody></table></div><p id="publication-meeting-empty" class="empty-state" hidden>Nenhuma reunião encontrada.</p></section></section>
     <section data-publication-panel="audiences" hidden><div class="publication-panel-heading"><h2>Audiências públicas</h2><button class="button button-primary button-auto" type="button" data-create-kind="audience">Cadastrar audiência</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Ano</th><th>Título</th><th>Data</th><th>Portal</th><th>Ações</th></tr></thead><tbody id="publication-audience-records"></tbody></table></div><p id="publication-audience-empty" class="empty-state" hidden>Nenhuma audiência encontrada.</p></section></section>

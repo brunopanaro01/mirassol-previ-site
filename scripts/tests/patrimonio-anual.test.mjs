@@ -24,7 +24,7 @@ test("patrimônio de 2026 está disponível para o gráfico", async () => {
   const data = JSON.parse(await readFile(path, "utf8"));
   assert.deepEqual(
     data.dados.find(({ ano }) => ano === 2026),
-    { ano: 2026, valor: 76504801.17 }
+    { ano: 2026, valor: 78160227.17 }
   );
 });
 
