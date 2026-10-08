@@ -30,7 +30,9 @@ test("SIGPREVI permite informar e reaproveitar o grupo da cartilha", () => {
   assert.match(adminModule, /name="series_key"/);
   assert.match(adminModule, /Grupo de versões da cartilha/);
   assert.match(adminModule, /series_key: seriesKey/);
-  assert.match(adminModule, /slugify\(title\)/);
+  assert.match(adminModule, /slugify\(form\.elements\.series_key\.value\.trim\(\) \|\| title\)/);
+  assert.doesNotMatch(adminModule, /name="series_key"[^>]*pattern=/);
+  assert.match(adminModule, /form\.elements\.series_key\.value = seriesKey/);
 });
 
 test("portal continua exibindo todas as cartilhas vigentes juntas", () => {

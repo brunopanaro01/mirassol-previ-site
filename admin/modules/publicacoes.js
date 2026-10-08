@@ -485,8 +485,12 @@ async function submitDocument(form) {
   if (!filePath && !externalUrl) throw new Error("Anexe um PDF ou informe um link HTTPS.");
   const title = form.elements.title.value.trim();
   const seriesKey = category === "guidance_booklet"
-    ? (form.elements.series_key.value.trim() || slugify(title))
+    ? slugify(form.elements.series_key.value.trim() || title)
     : "";
+  if (category === "guidance_booklet" && seriesKey.length < 3) {
+    throw new Error("Informe um título com pelo menos 3 caracteres para identificar a cartilha.");
+  }
+  form.elements.series_key.value = seriesKey;
   const payload = {
     public_id: recordPublicId(id, "document", title), category, title,
     series_key: seriesKey,
@@ -746,7 +750,7 @@ function dialogMarkup() {
         <div class="form-field"><label>Categoria</label><select name="category" required><option value="">Selecione</option>${categoryOptions}</select></div>
         <div class="form-field"><label>Ano de referência</label><input name="reference_year" type="number" min="2000" max="2200"></div>
         <div class="form-field form-field-wide"><label>Título</label><input name="title" required minlength="3"></div>
-        <div class="form-field form-field-wide" data-series-field hidden><label>Grupo de versões da cartilha</label><input name="series_key" pattern="[a-z0-9][a-z0-9-]{2,119}" placeholder="Ex.: cartilha-previdenciaria"><small>Use o mesmo grupo ao cadastrar uma nova versão da mesma cartilha. Para uma cartilha diferente, informe outro grupo.</small></div>
+        <div class="form-field form-field-wide" data-series-field hidden><label>Grupo de versões da cartilha</label><input name="series_key" maxlength="120" placeholder="Ex.: cartilha-previdenciaria"><small>Use o mesmo grupo ao cadastrar uma nova versão da mesma cartilha. Para uma cartilha diferente, informe outro grupo. O SIGPREVI ajustará esse identificador automaticamente ao salvar.</small></div>
         <div class="form-field form-field-wide"><label>Descrição</label><textarea name="description"></textarea></div>
         <div class="form-field"><label>Data de publicação</label><input name="publication_date" type="date"></div>
         <div class="form-field"><label>Versão / identificação</label><input name="version_label"></div>
