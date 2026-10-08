@@ -6,7 +6,7 @@ const MAX_FILE_SIZE = 20 * 1024 * 1024;
 const CATEGORIES = Object.freeze({
   progestao_certificate: "Certificado Pró-Gestão",
   governance_report: "Relatório de governança",
-  guidance_booklet: "Cartilha orientativa",
+  guidance_booklet: "Cartilhas orientativas",
   capacity_plan: "Plano de ação de capacitação",
   ethics_code: "Código de Ética",
   posic: "POSIC",
@@ -369,6 +369,7 @@ function openDialog(kind, record = null, options = {}) {
       ? (record ? "Editar certidão" : "Cadastrar certidão")
       : (record ? "Editar documento" : "Cadastrar documento");
     form.elements.title.value = record?.title ?? "";
+    form.elements.series_key.value = record?.series_key ?? "";
     form.elements.description.value = record?.description ?? "";
     form.elements.reference_year.value = record?.reference_year ?? "";
     form.elements.publication_date.value = record?.publication_date ?? "";
@@ -383,6 +384,7 @@ function openDialog(kind, record = null, options = {}) {
     dialog.querySelector(".current-file").textContent = record
       ? `Fonte atual: ${record.file_path || record.external_url}`
       : "Escolha um PDF ou informe um link HTTPS.";
+    updateDocumentSeriesField(form);
   } else if (kind === "member") {
     form.elements.body_code.value = record?.body_code ?? "conselho";
     form.elements.name.value = record?.name ?? "";
@@ -482,8 +484,12 @@ async function submitDocument(form) {
   }
   if (!filePath && !externalUrl) throw new Error("Anexe um PDF ou informe um link HTTPS.");
   const title = form.elements.title.value.trim();
+  const seriesKey = category === "guidance_booklet"
+    ? (form.elements.series_key.value.trim() || slugify(title))
+    : "";
   const payload = {
     public_id: recordPublicId(id, "document", title), category, title,
+    series_key: seriesKey,
     description: form.elements.description.value.trim(),
     reference_year: form.elements.reference_year.value,
     publication_date: form.elements.publication_date.value,
@@ -499,6 +505,16 @@ async function submitDocument(form) {
   if (previousPath && previousPath !== filePath) {
     const { error: storageError } = await supabase.storage.from(BUCKET).remove([previousPath]);
     if (storageError) console.warn("O registro foi salvo, mas o PDF substituído não pôde ser removido.", storageError);
+  }
+}
+
+function updateDocumentSeriesField(form) {
+  const wrapper = form.querySelector("[data-series-field]");
+  if (!wrapper) return;
+  const isBooklet = form.elements.category.value === "guidance_booklet";
+  wrapper.hidden = !isBooklet;
+  if (isBooklet && !form.elements.series_key.value.trim() && form.elements.title.value.trim()) {
+    form.elements.series_key.value = slugify(form.elements.title.value);
   }
 }
 
@@ -629,6 +645,8 @@ function bindEvents() {
     });
   });
   const documentForm = document.querySelector('#document-dialog form');
+  documentForm.elements.category.addEventListener("change", () => updateDocumentSeriesField(documentForm));
+  documentForm.elements.title.addEventListener("blur", () => updateDocumentSeriesField(documentForm));
   documentForm.elements.pdf_file.addEventListener("change", () => {
     if (documentForm.elements.pdf_file.files.length) documentForm.elements.external_url.value = "";
   });
@@ -728,6 +746,7 @@ function dialogMarkup() {
         <div class="form-field"><label>Categoria</label><select name="category" required><option value="">Selecione</option>${categoryOptions}</select></div>
         <div class="form-field"><label>Ano de referência</label><input name="reference_year" type="number" min="2000" max="2200"></div>
         <div class="form-field form-field-wide"><label>Título</label><input name="title" required minlength="3"></div>
+        <div class="form-field form-field-wide" data-series-field hidden><label>Grupo de versões da cartilha</label><input name="series_key" pattern="[a-z0-9][a-z0-9-]{2,119}" placeholder="Ex.: cartilha-previdenciaria"><small>Use o mesmo grupo ao cadastrar uma nova versão da mesma cartilha. Para uma cartilha diferente, informe outro grupo.</small></div>
         <div class="form-field form-field-wide"><label>Descrição</label><textarea name="description"></textarea></div>
         <div class="form-field"><label>Data de publicação</label><input name="publication_date" type="date"></div>
         <div class="form-field"><label>Versão / identificação</label><input name="version_label"></div>

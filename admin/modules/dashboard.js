@@ -173,7 +173,7 @@ async function initializeDashboard() {
       }
 
       const { initializePublicationsModule } = await import(
-        "./publicacoes.js?v=20260923-indicadores-1"
+        "./publicacoes.js?v=20261008-cartilhas-1"
       );
 
       await initializePublicationsModule();
