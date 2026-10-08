@@ -2,6 +2,7 @@ import { supabase } from "../components/supabase-client.js";
 
 const BUCKET = "publication-documents";
 const MAX_FILE_SIZE = 20 * 1024 * 1024;
+const MULTI_CURRENT_CATEGORIES = new Set(["action_plan_monitoring"]);
 
 const CATEGORIES = Object.freeze({
   progestao_certificate: "Certificado Pró-Gestão",
@@ -384,7 +385,7 @@ function openDialog(kind, record = null, options = {}) {
     dialog.querySelector(".current-file").textContent = record
       ? `Fonte atual: ${record.file_path || record.external_url}`
       : "Escolha um PDF ou informe um link HTTPS.";
-    updateDocumentSeriesField(form);
+    updateDocumentCategoryFields(form);
   } else if (kind === "member") {
     form.elements.body_code.value = record?.body_code ?? "conselho";
     form.elements.name.value = record?.name ?? "";
@@ -498,7 +499,8 @@ async function submitDocument(form) {
     reference_year: form.elements.reference_year.value,
     publication_date: form.elements.publication_date.value,
     version_label: form.elements.version_label.value.trim(),
-    status: form.elements.status.value, file_path: filePath,
+    status: MULTI_CURRENT_CATEGORIES.has(category) ? "current" : form.elements.status.value,
+    file_path: filePath,
     external_url: externalUrl, issued_at: form.elements.issued_at.value,
     valid_until: form.elements.valid_until.value,
     display_order: form.elements.display_order.value
@@ -512,14 +514,19 @@ async function submitDocument(form) {
   }
 }
 
-function updateDocumentSeriesField(form) {
+function updateDocumentCategoryFields(form) {
   const wrapper = form.querySelector("[data-series-field]");
   if (!wrapper) return;
-  const isBooklet = form.elements.category.value === "guidance_booklet";
+  const category = form.elements.category.value;
+  const isBooklet = category === "guidance_booklet";
   wrapper.hidden = !isBooklet;
   if (isBooklet && !form.elements.series_key.value.trim() && form.elements.title.value.trim()) {
     form.elements.series_key.value = slugify(form.elements.title.value);
   }
+  const statusWrapper = form.querySelector("[data-status-field]");
+  const keepsAllCurrent = MULTI_CURRENT_CATEGORIES.has(category);
+  statusWrapper.hidden = keepsAllCurrent;
+  if (keepsAllCurrent) form.elements.status.value = "current";
 }
 
 function recordPublicId(id, prefix, label) {
@@ -649,8 +656,8 @@ function bindEvents() {
     });
   });
   const documentForm = document.querySelector('#document-dialog form');
-  documentForm.elements.category.addEventListener("change", () => updateDocumentSeriesField(documentForm));
-  documentForm.elements.title.addEventListener("blur", () => updateDocumentSeriesField(documentForm));
+  documentForm.elements.category.addEventListener("change", () => updateDocumentCategoryFields(documentForm));
+  documentForm.elements.title.addEventListener("blur", () => updateDocumentCategoryFields(documentForm));
   documentForm.elements.pdf_file.addEventListener("change", () => {
     if (documentForm.elements.pdf_file.files.length) documentForm.elements.external_url.value = "";
   });
@@ -754,7 +761,7 @@ function dialogMarkup() {
         <div class="form-field form-field-wide"><label>Descrição</label><textarea name="description"></textarea></div>
         <div class="form-field"><label>Data de publicação</label><input name="publication_date" type="date"></div>
         <div class="form-field"><label>Versão / identificação</label><input name="version_label"></div>
-        <div class="form-field"><label>Situação da versão</label><select name="status"><option value="current">Atual</option><option value="historical">Histórico</option></select></div>
+        <div class="form-field" data-status-field><label>Situação da versão</label><select name="status"><option value="current">Atual</option><option value="historical">Histórico</option></select></div>
         <div class="form-field"><label>Ordem</label><input name="display_order" type="number" value="10"></div>
         <div class="form-field"><label>Emissão</label><input name="issued_at" type="date"></div>
         <div class="form-field"><label>Validade</label><input name="valid_until" type="date"></div>
