@@ -56,4 +56,5 @@ jobs:
           python -m playwright install --with-deps chromium
           python scripts/investments/test-ui.py
       - name: Verificar função de dados oficiais
-        run: npx --yes deno@2.9.6 check supabase/functions/investments-market-data/index.ts
+        run: npx --yes deno@2.9.6 check --node-modules-dir=auto supabase/functions/investments-market-data/index.ts
+
