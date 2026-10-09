@@ -1,2 +1,8 @@
 admin/sigprevi-config.local.js
 supabase/snippets/*.sql
+node_modules/
+investimentos-importacao-*.json
+investimentos-conferencia-*.json
+*.sqlite
+*.db
+test-results/

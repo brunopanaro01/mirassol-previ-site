@@ -5,9 +5,13 @@
   "scripts": {
     "test": "node --test scripts/tests/*.test.mjs",
     "test:cms": "node --test scripts/tests/cms-*.test.mjs",
-    "validate:cms": "node scripts/cms/validate-repository.mjs"
+    "validate:cms": "node scripts/cms/validate-repository.mjs",
+    "test:investments": "node --test scripts/tests/investments-*.test.mjs"
   },
   "engines": {
     "node": ">=22"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8"
   }
 }

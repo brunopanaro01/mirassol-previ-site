@@ -108,6 +108,14 @@ async function configureConsignmentsAccess() {
   return true;
 }
 
+async function configureInvestmentsAccess() {
+  const { error } = await supabase.rpc("investments_snapshot");
+  if (error) return false;
+  document.querySelector("#investments-link")?.removeAttribute("hidden");
+  document.querySelector("#investments-card")?.removeAttribute("hidden");
+  return true;
+}
+
 async function initializeDashboard() {
   try {
     const user = await requireAuthenticatedUser();
@@ -129,13 +137,26 @@ async function initializeDashboard() {
       isAdministrator,
       hasComprevAccess,
       hasPublicationsAccess,
-      hasConsignmentsAccess
+      hasConsignmentsAccess,
+      hasInvestmentsAccess
     ] = await Promise.all([
       configureAdministratorAccess(),
       configureComprevAccess(),
       configurePublicationsAccess(),
-      configureConsignmentsAccess()
+      configureConsignmentsAccess(),
+      configureInvestmentsAccess()
     ]);
+
+    if (moduleName === "investimentos") {
+      if (!hasInvestmentsAccess) {
+        statusElement.textContent = "Você não possui acesso ao módulo Investimentos.";
+        statusElement.classList.add("error");
+        return;
+      }
+      const { initializeInvestmentsModule } = await import("./investments.js?v=20261009-1");
+      await initializeInvestmentsModule();
+      return;
+    }
 
     if (moduleName === "legislacao") {
       const { initializeLegislationModule } = await import(
