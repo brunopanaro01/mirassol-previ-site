@@ -2,6 +2,9 @@ import { supabase } from "../components/supabase-client.js";
 
 import { initializeOwnPasswordChange } from "./own-password.js";
 
+import { appendAdminPasswordControl } from "./admin-user-password.js";
+
+let passwordAdministrator = false;
 let users = [];
 let moduleRoles = [];
 let searchTerm = "";
@@ -203,6 +206,9 @@ function createUserCard(user) {
     controls
   );
 
+  if (passwordAdministrator && user.email?.toLowerCase() !== "brunopanaro@gmail.com" && user.account_status === "active") {
+    appendAdminPasswordControl(card, user);
+  }
   return card;
 }
 
@@ -417,6 +423,8 @@ export async function initializeAccessManagement() {
   setStatus("Carregando usuários e acessos...");
 
   try {
+    const { data: identity } = await supabase.auth.getUser();
+    passwordAdministrator = identity?.user?.email?.toLowerCase() === "brunopanaro@gmail.com" && Boolean(identity.user.email_confirmed_at);
     await Promise.all([
       loadUsers(),
       loadModuleRoles()
