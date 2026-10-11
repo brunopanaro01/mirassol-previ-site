@@ -429,3 +429,9 @@ enabled = true
 # Function checks the caller JWT through the permission-checked database RPC.
 verify_jwt = false
 entrypoint = "./functions/investments-market-data/index.ts"
+
+[functions.admin-user-password]
+enabled = true
+# Validates caller with Auth.getUser, verified owner email and administrator RPC.
+verify_jwt = false
+entrypoint = "./functions/admin-user-password/index.ts"
