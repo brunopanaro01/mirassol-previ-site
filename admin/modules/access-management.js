@@ -1,5 +1,7 @@
 import { supabase } from "../components/supabase-client.js";
 
+import { initializeOwnPasswordChange } from "./own-password.js";
+
 let users = [];
 let moduleRoles = [];
 let searchTerm = "";
@@ -373,6 +375,8 @@ function renderModule() {
         </div>
       </div>
 
+      <section id="own-password-panel" class="access-user-card" aria-label="Minha senha"></section>
+
       <div class="access-toolbar">
         <label for="access-user-search">
           Pesquisar usuário
@@ -409,6 +413,7 @@ function renderModule() {
 
 export async function initializeAccessManagement() {
   renderModule();
+  initializeOwnPasswordChange();
   setStatus("Carregando usuários e acessos...");
 
   try {
