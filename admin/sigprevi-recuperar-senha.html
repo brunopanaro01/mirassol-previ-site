@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Recuperar senha — SIGPREVI</title>
+<link rel="stylesheet" href="sigprevi.css">
+</head>
+<body class="login-page">
+<main class="login-container"><section class="login-card" aria-labelledby="page-title">
+<div class="login-brand"><img src="../brasao.png" alt="Brasão do Município de Mirassol D'Oeste"><div><strong>Mirassol-Previ</strong><span>Sistema de Gestão Previdenciária</span></div></div>
+<h1 id="page-title">Recuperar senha</h1>
+<p class="login-description">Informe o e-mail cadastrado para receber um link de recuperação.</p>
+<form id="recovery-form">
+<div class="form-field"><label for="email">E-mail cadastrado</label><input id="email" name="email" type="email" autocomplete="email" required></div>
+<button id="recovery-button" class="button button-primary" type="submit">Enviar link de recuperação</button>
+</form>
+<p id="recovery-status" class="form-status" role="status" aria-live="polite"></p>
+<p><a href="sigprevi-login.html">Voltar para o acesso</a></p>
+</section></main>
+<script type="module" src="modules/password-recovery.js"></script>
+</body></html>

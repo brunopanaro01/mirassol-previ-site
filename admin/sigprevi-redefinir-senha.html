@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Definir nova senha — SIGPREVI</title>
+<link rel="stylesheet" href="sigprevi.css">
+</head>
+<body class="login-page">
+<main class="login-container"><section class="login-card" aria-labelledby="page-title">
+<div class="login-brand"><img src="../brasao.png" alt="Brasão do Município de Mirassol D'Oeste"><div><strong>Mirassol-Previ</strong><span>Sistema de Gestão Previdenciária</span></div></div>
+<h1 id="page-title">Definir nova senha</h1>
+<p class="login-description">Escolha uma senha com pelo menos 8 caracteres.</p>
+<form id="reset-form" hidden>
+<div class="form-field"><label for="password">Nova senha</label><input id="password" name="password" type="password" minlength="8" autocomplete="new-password" required></div>
+<div class="form-field"><label for="confirmation">Confirme a nova senha</label><input id="confirmation" name="confirmation" type="password" minlength="8" autocomplete="new-password" required></div>
+<button id="reset-button" class="button button-primary" type="submit">Salvar nova senha</button>
+</form>
+<p id="request-again" hidden><a href="sigprevi-recuperar-senha.html">Solicitar outro link</a></p>
+<p id="recovery-status" class="form-status" role="status" aria-live="polite"></p>
+<p><a href="sigprevi-login.html">Voltar para o acesso</a></p>
+</section></main>
+<script type="module" src="modules/password-reset.js"></script>
+</body></html>
