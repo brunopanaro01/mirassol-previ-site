@@ -423,3 +423,9 @@ entrypoint = "./functions/comprev-tce-search/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/comprev-tce-search/*.html" ]
+
+[functions.investments-market-data]
+enabled = true
+# Function checks the caller JWT through the permission-checked database RPC.
+verify_jwt = false
+entrypoint = "./functions/investments-market-data/index.ts"
