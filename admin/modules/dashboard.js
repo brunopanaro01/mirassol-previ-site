@@ -177,7 +177,7 @@ async function initializeDashboard() {
       }
 
       const { initializeAccessManagement } = await import(
-        "./access-management.js"
+        "./access-management.js?v=20261011-senha-2"
       );
 
       await initializeAccessManagement();
