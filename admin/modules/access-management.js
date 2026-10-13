@@ -4,6 +4,8 @@ import { initializeOwnPasswordChange } from "./own-password.js";
 
 import { appendAdminPasswordControl } from "./admin-user-password.js";
 
+import { initializeUserCreation } from "./admin-user-create.js";
+
 let passwordAdministrator = false;
 let users = [];
 let moduleRoles = [];
@@ -381,6 +383,8 @@ function renderModule() {
         </div>
       </div>
 
+      <section id="user-creation-panel" class="access-user-card" hidden></section>
+
       <section id="own-password-panel" class="access-user-card" aria-label="Minha senha"></section>
 
       <div class="access-toolbar">
@@ -430,6 +434,10 @@ export async function initializeAccessManagement() {
       loadModuleRoles()
     ]);
 
+    const activeOwner = passwordAdministrator && users.some(user => user.user_id === identity?.user?.id && user.account_status === "active");
+    if (activeOwner) initializeUserCreation(document.querySelector("#user-creation-panel"), async () => {
+      await loadUsers(); renderUsers();
+    });
     renderUsers();
     setStatus("");
   } catch (error) {

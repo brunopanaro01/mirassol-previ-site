@@ -435,3 +435,9 @@ enabled = true
 # Validates caller with Auth.getUser, verified owner email and administrator RPC.
 verify_jwt = false
 entrypoint = "./functions/admin-user-password/index.ts"
+
+[functions.admin-user-create]
+enabled = true
+# Auth.getUser + e-mail confirmado do responsável + RPC de administrador ativo.
+verify_jwt = false
+entrypoint = "./functions/admin-user-create/index.ts"
