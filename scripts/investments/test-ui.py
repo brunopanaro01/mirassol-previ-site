@@ -39,6 +39,8 @@ class BrowserTests(unittest.TestCase):
         self.addCleanup(page.close)
         errors = []
         page.on('pageerror', lambda error: errors.append(str(error)))
+        page.on('console', lambda msg: errors.append(f'console: {msg.text}') if msg.type == 'error' else None)
+        page.on('requestfailed', lambda request: errors.append(f'requestfailed: {request.url}'))
         def mock_client(route):
             tables = json.dumps(FIXTURE['inputs'], ensure_ascii=False)
             flag = 'true' if manager else 'false'
@@ -59,7 +61,10 @@ class BrowserTests(unittest.TestCase):
         # Every remote resource is blocked; the test cannot touch real accounts or data.
         page.route('https://**/*', lambda route: route.abort())
         page.goto(f'http://127.0.0.1:{self.server.server_port}/admin/sigprevi.html?module=investimentos')
-        page.get_by_role('heading', name='Carteira e governança').wait_for()
+        try:
+            page.get_by_role('heading', name='Carteira e governança').wait_for()
+        except Exception:
+            raise AssertionError(f'Falha ao iniciar o módulo: {errors}; status={page.locator("#application-status").text_content()}')
         return page, errors
 
     def test_manager_all_tabs_and_save(self):
@@ -78,9 +83,19 @@ class BrowserTests(unittest.TestCase):
         page.locator('[data-tab="meta"]').click()
         page.get_by_text('0,42%', exact=True).wait_for()
         page.locator('[data-tab="desempenho"]').click()
-        page.locator('.investments-table tbody button').first.click()
-        page.get_by_role('dialog').get_by_role('heading', name='Radar', exact=False).wait_for()
-        page.get_by_role('dialog').get_by_role('button', name='Fechar', exact=True).click()
+        cards = page.locator('.investment-fund-card')
+        self.assertGreater(cards.count(), 0)
+        cards.first.get_by_text('Ver análise completa', exact=False).wait_for()
+        cards.first.click()
+        detail = page.get_by_role('dialog')
+        try:
+            detail.get_by_role('heading', name='Histórico mensal', exact=True).wait_for()
+        except Exception:
+            raise AssertionError(f'Falha ao abrir detalhe do fundo: {errors}')
+        detail.get_by_role('heading', name='Radar', exact=False).wait_for()
+        detail.get_by_text('Melhor mês', exact=True).wait_for()
+        detail.get_by_text('Pior mês', exact=True).wait_for()
+        detail.get_by_role('button', name='Fechar', exact=True).click()
         self.assertEqual(errors, [])
 
     def test_committee_readonly_ui_and_participation(self):

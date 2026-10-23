@@ -157,20 +157,44 @@ function closeMonth(comp,reopen){
  const err=el('p',undefined,'form-status error'),save=el('button','Confirmar','button button-primary');save.type='submit';form.append(err,save,button('Cancelar',()=>d.close()));d.append(form);
  form.addEventListener('submit',async e=>{e.preventDefault();save.disabled=true;try{await rpc('investments_close_month',{p_mes:comp,p_reopen:reopen,p_reason:reopen?reason.value:null});d.close();await load();}catch(error){err.textContent=error.message;}finally{save.disabled=false;}});d.showModal();
 }
+function riskTone(cor){return {verde:'normal',amarelo:'attention',vermelho:'critical'}[cor]??'neutral';}
+function riskBadge(indicator){
+ const badge=el('span',indicator.nivel,`investment-risk-badge is-${riskTone(indicator.cor)}`);
+ badge.setAttribute('aria-label',`Situação: ${indicator.nivel}`);return badge;
+}
+function performanceMetric(label,value,detail=''){
+ const item=el('span',undefined,'investment-fund-metric');item.append(el('small',label),el('strong',value));if(detail)item.append(el('em',detail));return item;
+}
 function renderPerformance(){
- const s=section(tab==='radar'?'Radar do Comitê':'Desempenho e risco','Os parâmetros por classe e a volatilidade amostral seguem o painel local. O indicador considera o histórico completo; a análise por período está no detalhe do fundo.');
+ const s=section(tab==='radar'?'Radar do Comitê':'Desempenho e risco','Acompanhe a situação de cada fundo. Selecione um cartão para abrir o histórico, os indicadores, a análise automática, o radar e as decisões relacionadas.');
  const funds=rows('invest_fundos').filter(f=>!month?f.ativo:rows('invest_saldos').some(r=>r.fundo_id===f.id&&r.mes_ano===month&&r.saldo_final>.01));
- s.append(table(['Fundo','Rentabilidade mês','Benchmark mês','Diferença (p.p.)','Volatilidade 12m','Situação / motivos'],funds.map(f=>{
-  const i=fundIndicator(data,f,month);return [button(f.nome,()=>showFund(f)),pct(i.rentabilidade_mes),pct(i.benchmark_mes),i.diferenca_benchmark===null?'Pendente':decimal.format(i.diferenca_benchmark),pct(i.volatilidade_12m),`${i.nivel}: ${i.motivos.join(' ')}`];
- })));
+ const analyzed=funds.map(f=>({fund:f,indicator:fundIndicator(data,f,month)}));
+ const counts={normal:0,attention:0,critical:0,neutral:0};analyzed.forEach(({indicator})=>counts[riskTone(indicator.cor)]++);
+ s.append(kpis([['Fundos analisados',String(funds.length)],['Situação normal',String(counts.normal)],['Em atenção',String(counts.attention)],['Situação crítica',String(counts.critical)]]));
+ const legend=el('p',undefined,'investment-risk-legend');legend.append(el('strong',`Competência ${month||'mais recente'}: `),document.createTextNode('verde dentro dos parâmetros, amarelo requer atenção e vermelho indica situação crítica.'));
+ s.append(legend);
+ const grid=el('div',undefined,'investment-performance-grid');
+ analyzed.sort((a,b)=>({critical:0,attention:1,normal:2,neutral:3}[riskTone(a.indicator.cor)]-({critical:0,attention:1,normal:2,neutral:3}[riskTone(b.indicator.cor)])||a.fund.nome.localeCompare(b.fund.nome,'pt-BR'))).forEach(({fund,indicator})=>{
+  const card=el('button',undefined,`investment-fund-card is-${riskTone(indicator.cor)}`);card.type='button';
+  const head=el('span',undefined,'investment-fund-card-head'),identity=el('span',undefined,'investment-fund-identity');
+  identity.append(el('strong',fund.nome),el('small',[fund.classe,fund.benchmark].filter(Boolean).join(' · ')||'Classificação não informada'));head.append(identity,riskBadge(indicator));card.append(head);
+  const metrics=el('span',undefined,'investment-fund-metrics');
+  metrics.append(performanceMetric('Rentabilidade no mês',pct(indicator.rentabilidade_mes),indicator.situacao_benchmark),performanceMetric('Benchmark',pct(indicator.benchmark_mes),benchmarkName(fund.benchmark)),performanceMetric('Diferença',indicator.diferenca_benchmark===null?'Pendente':`${indicator.diferenca_benchmark>=0?'+':''}${decimal.format(indicator.diferenca_benchmark)} p.p.`),performanceMetric('Volatilidade 12m',pct(indicator.volatilidade_12m)));
+  card.append(metrics,el('span',indicator.motivos.join(' '),'investment-fund-analysis'),el('span','Ver análise completa →','investment-fund-open'));card.addEventListener('click',()=>showFund(fund));grid.append(card);
+ });
+ if(!analyzed.length)grid.append(el('p','Nenhum fundo com posição para a competência selecionada.'));
+ s.append(grid);
 }
 function historyTable(h){return table(['Competência','Rentabilidade','Benchmark','Meta atuarial','Dif. benchmark (p.p.)','Saldo final'],h.linhas.map(r=>[r.mes_ano,pct(r.rentabilidade),pct(r.benchmark),pct(r.meta_atuarial),r.diferenca_benchmark===null?'Pendente':decimal.format(r.diferenca_benchmark),brl(r.saldo_final)]));}
 function showFund(f){
- if(!f)return;const d=dialog(f.nome),h=fundHistory(data,f,period),i=fundIndicator(data,f),r=fundRadar(f,h,i);
- d.append(kpis([['Retorno acumulado',pct(h.retorno_acumulado)],['Benchmark acumulado',pct(h.benchmark_acumulado)],['Meta acumulada',pct(h.meta_acumulada)],['Volatilidade do período',pct(h.volatilidade)]]),el('p',`Período: ${h.total_meses} observações. Ausências do benchmark e da meta não são tratadas como zero.`));
- d.append(historyTable(h),el('h3',`Radar — nota ${decimal.format(r.nota)}`),table(['Eixo','Valor','Situação','Descrição'],r.eixos.map(e=>[e.nome,e.valor,e.situacao,e.descricao])));
- d.append(el('h3','Decisões'),table(['Data','Tipo','Justificativa','Responsável'],rows('invest_historico_decisoes_fundo').filter(r=>r.fundo_id===f.id).map(r=>[r.data_decisao,r.tipo_decisao,r.justificativa,r.responsavel])));
- d.append(button('Imprimir / salvar PDF',()=>window.print()),button('Fechar',()=>d.close()));d.showModal();
+ if(!f)return;const d=dialog(f.nome),h=fundHistory(data,f,period),i=fundIndicator(data,f,month),r=fundRadar(f,h,i);d.classList.add('investment-fund-dialog');
+ const hero=el('section',undefined,`investment-fund-hero is-${riskTone(i.cor)}`),heroHead=el('div',undefined,'investment-fund-hero-head'),meta=el('p',[f.classe,f.benchmark&&`Benchmark: ${benchmarkName(f.benchmark)}`,f.gestor&&`Gestor: ${f.gestor}`].filter(Boolean).join(' · '));
+ heroHead.append(riskBadge(i),meta);hero.append(heroHead,el('p',i.motivos.join(' '),'investment-fund-analysis'));
+ const diff=h.benchmark_acumulado===null?null:h.retorno_acumulado-h.benchmark_acumulado;
+ d.append(hero,kpis([['Retorno acumulado',pct(h.retorno_acumulado)],['Benchmark acumulado',pct(h.benchmark_acumulado)],['Diferença acumulada',diff===null?'Pendente':`${diff>=0?'+':''}${decimal.format(diff)} p.p.`],['Meta acumulada',pct(h.meta_acumulada)],['Volatilidade do período',pct(h.volatilidade)],['Meses acima do benchmark',`${h.meses_acima_benchmark} de ${h.total_meses}`],['Melhor mês',h.melhor_mes?`${h.melhor_mes.mes_ano} · ${pct(h.melhor_mes.rentabilidade)}`:'Pendente'],['Pior mês',h.pior_mes?`${h.pior_mes.mes_ano} · ${pct(h.pior_mes.rentabilidade)}`:'Pendente']]));
+ d.append(el('p',`Período selecionado: ${period} meses; ${h.total_meses} observações disponíveis. Ausências do benchmark e da meta permanecem pendentes e não são tratadas como zero.`,'investment-detail-note'),el('h3','Histórico mensal'),historyTable(h),el('h3',`Radar — nota ${decimal.format(r.nota)}`),table(['Eixo','Valor','Situação','Descrição'],r.eixos.map(e=>[e.nome,e.valor,e.situacao,e.descricao])));
+ d.append(el('h3','Decisões relacionadas ao fundo'),table(['Data','Tipo','Justificativa','Responsável'],rows('invest_historico_decisoes_fundo').filter(row=>row.fundo_id===f.id).map(row=>[row.data_decisao,row.tipo_decisao,row.justificativa,row.responsavel])));
+ const actions=el('div',undefined,'investment-dialog-actions');actions.append(button('Imprimir / salvar PDF',()=>window.print()),button('Fechar',()=>d.close()));d.append(actions);d.showModal();
 }
 function renderRanking(){const s=section('Ranking dos fundos','Pontuação, consistência, diferença para benchmark/meta e penalidade de volatilidade preservam os critérios do painel local.');
  const include=el('input');include.type='checkbox';const label=el('label','Incluir fundos encerrados');label.append(include);s.append(label);const holder=el('div');s.append(holder);
