@@ -180,7 +180,7 @@ function renderPerformance(){
   identity.append(el('strong',fund.nome),el('small',[fund.classe,fund.benchmark].filter(Boolean).join(' · ')||'Classificação não informada'));head.append(identity,riskBadge(indicator));card.append(head);
   const metrics=el('span',undefined,'investment-fund-metrics');
   metrics.append(performanceMetric('Rentabilidade no mês',pct(indicator.rentabilidade_mes),indicator.situacao_benchmark),performanceMetric('Benchmark',pct(indicator.benchmark_mes),benchmarkName(fund.benchmark)),performanceMetric('Diferença',indicator.diferenca_benchmark===null?'Pendente':`${indicator.diferenca_benchmark>=0?'+':''}${decimal.format(indicator.diferenca_benchmark)} p.p.`),performanceMetric('Volatilidade 12m',pct(indicator.volatilidade_12m)));
-  card.append(metrics,el('span',indicator.motivos.join(' '),'investment-fund-analysis'),el('span','Ver análise completa →','investment-fund-open'));card.addEventListener('click',()=>showFund(f));grid.append(card);
+  card.append(metrics,el('span',indicator.motivos.join(' '),'investment-fund-analysis'),el('span','Ver análise completa →','investment-fund-open'));card.addEventListener('click',()=>showFund(fund));grid.append(card);
  });
  if(!analyzed.length)grid.append(el('p','Nenhum fundo com posição para a competência selecionada.'));
  s.append(grid);
