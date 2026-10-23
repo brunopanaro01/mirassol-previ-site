@@ -174,7 +174,7 @@ function renderPerformance(){
  const legend=el('p',undefined,'investment-risk-legend');legend.append(el('strong',`Competência ${month||'mais recente'}: `),document.createTextNode('verde dentro dos parâmetros, amarelo requer atenção e vermelho indica situação crítica.'));
  s.append(legend);
  const grid=el('div',undefined,'investment-performance-grid');
- analyzed.sort((a,b)=>({critical:0,attention:1,normal:2,neutral:3}[riskTone(a.indicator.cor)]-({critical:0,attention:1,normal:2,neutral:3}[riskTone(b.indicator.cor)])||a.fund.nome.localeCompare(b.fund.nome,'pt-BR')).forEach(({fund,indicator})=>{
+ analyzed.sort((a,b)=>({critical:0,attention:1,normal:2,neutral:3}[riskTone(a.indicator.cor)]-({critical:0,attention:1,normal:2,neutral:3}[riskTone(b.indicator.cor)])||a.fund.nome.localeCompare(b.fund.nome,'pt-BR'))).forEach(({fund,indicator})=>{
   const card=el('button',undefined,`investment-fund-card is-${riskTone(indicator.cor)}`);card.type='button';
   const head=el('span',undefined,'investment-fund-card-head'),identity=el('span',undefined,'investment-fund-identity');
   identity.append(el('strong',fund.nome),el('small',[fund.classe,fund.benchmark].filter(Boolean).join(' · ')||'Classificação não informada'));head.append(identity,riskBadge(indicator));card.append(head);
