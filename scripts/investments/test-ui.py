@@ -88,7 +88,10 @@ class BrowserTests(unittest.TestCase):
         cards.first.get_by_text('Ver análise completa', exact=False).wait_for()
         cards.first.click()
         detail = page.get_by_role('dialog')
-        detail.get_by_role('heading', name='Histórico mensal', exact=True).wait_for()
+        try:
+            detail.get_by_role('heading', name='Histórico mensal', exact=True).wait_for()
+        except Exception:
+            raise AssertionError(f'Falha ao abrir detalhe do fundo: {errors}')
         detail.get_by_role('heading', name='Radar', exact=False).wait_for()
         detail.get_by_text('Melhor mês', exact=True).wait_for()
         detail.get_by_text('Pior mês', exact=True).wait_for()
