@@ -39,6 +39,8 @@ class BrowserTests(unittest.TestCase):
         self.addCleanup(page.close)
         errors = []
         page.on('pageerror', lambda error: errors.append(str(error)))
+        page.on('console', lambda msg: errors.append(f'console: {msg.text}') if msg.type == 'error' else None)
+        page.on('requestfailed', lambda request: errors.append(f'requestfailed: {request.url}'))
         def mock_client(route):
             tables = json.dumps(FIXTURE['inputs'], ensure_ascii=False)
             flag = 'true' if manager else 'false'
@@ -59,7 +61,10 @@ class BrowserTests(unittest.TestCase):
         # Every remote resource is blocked; the test cannot touch real accounts or data.
         page.route('https://**/*', lambda route: route.abort())
         page.goto(f'http://127.0.0.1:{self.server.server_port}/admin/sigprevi.html?module=investimentos')
-        page.get_by_role('heading', name='Carteira e governança').wait_for()
+        try:
+            page.get_by_role('heading', name='Carteira e governança').wait_for()
+        except Exception:
+            raise AssertionError(f'Falha ao iniciar o módulo: {errors}; status={page.locator("#application-status").text_content()}')
         return page, errors
 
     def test_manager_all_tabs_and_save(self):
