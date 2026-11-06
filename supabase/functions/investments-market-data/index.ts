@@ -1,6 +1,6 @@
 import {createClient} from 'npm:@supabase/supabase-js@2.57.4';
 import {Unzip,UnzipInflate} from 'npm:fflate@0.8.2';
-import {CsvReader,alias,digits,cvmCandidate,parseSgs} from './parsers.js';
+import {CsvReader,alias,digits,cvmCandidate,parseSgs,parseSgsMonthlyReturn,parseAnbimaMonthly,canonicalAnbimaIndex} from './parsers.js';
 
 const origins=new Set(['https://mirassolprevi.com.br','https://www.mirassolprevi.com.br','http://localhost:5500','http://127.0.0.1:5500']);
 function response(request:Request,value:unknown,status=200){return new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json','Access-Control-Allow-Origin':origins.has(request.headers.get('origin')??'')?request.headers.get('origin')!:'https://mirassolprevi.com.br','Access-Control-Allow-Headers':'authorization,apikey,content-type,x-client-info','Access-Control-Allow-Methods':'POST,OPTIONS','Vary':'Origin'}});}
@@ -19,17 +19,52 @@ Deno.serve(async request=>{
   if(body.action==='indicators'){
    if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(body.month??''))throw new Error('Competência inválida.');
    const [year,month]=body.month.split('-').map(Number),last=new Date(Date.UTC(year,month,0)).getUTCDate();
-   const start=`01/${String(month).padStart(2,'0')}/${year}`,end=`${last}/${String(month).padStart(2,'0')}/${year}`;
-   const saved:string[]=[],errors:string[]=[];
-   for(const [indicator,series,source]of [['IPCA','433','IBGE via Banco Central do Brasil - SGS 433'],['SELIC','4390','Banco Central do Brasil - SGS 4390']]){
-    try{
-     const remote=await fetch(`https://api.bcb.gov.br/dados/serie/bcdata.sgs.${series}/dados?formato=json&dataInicial=${start}&dataFinal=${end}`,{signal:AbortSignal.timeout(15000)});
-     if(!remote.ok)throw new Error(`Fonte oficial indisponível (HTTP ${remote.status}).`);
-     const value=parseSgs(await remote.json());if(value===null){errors.push(`${indicator}: valor ainda não publicado.`);continue;}
-     const old=snapshot.tables.invest_indicadores_mensais.find((r:{mes_ano:string;indicador:string})=>r.mes_ano===body.month&&r.indicador===indicator);
-     const {error}=await client.rpc('investments_save',{p_table:'invest_indicadores_mensais',p_id:old?.id??null,p_version:old?.version??null,p_data:{mes_ano:body.month,indicador:indicator,rentabilidade_percentual:value,fonte:source,observacao:`Atualização oficial em ${new Date().toISOString()}.`}});
-     if(error)throw error;saved.push(`${indicator}: ${value}%.`);
-    }catch(e){errors.push(`${indicator}: ${e instanceof Error?e.message:String(e)}`);}
+   const format=date=>`${String(date.getUTCDate()).padStart(2,'0')}/${String(date.getUTCMonth()+1).padStart(2,'0')}/${date.getUTCFullYear()}`;
+   const startDate=new Date(Date.UTC(year,month-1,1)),endDate=new Date(Date.UTC(year,month,0)),lookback=new Date(startDate);lookback.setUTCDate(lookback.getUTCDate()-15);
+   const start=format(startDate),end=format(endDate),saved:string[]=[],errors:string[]=[];
+   const canonical=value=>{
+    const raw=String(value??'').trim().toUpperCase();
+    if(raw==='IBOV'||raw==='IBOVESPA')return 'IBOVESPA';
+    if(raw==='SELIC'||raw==='CDI'||raw==='IPCA')return raw;
+    return canonicalAnbimaIndex(raw)??raw;
+   };
+   const wanted=new Set(['IPCA','SELIC','CDI','IBOVESPA']);
+   for(const item of snapshot.tables.invest_benchmarks??[])if(item.ativo!==false)wanted.add(canonical(item.nome));
+   for(const item of snapshot.tables.invest_fundos??[])if(item.ativo!==false&&item.benchmark)wanted.add(canonical(item.benchmark));
+   const save=async(indicator,value,source)=>{
+    const old=snapshot.tables.invest_indicadores_mensais.find((row:{mes_ano:string;indicador:string})=>row.mes_ano===body.month&&canonical(row.indicador)===indicator);
+    const {error}=await client.rpc('investments_save',{p_table:'invest_indicadores_mensais',p_id:old?.id??null,p_version:old?.version??null,p_data:{mes_ano:body.month,indicador:indicator,rentabilidade_percentual:value,fonte:source,observacao:`Atualização oficial em ${new Date().toISOString()}.`}});
+    if(error)throw error;saved.push(`${indicator}: ${value}%.`);
+   };
+   const sgs=async(series,startValue=start,endValue=end)=>{
+    const remote=await fetch(`https://api.bcb.gov.br/dados/serie/bcdata.sgs.${series}/dados?formato=json&dataInicial=${startValue}&dataFinal=${endValue}`,{signal:AbortSignal.timeout(15000)});
+    if(!remote.ok)throw new Error(`Fonte oficial indisponível (HTTP ${remote.status}).`);return await remote.json();
+   };
+   for(const [indicator,series,source]of [['IPCA','433','IBGE via Banco Central do Brasil - SGS 433'],['SELIC','4390','Banco Central do Brasil - SGS 4390'],['CDI','4391','Banco Central do Brasil - SGS 4391']]){
+    try{const value=parseSgs(await sgs(series));if(value===null){errors.push(`${indicator}: valor ainda não publicado.`);continue;}await save(indicator,value,source);}
+    catch(e){errors.push(`${indicator}: ${e instanceof Error?e.message:String(e)}`);}
+   }
+   try{
+    const value=parseSgsMonthlyReturn(await sgs('7',format(lookback),end),body.month);
+    if(value===null)errors.push('IBOVESPA: dados insuficientes para calcular o resultado mensal.');
+    else await save('IBOVESPA',value,'B3 via Banco Central do Brasil - SGS 7');
+   }catch(e){errors.push(`IBOVESPA: ${e instanceof Error?e.message:String(e)}`);}
+   const anbimaWanted=[...wanted].filter(value=>canonicalAnbimaIndex(value));
+   if(anbimaWanted.length){
+    const clientId=Deno.env.get('ANBIMA_CLIENT_ID'),clientSecret=Deno.env.get('ANBIMA_CLIENT_SECRET');
+    if(!clientId||!clientSecret)errors.push('ANBIMA: credenciais da API oficial ainda não configuradas; índices IMA e IRF-M não foram alterados.');
+    else try{
+     const tokenResponse=await fetch('https://api.anbima.com.br/oauth/access-token',{method:'POST',headers:{Authorization:`Basic ${btoa(`${clientId}:${clientSecret}`)}`,'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=client_credentials',signal:AbortSignal.timeout(15000)});
+     if(!tokenResponse.ok)throw new Error(`autenticação oficial indisponível (HTTP ${tokenResponse.status}).`);
+     const tokenPayload=await tokenResponse.json(),token=tokenPayload.access_token;if(!token)throw new Error('token oficial não retornado.');
+     let official=[];
+     for(let offset=0;offset<10&&!official.length;offset++){
+      const date=new Date(endDate);date.setUTCDate(date.getUTCDate()-offset);if([0,6].includes(date.getUTCDay()))continue;
+      const iso=date.toISOString().slice(0,10),remote=await fetch(`https://api.anbima.com.br/feed/precos-indices/v1/indices/resultados-ima?data=${iso}`,{headers:{Authorization:`Bearer ${token}`,'client_id':clientId},signal:AbortSignal.timeout(15000)});
+      if(remote.status===404)continue;if(!remote.ok)throw new Error(`consulta oficial indisponível (HTTP ${remote.status}).`);official=parseAnbimaMonthly(await remote.json());
+     }
+     for(const indicator of anbimaWanted){const item=official.find(row=>row.indicator===indicator);if(item)await save(indicator,item.value,'ANBIMA Data / ANBIMA Feed');else errors.push(`${indicator}: valor ainda não publicado pela ANBIMA.`);}
+    }catch(e){errors.push(`ANBIMA: ${e instanceof Error?e.message:String(e)}`);}
    }
    return response(request,{saved,errors});
   }
