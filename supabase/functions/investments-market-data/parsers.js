@@ -52,7 +52,7 @@ export function canonicalAnbimaIndex(value){
  return aliases[normalized]??null;
 }
 export function parseAnbimaMonthly(payload){
- const rows=Array.isArray(payload)?payload:Array.isArray(payload?.content)?payload.content:Array.isArray(payload?.data)?payload.data:Array.isArray(payload?.items)?payload.items:[];
+ const rows=Array.isArray(payload)?payload:Array.isArray(payload?.content)?payload.content:Array.isArray(payload?.data)?payload.data:Array.isArray(payload?.items)?payload.items:Array.isArray(payload?.resultados)?payload.resultados:[];
  const result=[];
  for(const row of rows){
   const name=canonicalAnbimaIndex(row.indice??row.nome_indice??row.nome??row.indexador);
