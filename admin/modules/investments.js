@@ -1,5 +1,5 @@
 import {supabase} from '../components/supabase-client.js';
-import {catalog,visibleTabs,parseNumber} from './investments/catalog.js';
+import {catalog,visibleTabs,parseNumber} from './investments/catalog.js?v=20261106-indicadores-2';
 import {portfolio,monthlyReturn,monthlyTarget,targetPanel,fundHistory,fundIndicator,fundRadar,fundRanking,benchmarkName} from './investments/calculations.js';
 
 let snapshot, data={}, tab='painel', month='', year=2026, period=12, search='';
