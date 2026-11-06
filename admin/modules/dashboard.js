@@ -153,7 +153,7 @@ async function initializeDashboard() {
         statusElement.classList.add("error");
         return;
       }
-      const { initializeInvestmentsModule } = await import("./investments.js?v=20261106-indicadores-1");
+      const { initializeInvestmentsModule } = await import("./investments.js?v=20261106-indicadores-2");
       await initializeInvestmentsModule();
       return;
     }
