@@ -106,6 +106,36 @@ function detailRecord(key,row){
  cfg.fields.forEach(f=>{dl.append(el('dt',f.label));const v=el('dd');v.append(f.type==='url'?safeLink(row[f.key]):el('span',formatField(f,row[f.key])));dl.append(v);});
  dl.append(el('dt','Criado em'),el('dd',row.criado_em),el('dt','Última alteração'),el('dd',row.atualizado_em));d.append(dl,button('Fechar',()=>d.close()));d.showModal();
 }
+function previousCompetence(value){
+ const match=/^(\d{4})-(\d{2})$/.exec(value??'');if(!match)return null;
+ const date=new Date(Date.UTC(Number(match[1]),Number(match[2])-2,1));
+ return `${date.getUTCFullYear()}-${String(date.getUTCMonth()+1).padStart(2,'0')}`;
+}
+function configureInvestmentEntryForm(form,row){
+ const fund=form.elements.namedItem('fundo_id'),competence=form.elements.namedItem('mes_ano'),initial=form.elements.namedItem('saldo_inicial'),final=form.elements.namedItem('saldo_final');
+ const movementKeys=['aplicacoes','resgates','rendimento'];
+ const hint=el('p',undefined,'investment-form-hint');hint.setAttribute('role','status');hint.setAttribute('aria-live','polite');
+ final.readOnly=true;final.setAttribute('aria-describedby','investment-balance-hint');hint.id='investment-balance-hint';
+ const valueOf=(key,blankAsZero=false)=>{const input=form.elements.namedItem(key),raw=input.value.trim();if(!raw)return blankAsZero?0:null;try{return parseNumber(raw);}catch{return null;}};
+ const calculateFinal=()=>{
+  const opening=valueOf('saldo_inicial');if(opening===null){final.value='';return;}
+  const applications=valueOf('aplicacoes',true),redemptions=valueOf('resgates',true),income=valueOf('rendimento',true);
+  if([applications,redemptions,income].some(value=>value===null)){final.value='';return;}
+  final.value=String(opening+applications-redemptions+income);
+ };
+ const loadPrevious=()=>{
+  if(row)return calculateFinal();
+  const previous=previousCompetence(competence.value),fundId=parseNumber(fund.value);
+  if(!previous||fundId===null){initial.value='';hint.textContent='Selecione o fundo e a competência para buscar o saldo final do mês anterior.';return calculateFinal();}
+  const prior=rows('invest_saldos').find(record=>record.fundo_id===fundId&&record.mes_ano===previous);
+  if(prior){initial.value=String(prior.saldo_final??'');hint.textContent=`Saldo inicial preenchido pelo saldo final de ${previous}.`;}
+  else{initial.value='';hint.textContent=`Não foi encontrado lançamento do fundo em ${previous}; informe o saldo inicial para continuar.`;}
+  calculateFinal();
+ };
+ fund.addEventListener('change',loadPrevious);competence.addEventListener('change',loadPrevious);initial.addEventListener('input',calculateFinal);
+ movementKeys.forEach(key=>form.elements.namedItem(key).addEventListener('input',calculateFinal));
+ form.append(hint);if(row)calculateFinal();else loadPrevious();
+}
 function editRecord(key,row=null,defaults={}){
  if(!snapshot.can_manage)return;
  const cfg=catalog[key],d=dialog(`${row?'Editar':'Novo'} — ${cfg.title}`),form=el('form',undefined,'investment-form'),values=row??defaults;
@@ -120,6 +150,7 @@ function editRecord(key,row=null,defaults={}){
   if(f.type==='checkbox')input.checked=values[f.key]??(f.key==='ativo');else input.value=values[f.key]??(f.key==='mes_ano'?month:f.key==='ano'?year:f.key==='indice'?'IPCA':'');
   label.append(input);form.append(label);
  }
+ if(key==='lancamentos')configureInvestmentEntryForm(form,row);
  const err=el('p',undefined,'form-status error');err.setAttribute('role','alert');
  const save=el('button','Salvar','button button-primary');save.type='submit';form.append(err,save,button('Cancelar',()=>d.close()));d.append(form);
  form.addEventListener('submit',async e=>{
