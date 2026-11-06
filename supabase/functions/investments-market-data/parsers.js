@@ -37,15 +37,6 @@ export class CsvReader {
 export function parseSgs(values){if(!Array.isArray(values)||!values.length)return null;const raw=String(values.at(-1).valor??'').trim();if(!raw)throw new Error('Valor oficial vazio.');const value=Number(raw.replace(',','.'));if(!Number.isFinite(value))throw new Error('Valor oficial inválido.');return value;}
 
 function officialNumber(value){const raw=String(value??'').trim();if(!raw)throw new Error('Valor oficial vazio.');const parsed=Number(raw.includes(',')?raw.replace(/\./g,'').replace(',','.'):raw);if(!Number.isFinite(parsed))throw new Error('Valor oficial inválido.');return parsed;}
-function sgsDate(value){const match=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(value??''));return match?new Date(Date.UTC(Number(match[3]),Number(match[2])-1,Number(match[1]))):null;}
-export function parseSgsMonthlyReturn(values,competence){
- if(!Array.isArray(values)||!values.length)return null;
- const [year,month]=String(competence).split('-').map(Number),start=new Date(Date.UTC(year,month-1,1)),end=new Date(Date.UTC(year,month,0));
- const points=values.map(item=>({date:sgsDate(item.data),value:officialNumber(item.valor)})).filter(item=>item.date).sort((a,b)=>a.date-b.date);
- const previous=points.filter(item=>item.date<start).at(-1),current=points.filter(item=>item.date>=start&&item.date<=end).at(-1);
- if(!previous||!current||previous.value===0)return null;
- return Number((((current.value/previous.value)-1)*100).toFixed(6));
-}
 export function canonicalAnbimaIndex(value){
  const normalized=String(value??'').toUpperCase().replace(/\s+/g,'').replace(/[–—]/g,'-');
  const aliases={'IMA-B':'IMA-B','IMAB':'IMA-B','IMA-B5':'IMA-B 5','IMAB5':'IMA-B 5','IMA-B5+':'IMA-B 5+','IMAB5+':'IMA-B 5+','IRF-M':'IRF-M','IRFM':'IRF-M','IRF-M1':'IRF-M 1','IRFM1':'IRF-M 1','IRF-M1+':'IRF-M 1+','IRFM1+':'IRF-M 1+','IMA-S':'IMA-S','IMAS':'IMA-S','IMA-GERAL':'IMA-GERAL','IMAGERAL':'IMA-GERAL'};
