@@ -33,6 +33,13 @@ function card(label,value){const c=el('article',undefined,'investment-kpi');c.ap
 function kpis(items){const group=el('div',undefined,'investment-kpis');items.forEach(([k,v])=>group.append(card(k,v)));return group;}
 function section(title,text){const s=el('section',undefined,'investment-section');s.append(el('h2',title));if(text)s.append(el('p',text));content.append(s);return s;}
 function fundName(id){return rows('invest_fundos').find(f=>f.id===id)?.nome??'Fundo não encontrado';}
+function benchmarkOptions(current=''){
+ const values=['IPCA','SELIC','CDI','IBOVESPA'];
+ rows('invest_benchmarks').filter(item=>item.ativo!==false).forEach(item=>values.push(item.nome));
+ rows('invest_fundos').filter(item=>item.ativo!==false).forEach(item=>values.push(item.benchmark));
+ if(current)values.push(current);
+ return [...new Set(values.filter(Boolean).map(benchmarkName))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+}
 function filterMonth(values){return values.filter(r=>!month||!r.mes_ano||r.mes_ano===month);}
 function formatField(field,value){
  if(field.type==='fund')return fundName(value);
@@ -80,8 +87,8 @@ function renderEntity(key,parent=null){
  const input=el('input');input.type='search';input.placeholder='Buscar registros';input.setAttribute('aria-label','Buscar registros');input.value=search;
  input.addEventListener('input',()=>{search=input.value;draw();});controls.append(input);s.append(controls);
  if(key==='indicadores'){
-  s.append(el('p','Cadastre o IPCA uma única vez aqui. A Meta Atuarial usa automaticamente este valor, preservando a taxa real anual e os índices históricos.'));
-  if(snapshot.can_manage)s.append(button('Buscar IPCA e Selic oficiais',()=>run(updateOfficial)));
+  s.append(el('p','Selecione um benchmark cadastrado. A busca oficial atualiza IPCA, Selic, CDI e Ibovespa; índices IMA e IRF-M usam a API oficial da ANBIMA quando as credenciais estiverem configuradas.'));
+  if(snapshot.can_manage)s.append(button('Buscar indicadores oficiais',()=>run(updateOfficial)));
  }
  if(key==='diario'&&snapshot.can_manage)s.append(button('Preparar minuta com os dados do mês',()=>prepareDiary()));
  if(key==='fundos'&&snapshot.can_manage)s.append(button('Consultar cadastro CVM',()=>cvmForm()));
@@ -141,9 +148,9 @@ function editRecord(key,row=null,defaults={}){
  const cfg=catalog[key],d=dialog(`${row?'Editar':'Novo'} — ${cfg.title}`),form=el('form',undefined,'investment-form'),values=row??defaults;
  for(const f of cfg.fields){
   const label=el('label',f.label);let input;
-  if(['select','fund','institution'].includes(f.type)){
+  if(['select','fund','institution','benchmark'].includes(f.type)){
    input=el('select');input.add(new Option('Selecione',''));
-   const options=f.options??rows(f.type==='fund'?'invest_fundos':'invest_instituicoes').map(r=>({id:r.id,nome:r.nome}));
+   const options=f.type==='benchmark'?benchmarkOptions(values[f.key]):f.options??rows(f.type==='fund'?'invest_fundos':'invest_instituicoes').map(r=>({id:r.id,nome:r.nome}));
    options.forEach(o=>input.add(new Option(typeof o==='string'?o:o.nome,typeof o==='string'?o:String(o.id))));
   }else if(f.type==='textarea')input=el('textarea');else{input=el('input');input.type=['month','date','url','checkbox'].includes(f.type)?f.type:'text';if(['number','integer'].includes(f.type))input.inputMode='decimal';}
   input.name=f.key;input.required=f.required;
@@ -273,7 +280,7 @@ async function previewImport(file){
  const err=el('p',undefined,'form-status error'),confirm=button('Confirmar importação',async()=>{confirm.disabled=true;try{const result=await rpc('investments_import',{p_payload:payload});d.close();await load();message(`Importação concluída. Identificação: ${result.fingerprint}`);}catch(error){err.textContent=error.message;confirm.disabled=false;}},'button button-primary');d.append(err,confirm,button('Cancelar',()=>d.close()));d.showModal();
 }
 async function updateOfficial(){
- if(!month)throw new Error('Selecione uma competência.');message('Consultando IPCA e Selic oficiais...');
+ if(!month)throw new Error('Selecione uma competência.');message('Consultando indicadores em fontes oficiais...');
  const {data:result,error}=await supabase.functions.invoke('investments-market-data',{body:{action:'indicators',month}});if(error)throw error;
  await load();message([...(result.saved??[]),...(result.errors??[])].join(' ')||'Nenhum índice publicado para esta competência.',!!result.errors?.length);
 }
