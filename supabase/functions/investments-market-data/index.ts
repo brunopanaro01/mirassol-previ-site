@@ -1,6 +1,6 @@
 import {createClient} from 'npm:@supabase/supabase-js@2.57.4';
 import {Unzip,UnzipInflate} from 'npm:fflate@0.8.2';
-import {CsvReader,alias,digits,cvmCandidate,parseSgs,parseSgsMonthlyReturn,parseAnbimaMonthly,canonicalAnbimaIndex} from './parsers.js';
+import {CsvReader,alias,digits,cvmCandidate,parseSgs,parseAnbimaMonthly,canonicalAnbimaIndex} from './parsers.js';
 
 const origins=new Set(['https://mirassolprevi.com.br','https://www.mirassolprevi.com.br','http://localhost:5500','http://127.0.0.1:5500']);
 function response(request:Request,value:unknown,status=200){return new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json','Access-Control-Allow-Origin':origins.has(request.headers.get('origin')??'')?request.headers.get('origin')!:'https://mirassolprevi.com.br','Access-Control-Allow-Headers':'authorization,apikey,content-type,x-client-info','Access-Control-Allow-Methods':'POST,OPTIONS','Vary':'Origin'}});}
@@ -20,7 +20,7 @@ Deno.serve(async request=>{
    if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(body.month??''))throw new Error('Competência inválida.');
    const [year,month]=body.month.split('-').map(Number),last=new Date(Date.UTC(year,month,0)).getUTCDate();
    const format=(date:Date)=>`${String(date.getUTCDate()).padStart(2,'0')}/${String(date.getUTCMonth()+1).padStart(2,'0')}/${date.getUTCFullYear()}`;
-   const startDate=new Date(Date.UTC(year,month-1,1)),endDate=new Date(Date.UTC(year,month,0)),lookback=new Date(startDate);lookback.setUTCDate(lookback.getUTCDate()-15);
+   const startDate=new Date(Date.UTC(year,month-1,1)),endDate=new Date(Date.UTC(year,month,0));
    const start=format(startDate),end=format(endDate),saved:string[]=[],errors:string[]=[];
    const canonical=(value:unknown)=>{
     const raw=String(value??'').trim().toUpperCase();
@@ -28,7 +28,7 @@ Deno.serve(async request=>{
     if(raw==='SELIC'||raw==='CDI'||raw==='IPCA')return raw;
     return canonicalAnbimaIndex(raw)??raw;
    };
-   const wanted=new Set(['IPCA','SELIC','CDI','IBOVESPA']);
+   const wanted=new Set(['IPCA','SELIC','CDI']);
    for(const item of snapshot.tables.invest_benchmarks??[])if(item.ativo!==false)wanted.add(canonical(item.nome));
    for(const item of snapshot.tables.invest_fundos??[])if(item.ativo!==false&&item.benchmark)wanted.add(canonical(item.benchmark));
    const save=async(indicator:string,value:number,source:string)=>{
@@ -38,17 +38,13 @@ Deno.serve(async request=>{
    };
    const sgs=async(series:string,startValue=start,endValue=end)=>{
     const remote=await fetch(`https://api.bcb.gov.br/dados/serie/bcdata.sgs.${series}/dados?formato=json&dataInicial=${startValue}&dataFinal=${endValue}`,{signal:AbortSignal.timeout(15000)});
-    if(!remote.ok)throw new Error(`Fonte oficial indisponível (HTTP ${remote.status}).`);return await remote.json();
+    if(remote.status===404)return [];if(!remote.ok)throw new Error(`Fonte oficial indisponível (HTTP ${remote.status}).`);return await remote.json();
    };
    for(const [indicator,series,source]of [['IPCA','433','IBGE via Banco Central do Brasil - SGS 433'],['SELIC','4390','Banco Central do Brasil - SGS 4390'],['CDI','4391','Banco Central do Brasil - SGS 4391']]){
     try{const value=parseSgs(await sgs(series));if(value===null){errors.push(`${indicator}: valor ainda não publicado.`);continue;}await save(indicator,value,source);}
     catch(e){errors.push(`${indicator}: ${e instanceof Error?e.message:String(e)}`);}
    }
-   try{
-    const value=parseSgsMonthlyReturn(await sgs('7',format(lookback),end),body.month);
-    if(value===null)errors.push('IBOVESPA: dados insuficientes para calcular o resultado mensal.');
-    else await save('IBOVESPA',value,'B3 via Banco Central do Brasil - SGS 7');
-   }catch(e){errors.push(`IBOVESPA: ${e instanceof Error?e.message:String(e)}`);}
+   if(wanted.has('IBOVESPA'))errors.push('IBOVESPA: a B3 exige acesso autorizado à fonte oficial; mantenha o lançamento manual enquanto a integração não estiver contratada.');
    const anbimaWanted=[...wanted].filter(value=>canonicalAnbimaIndex(value));
    if(anbimaWanted.length){
     const clientId=Deno.env.get('ANBIMA_CLIENT_ID'),clientSecret=Deno.env.get('ANBIMA_CLIENT_SECRET');
