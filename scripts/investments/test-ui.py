@@ -98,6 +98,31 @@ class BrowserTests(unittest.TestCase):
         detail.get_by_role('button', name='Fechar', exact=True).click()
         self.assertEqual(errors, [])
 
+    def test_monthly_entry_carries_previous_balance_and_calculates_final(self):
+        page, errors = self.open(True)
+        prior = max(FIXTURE['inputs']['invest_saldos'], key=lambda item: item['mes_ano'])
+        year, month_number = map(int, prior['mes_ano'].split('-'))
+        next_month = f'{year + (1 if month_number == 12 else 0):04d}-{(month_number % 12) + 1:02d}'
+
+        page.locator('[data-tab="lancamentos"]').click()
+        page.get_by_role('button', name='Novo registro', exact=True).click()
+        dialog = page.get_by_role('dialog')
+        dialog.get_by_label('Fundo').select_option(str(prior['fundo_id']))
+        dialog.get_by_label('Competência').fill(next_month)
+
+        opening = float(dialog.get_by_label('Saldo inicial').input_value())
+        self.assertAlmostEqual(opening, float(prior['saldo_final']), places=2)
+        dialog.get_by_text(f'Saldo inicial preenchido pelo saldo final de {prior["mes_ano"]}.', exact=True).wait_for()
+
+        dialog.get_by_label('Aplicações').fill('100,50')
+        dialog.get_by_label('Resgates').fill('20,25')
+        dialog.get_by_label('Rendimento').fill('10,75')
+        final = float(dialog.get_by_label('Saldo final (vazio: calcular)').input_value())
+        self.assertAlmostEqual(final, opening + 100.50 - 20.25 + 10.75, places=2)
+        self.assertFalse(dialog.get_by_label('Saldo final (vazio: calcular)').is_editable())
+        dialog.get_by_role('button', name='Cancelar', exact=True).click()
+        self.assertEqual(errors, [])
+
     def test_committee_readonly_ui_and_participation(self):
         page, errors = self.open(False)
         self.assertEqual(page.locator('[data-tab="lancamentos"]').count(), 0)
