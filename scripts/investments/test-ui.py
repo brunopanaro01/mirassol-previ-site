@@ -75,7 +75,12 @@ class BrowserTests(unittest.TestCase):
         page.get_by_role('button', name='Novo registro', exact=True).click()
         dialog = page.get_by_role('dialog')
         dialog.get_by_label('Competência').fill('2026-09')
-        dialog.get_by_label('Indicador / benchmark').fill('IPCA')
+        indicator = dialog.get_by_label('Indicador / benchmark')
+        self.assertEqual(indicator.evaluate('(element) => element.tagName'), 'SELECT')
+        options = indicator.locator('option').evaluate_all('(items) => items.map(item => item.value)')
+        for expected in ['IPCA', 'SELIC', 'CDI', 'IBOVESPA']:
+            self.assertIn(expected, options)
+        indicator.select_option('IPCA')
         dialog.get_by_label('Variação mensal (%)').fill('0,42')
         dialog.get_by_role('button', name='Salvar', exact=True).click()
         dialog.wait_for(state='detached')
