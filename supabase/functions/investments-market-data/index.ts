@@ -19,10 +19,10 @@ Deno.serve(async request=>{
   if(body.action==='indicators'){
    if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(body.month??''))throw new Error('Competência inválida.');
    const [year,month]=body.month.split('-').map(Number),last=new Date(Date.UTC(year,month,0)).getUTCDate();
-   const format=date=>`${String(date.getUTCDate()).padStart(2,'0')}/${String(date.getUTCMonth()+1).padStart(2,'0')}/${date.getUTCFullYear()}`;
+   const format=(date:Date)=>`${String(date.getUTCDate()).padStart(2,'0')}/${String(date.getUTCMonth()+1).padStart(2,'0')}/${date.getUTCFullYear()}`;
    const startDate=new Date(Date.UTC(year,month-1,1)),endDate=new Date(Date.UTC(year,month,0)),lookback=new Date(startDate);lookback.setUTCDate(lookback.getUTCDate()-15);
    const start=format(startDate),end=format(endDate),saved:string[]=[],errors:string[]=[];
-   const canonical=value=>{
+   const canonical=(value:unknown)=>{
     const raw=String(value??'').trim().toUpperCase();
     if(raw==='IBOV'||raw==='IBOVESPA')return 'IBOVESPA';
     if(raw==='SELIC'||raw==='CDI'||raw==='IPCA')return raw;
@@ -31,12 +31,12 @@ Deno.serve(async request=>{
    const wanted=new Set(['IPCA','SELIC','CDI','IBOVESPA']);
    for(const item of snapshot.tables.invest_benchmarks??[])if(item.ativo!==false)wanted.add(canonical(item.nome));
    for(const item of snapshot.tables.invest_fundos??[])if(item.ativo!==false&&item.benchmark)wanted.add(canonical(item.benchmark));
-   const save=async(indicator,value,source)=>{
+   const save=async(indicator:string,value:number,source:string)=>{
     const old=snapshot.tables.invest_indicadores_mensais.find((row:{mes_ano:string;indicador:string})=>row.mes_ano===body.month&&canonical(row.indicador)===indicator);
     const {error}=await client.rpc('investments_save',{p_table:'invest_indicadores_mensais',p_id:old?.id??null,p_version:old?.version??null,p_data:{mes_ano:body.month,indicador:indicator,rentabilidade_percentual:value,fonte:source,observacao:`Atualização oficial em ${new Date().toISOString()}.`}});
     if(error)throw error;saved.push(`${indicator}: ${value}%.`);
    };
-   const sgs=async(series,startValue=start,endValue=end)=>{
+   const sgs=async(series:string,startValue=start,endValue=end)=>{
     const remote=await fetch(`https://api.bcb.gov.br/dados/serie/bcdata.sgs.${series}/dados?formato=json&dataInicial=${startValue}&dataFinal=${endValue}`,{signal:AbortSignal.timeout(15000)});
     if(!remote.ok)throw new Error(`Fonte oficial indisponível (HTTP ${remote.status}).`);return await remote.json();
    };
@@ -57,7 +57,7 @@ Deno.serve(async request=>{
      const tokenResponse=await fetch('https://api.anbima.com.br/oauth/access-token',{method:'POST',headers:{Authorization:`Basic ${btoa(`${clientId}:${clientSecret}`)}`,'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=client_credentials',signal:AbortSignal.timeout(15000)});
      if(!tokenResponse.ok)throw new Error(`autenticação oficial indisponível (HTTP ${tokenResponse.status}).`);
      const tokenPayload=await tokenResponse.json(),token=tokenPayload.access_token;if(!token)throw new Error('token oficial não retornado.');
-     let official=[];
+     let official:{indicator:string;value:number}[]=[];
      for(let offset=0;offset<10&&!official.length;offset++){
       const date=new Date(endDate);date.setUTCDate(date.getUTCDate()-offset);if([0,6].includes(date.getUTCDay()))continue;
       const iso=date.toISOString().slice(0,10),remote=await fetch(`https://api.anbima.com.br/feed/precos-indices/v1/indices/resultados-ima?data=${iso}`,{headers:{Authorization:`Bearer ${token}`,'client_id':clientId},signal:AbortSignal.timeout(15000)});
