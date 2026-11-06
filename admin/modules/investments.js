@@ -87,7 +87,7 @@ function renderEntity(key,parent=null){
  const input=el('input');input.type='search';input.placeholder='Buscar registros';input.setAttribute('aria-label','Buscar registros');input.value=search;
  input.addEventListener('input',()=>{search=input.value;draw();});controls.append(input);s.append(controls);
  if(key==='indicadores'){
-  s.append(el('p','Selecione um benchmark cadastrado. A busca oficial atualiza IPCA, Selic, CDI e Ibovespa; índices IMA e IRF-M usam a API oficial da ANBIMA quando as credenciais estiverem configuradas.'));
+  s.append(el('p','Selecione um benchmark cadastrado. A busca oficial atualiza IPCA, Selic e CDI. Ibovespa exige acesso autorizado da B3; índices IMA e IRF-M usam a API oficial da ANBIMA quando as credenciais estiverem configuradas.'));
   if(snapshot.can_manage)s.append(button('Buscar indicadores oficiais',()=>run(updateOfficial)));
  }
  if(key==='diario'&&snapshot.can_manage)s.append(button('Preparar minuta com os dados do mês',()=>prepareDiary()));
