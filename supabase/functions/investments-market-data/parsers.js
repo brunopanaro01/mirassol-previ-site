@@ -36,7 +36,7 @@ export class CsvReader {
 }
 export function parseSgs(values){if(!Array.isArray(values)||!values.length)return null;const raw=String(values.at(-1).valor??'').trim();if(!raw)throw new Error('Valor oficial vazio.');const value=Number(raw.replace(',','.'));if(!Number.isFinite(value))throw new Error('Valor oficial inválido.');return value;}
 
-function officialNumber(value){const raw=String(value??'').trim();if(!raw)throw new Error('Valor oficial vazio.');const parsed=Number(raw.replace(/\./g,'').replace(',','.'));if(!Number.isFinite(parsed))throw new Error('Valor oficial inválido.');return parsed;}
+function officialNumber(value){const raw=String(value??'').trim();if(!raw)throw new Error('Valor oficial vazio.');const parsed=Number(raw.includes(',')?raw.replace(/\./g,'').replace(',','.'):raw);if(!Number.isFinite(parsed))throw new Error('Valor oficial inválido.');return parsed;}
 function sgsDate(value){const match=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(value??''));return match?new Date(Date.UTC(Number(match[3]),Number(match[2])-1,Number(match[1]))):null;}
 export function parseSgsMonthlyReturn(values,competence){
  if(!Array.isArray(values)||!values.length)return null;
