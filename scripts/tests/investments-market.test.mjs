@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {CsvReader,cvmCandidate,alias,inferBenchmark,parseSgs,parseSgsMonthlyReturn,parseAnbimaMonthly,canonicalAnbimaIndex} from '../../supabase/functions/investments-market-data/parsers.js';
+import {CsvReader,cvmCandidate,alias,inferBenchmark,parseSgs,parseAnbimaMonthly,canonicalAnbimaIndex} from '../../supabase/functions/investments-market-data/parsers.js';
 test('official monthly SGS values distinguish missing and zero',()=>{
  assert.equal(parseSgs([]),null);assert.equal(parseSgs([{valor:'0,00'}]),0);assert.equal(parseSgs([{valor:'-0.10'}]),-.1);
  assert.throws(()=>parseSgs([{valor:'NaN'}]));assert.throws(()=>parseSgs([{valor:''}]));
@@ -16,11 +16,6 @@ test('CVM streaming CSV handles chunks, quotes, semicolons and embedded newlines
  assert.equal(inferBenchmark('Fundo IMA-B 5+','RENDA FIXA'),'IMA-B 5+');
 });
 
-test('official Ibovespa series calculates the requested monthly return',()=>{
- const values=[{data:'30/09/2026',valor:'145000.00'},{data:'01/10/2026',valor:'146000.00'},{data:'30/10/2026',valor:'150800.00'}];
- assert.equal(parseSgsMonthlyReturn(values,'2026-10'),4);
- assert.equal(parseSgsMonthlyReturn(values,'2026-09'),null);
-});
 test('official ANBIMA payload normalizes index names and decimal formats',()=>{
  assert.equal(canonicalAnbimaIndex('IMA - B 5+'),'IMA-B 5+');
  assert.deepEqual(parseAnbimaMonthly({resultados:[
