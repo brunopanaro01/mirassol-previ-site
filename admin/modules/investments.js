@@ -2,6 +2,10 @@ import {supabase} from '../components/supabase-client.js';
 import {catalog,visibleTabs,parseNumber} from './investments/catalog.js?v=20261106-indicadores-2';
 import {portfolio,monthlyReturn,monthlyTarget,targetPanel,fundHistory,fundIndicator,fundRadar,fundRanking,benchmarkName} from './investments/calculations.js';
 
+import {framingSummary} from './investments/framing.js?v=20261107-enquadramento-1';
+
+const framingBases=new Map();
+let framingLevel=1;
 let snapshot, data={}, tab='painel', month='', year=2026, period=12, search='';
 let view, content, status;
 const money=new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
@@ -75,10 +79,43 @@ function renderDashboard(){
  renderPortfolio();
 }
 function renderPortfolio(){
+ renderFraming();
  const r=portfolio(data,month),s=section('Composição da carteira');
  s.append(table(['Fundo','Classe','Saldo','Participação','Rentabilidade'],rows('invest_saldos').filter(r=>r.mes_ano===month&&r.saldo_final>.01).sort((a,b)=>b.saldo_final-a.saldo_final).map(r=>{
   const f=rows('invest_fundos').find(f=>f.id===r.fundo_id);return [button(f?.nome??'Fundo',()=>showFund(f)),f?.classe,brl(r.saldo_final),pct(r.saldo_final/(portfolio(data,month).saldo_final||1)*100),pct(monthlyReturn(r))];
  })));
+}
+function renderFraming(){
+ const s=section('Alocação por enquadramento',`Competência ${month||'não selecionada'} · CMN 5.272/2025. Valores agrupados pelo artigo informado no cadastro de cada fundo.`);
+ s.id='investment-framing';
+ const controls=el('div',undefined,'investment-toolbar'),label=el('label','Base de cálculo do RPPS (R$)'),input=el('input');
+ input.type='text';input.inputMode='decimal';input.placeholder='Informe a base consolidada da competência';input.value=framingBases.has(month)?String(framingBases.get(month)).replace('.',','):'';label.append(input);
+ const levelLabel=el('label','Nível Pró-Gestão'),level=el('select');
+ [0,1,2,3,4].forEach(n=>level.add(new Option(n?`Nível ${n}`:'Sem certificação',String(n))));level.value=String(framingLevel);levelLabel.append(level);
+ const holder=el('div'),error=el('p',undefined,'form-status error');error.setAttribute('role','alert');
+ const draw=()=>{
+  const q=framingSummary(data,month,{base:framingBases.get(month)??null,level:framingLevel});holder.replaceChildren();
+  holder.append(kpis([['Ativos registrados na competência',brl(q.total)],['Base do RPPS para comparação',q.base===null?'Não informada':brl(q.base)]]));
+  if(q.base===null)holder.append(el('p','Informe a base consolidada do RPPS para calcular a participação regulatória e verificar os limites. A participação nos ativos registrados é exibida separadamente.','investment-warning'));
+  q.warnings.forEach(text=>holder.append(el('p',text,'investment-warning')));
+  const values=q.groups.map(g=>{
+   const identity=el('div');identity.append(el('strong',g.rule?.label??'Sem enquadramento reconhecido'),el('p',g.rule?.description??'Preencha ou corrija o artigo no cadastro.'));
+   const details=el('details'),summary=el('summary',`${g.funds.length} posição(ões)`),list=el('ul');details.append(summary,list);
+   g.funds.forEach(({fund,amount})=>{
+    const li=el('li');li.append(el('span',`${fund?.nome??'Cadastro não encontrado'} — ${brl(amount)} `));
+    if(fund)li.append(button(snapshot.can_manage?'Editar enquadramento':'Ver cadastro',()=>snapshot.can_manage?editRecord('fundos',fund):detailRecord('fundos',fund)));
+    list.append(li);
+   });identity.append(details);
+   const badge=el('span',g.status,`investment-risk-badge is-${g.tone}`);
+   const access=!q.currentRule?'Verificar certificação da época':!g.rule?'Revisar cadastro':g.eligible?'Nível suficiente; observar demais requisitos':`Novos aportes restritos: exige nível ${g.rule.minLevel}. Posição existente: verificar art. 27.`;
+   return [identity,brl(g.amount),pct(g.fundShare),pct(g.percentage),q.currentRule&&g.rule?pct(g.rule.limit):'Pendente',g.limitValue===null?'Pendente':brl(g.limitValue),badge,access];
+  });
+  holder.append(table(['Enquadramento / fundos','Valor alocado','% dos ativos registrados','% da base RPPS','Teto da modalidade','Teto em R$','Situação percentual','Novos aportes'],values));
+ };
+ const apply=()=>{error.textContent='';try{const v=parseNumber(input.value);if(v===null)framingBases.delete(month);else if(v<=0)throw new Error('Informe uma base positiva.');else framingBases.set(month,v);framingLevel=Number(level.value);draw();}catch(e){error.textContent=e.message;}};
+ controls.append(label,levelLabel,button('Comparar limites',apply,'button button-primary'));s.append(controls,error,el('p','A base deve incluir os ativos financeiros sujeitos aos limites, conforme art. 6º, e excluir disponibilidades em conta corrente. O valor informado serve apenas a esta consulta e não altera os saldos cadastrados.'),holder);
+ s.append(el('p','O teto apresentado é o da modalidade. Limites da política de investimentos, por fundo/classe, emissor e gestor exigem verificações próprias. O quadro não atesta regularidade integral. Excesso percentual exige apuração da causa e das regras de desenquadramento passivo do art. 27.'));
+ const link=el('a','Consultar a Resolução CMN 5.272/2025');link.href='https://www.gov.br/previdencia/pt-br/assuntos/rpps/legislacao-dos-rpps/2025/ResoluoBCCMNn5.272de18dez2025.pdf';link.target='_blank';link.rel='noopener noreferrer';s.append(link);draw();
 }
 function renderEntity(key,parent=null){
  const cfg=catalog[key];if(cfg.managerOnly&&!snapshot.can_manage)return;
@@ -93,7 +130,7 @@ function renderEntity(key,parent=null){
  if(key==='diario'&&snapshot.can_manage)s.append(button('Preparar minuta com os dados do mês',()=>prepareDiary()));
  if(key==='fundos'&&snapshot.can_manage)s.append(button('Consultar cadastro CVM',()=>cvmForm()));
  const holder=el('div');s.append(holder);
- const fields=cfg.fields.slice(0,key==='fundos'?5:4);
+ const fields=key==='fundos'?[...cfg.fields.slice(0,5),cfg.fields.find(f=>f.key==='artigo_resolucao')]:cfg.fields.slice(0,4);
  function draw(){
   const list=filterMonth(rows(cfg.table)).filter(r=>JSON.stringify(r).toLocaleLowerCase('pt-BR').includes(search.toLocaleLowerCase('pt-BR'))).sort((a,b)=>(b.mes_ano??'').localeCompare(a.mes_ano??'')||a.id-b.id);
   holder.replaceChildren(table([...fields.map(f=>f.label),'Ações'],list.map(row=>{
