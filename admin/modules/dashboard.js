@@ -153,7 +153,7 @@ async function initializeDashboard() {
         statusElement.classList.add("error");
         return;
       }
-      const { initializeInvestmentsModule } = await import("./investments.js?v=20261107-enquadramento-1");
+      const { initializeInvestmentsModule } = await import("./investments.js?v=20261107-enquadramento-2");
       await initializeInvestmentsModule();
       return;
     }
