@@ -2,8 +2,9 @@ import {supabase} from '../components/supabase-client.js';
 import {catalog,visibleTabs,parseNumber} from './investments/catalog.js?v=20261106-indicadores-2';
 import {portfolio,monthlyReturn,monthlyTarget,targetPanel,fundHistory,fundIndicator,fundRadar,fundRanking,benchmarkName} from './investments/calculations.js';
 
-import {framingSummary} from './investments/framing.js?v=20261107-enquadramento-2';
+import {framingOverview} from './investments/framing.js?v=20261107-enquadramento-3';
 
+let framingLevel=1;
 let snapshot, data={}, tab='painel', month='', year=2026, period=12, search='';
 let view, content, status;
 const money=new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
@@ -84,20 +85,26 @@ function renderPortfolio(){
  })));
 }
 function renderFraming(){
- const q=framingSummary(data,month,{level:1});
- const framingPct=v=>v===null||v===undefined?'Pendente':`${Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}%`;
  const s=section('Alocação por enquadramento',`Competência ${month||'não selecionada'}`);
  s.id='investment-framing';
- s.append(table(['Enquadramento','Limite','Percentual aplicado'],q.groups.map(g=>{
-  const label=el('div');label.append(el('strong',g.rule?.label??'Revisar cadastro'));
-  if(g.rule)label.append(el('small',` — ${g.rule.description}`));
-  return [label,q.currentRule&&g.rule?framingPct(g.rule.limit):'Pendente',framingPct(g.fundShare)];
- })));
- s.append(el('p',`Percentuais sobre o total dos fundos cadastrados na competência: ${brl(q.total)}. Os limites são os tetos por modalidade da CMN 5.272/2025.`,'investment-detail-note'));
- const restricted=q.groups.filter(g=>g.rule&&!g.eligible);
- if(q.currentRule&&restricted.length)s.append(el('p',`Pró-Gestão nível I: novos aportes em ${restricted.map(g=>g.rule.label).join('; ')} exigem nível superior. Posições existentes devem observar o art. 27.`,'investment-detail-note'));
- q.warnings.forEach(text=>s.append(el('p',text,'investment-warning')));
- if(q.incomplete)s.append(el('p','Há dados pendentes de revisão nos cadastros ou lançamentos.','investment-warning'));
+ const tools=el('div',undefined,'investment-toolbar'),label=el('label','Nível Pró-Gestão'),select=el('select');
+ [0,1,2,3,4].forEach(n=>select.add(new Option(n?`Nível ${n}`:'Sem certificação',String(n))));select.value=String(framingLevel);label.append(select);tools.append(label);s.append(tools);
+ const holder=el('div');s.append(holder);
+ const framingPct=v=>v===null||v===undefined?'Pendente':`${Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}%`;
+ const draw=()=>{
+  const q=framingOverview(data,month,framingLevel);holder.replaceChildren();
+  holder.append(table(['Enquadramento','Limite','Percentual aplicado'],q.groups.map(g=>{
+   const label=el('div');label.append(el('strong',g.rule?.label??'Revisar cadastro'));if(g.rule)label.append(el('small',` — ${g.rule.description}`));
+   const limit=el('div',q.currentRule&&g.rule?framingPct(g.availableLimit):'Pendente');
+   if(q.currentRule&&g.rule&&!g.eligible)limit.append(el('small',` — novos aportes exigem nível ${g.rule.minLevel} (teto da modalidade: ${framingPct(g.rule.limit)})`));
+   return [label,limit,g.integrated?framingPct(g.fundShare):'Não integrado'];
+  })));
+  holder.append(el('p',`Percentuais sobre os ativos registrados na competência: ${brl(q.total)}. O limite exibido considera o nível selecionado para novos aportes; posições existentes observam o art. 27. Consignados de outro módulo não estão integrados a este quadro.`,'investment-detail-note'));
+  holder.append(el('p','Tetos globais: renda variável 50%; exterior 10%; estruturados 20%; RF dos incisos VII a IX 35%. Os limites das linhas não se somam.','investment-detail-note'));
+  q.warnings.forEach(text=>holder.append(el('p',text,'investment-warning')));
+  if(q.incomplete)holder.append(el('p','Há dados pendentes de revisão nos cadastros ou lançamentos.','investment-warning'));
+ };
+ select.addEventListener('change',()=>{framingLevel=Number(select.value);draw();});draw();
 }
 function renderEntity(key,parent=null){
  const cfg=catalog[key];if(cfg.managerOnly&&!snapshot.can_manage)return;
