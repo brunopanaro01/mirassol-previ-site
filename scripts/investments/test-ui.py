@@ -146,5 +146,26 @@ class BrowserTests(unittest.TestCase):
         dialog.wait_for(state='detached')
         self.assertEqual(errors, [])
 
+
+    def test_framing_visible_on_dashboard_and_portfolio(self):
+        page, errors = self.open(True)
+        panel = page.locator('#investment-framing')
+        panel.get_by_role('heading', name='Alocação por enquadramento', exact=True).wait_for()
+        self.assertGreater(panel.locator('tbody tr').count(), 0)
+        panel.get_by_text('Informe a base consolidada do RPPS', exact=False).wait_for()
+        month = max(row['mes_ano'] for row in FIXTURE['inputs']['invest_saldos'])
+        total = sum(float(row['saldo_final'] or 0) for row in FIXTURE['inputs']['invest_saldos'] if row['mes_ano'] == month)
+        panel.get_by_label('Base de cálculo do RPPS (R$)').fill(str(total))
+        panel.get_by_role('button', name='Comparar limites', exact=True).click()
+        self.assertIn('%', panel.locator('tbody tr').first.locator('td').nth(3).inner_text())
+        panel.locator('summary').first.click()
+        self.assertTrue(panel.locator('details').first.get_attribute('open') is not None)
+        page.locator('[data-tab="carteira"]').click()
+        panel.get_by_role('heading', name='Alocação por enquadramento', exact=True).wait_for()
+        self.assertIn('%', panel.locator('tbody tr').first.locator('td').nth(3).inner_text())
+        page.set_viewport_size({'width': 390, 'height': 844})
+        panel.get_by_role('heading', name='Alocação por enquadramento', exact=True).wait_for()
+        self.assertEqual(errors, [])
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)
