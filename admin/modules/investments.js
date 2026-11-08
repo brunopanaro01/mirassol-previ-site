@@ -2,7 +2,7 @@ import {supabase} from '../components/supabase-client.js';
 import {catalog,visibleTabs,parseNumber} from './investments/catalog.js?v=20261106-indicadores-2';
 import {portfolio,monthlyReturn,monthlyTarget,targetPanel,fundHistory,fundIndicator,fundRadar,fundRanking,benchmarkName} from './investments/calculations.js';
 
-import {framingOverview} from './investments/framing.js?v=20261107-enquadramento-3';
+import {framingOverview} from './investments/framing.js?v=20261108-enquadramento-4';
 
 let framingLevel=1;
 let snapshot, data={}, tab='painel', month='', year=2026, period=12, search='';
@@ -93,12 +93,14 @@ function renderFraming(){
  const framingPct=v=>v===null||v===undefined?'Pendente':`${Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}%`;
  const draw=()=>{
   const q=framingOverview(data,month,framingLevel);holder.replaceChildren();
-  holder.append(table(['Enquadramento','Limite','Percentual aplicado'],q.groups.map(g=>{
+  const grid=table(['Enquadramento','Limite','Valor investido','Percentual aplicado'],q.groups.map(g=>{
    const label=el('div');label.append(el('strong',g.rule?.label??'Revisar cadastro'));if(g.rule)label.append(el('small',` — ${g.rule.description}`));
    const limit=el('div',q.currentRule&&g.rule?framingPct(g.availableLimit):'Pendente');
    if(q.currentRule&&g.rule&&!g.eligible)limit.append(el('small',` — novos aportes exigem nível ${g.rule.minLevel} (teto da modalidade: ${framingPct(g.rule.limit)})`));
-   return [label,limit,g.integrated?framingPct(g.fundShare):'Não integrado'];
-  })));
+   return [label,limit,g.integrated?brl(g.amount):'Não integrado',g.integrated?framingPct(g.fundShare):'Não integrado'];
+  }));
+  const footer=el('tfoot'),totalRow=el('tr'),totalLabel=el('th','Total registrado');totalLabel.setAttribute('scope','row');totalRow.append(totalLabel);
+  ['—',brl(q.total),framingPct(q.total>0?100:0)].forEach(value=>{const cell=el('td');cell.append(el('strong',value));totalRow.append(cell);});footer.append(totalRow);grid.querySelector('table').append(footer);holder.append(grid);
   holder.append(el('p',`Percentuais sobre os ativos registrados na competência: ${brl(q.total)}. O limite exibido considera o nível selecionado para novos aportes; posições existentes observam o art. 27. Consignados de outro módulo não estão integrados a este quadro.`,'investment-detail-note'));
   holder.append(el('p','Tetos globais: renda variável 50%; exterior 10%; estruturados 20%; RF dos incisos VII a IX 35%. Os limites das linhas não se somam.','investment-detail-note'));
   q.warnings.forEach(text=>holder.append(el('p',text,'investment-warning')));
