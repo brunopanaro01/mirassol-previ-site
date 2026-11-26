@@ -5,22 +5,22 @@ const MAX_FILE_SIZE = 20 * 1024 * 1024;
 const MULTI_CURRENT_CATEGORIES = new Set(["action_plan_monitoring"]);
 
 const CATEGORIES = Object.freeze({
-  progestao_certificate: "Certificado Pr�-Gest�o",
-  governance_report: "Relat�rio de governan�a",
+  progestao_certificate: "Certificado Pró-Gestão",
+  governance_report: "Relatório de governança",
   guidance_booklet: "Cartilhas orientativas",
-  capacity_plan: "Plano de a��o de capacita��o",
-  ethics_code: "C�digo de �tica",
+  capacity_plan: "Plano de ação de capacitação",
+  ethics_code: "Código de Ética",
   posic: "POSIC",
-  action_plan: "Plano de a��o",
-  action_plan_monitoring: "Avalia��o do plano de a��o",
-  certificate: "Certid�o / certificado",
+  action_plan: "Plano de ação",
+  action_plan_monitoring: "Avaliação do plano de ação",
+  certificate: "Certidão / certificado",
   other: "Outro documento"
 });
 
 const BODY_LABELS = Object.freeze({
-  conselho: "Conselho Previdenci�rio",
+  conselho: "Conselho Previdenciário",
   fiscal: "Conselho Fiscal",
-  comite: "Comit� de Investimentos"
+  comite: "Comitê de Investimentos"
 });
 
 let snapshot = {
@@ -35,7 +35,7 @@ function setStatus(message, type = "") {
 }
 
 function formatDate(value) {
-  if (!value) return "-";
+  if (!value) return "—";
   return new Intl.DateTimeFormat("pt-BR").format(new Date(`${value}T12:00:00`));
 }
 
@@ -53,7 +53,7 @@ function publicId(prefix, label) {
 function createCell(label, value) {
   const cell = document.createElement("td");
   cell.dataset.label = label;
-  cell.textContent = value ?? "-";
+  cell.textContent = value ?? "—";
   return cell;
 }
 
@@ -72,7 +72,7 @@ function fillSelect(select, options, placeholder) {
   options.forEach(([value, label]) => select.add(new Option(label, value)));
 }
 
-async function loadSnapshot(message = "Carregando publica��es...") {
+async function loadSnapshot(message = "Carregando publicações...") {
   setStatus(message);
   const { data, error } = await supabase.rpc("publications_admin_snapshot");
   if (error) throw error;
@@ -93,11 +93,11 @@ async function loadSnapshot(message = "Carregando publica��es...") {
     indicators: Array.isArray(indicatorData?.years) ? indicatorData.years : []
   };
   renderAll();
-  setStatus("Conte�do atualizado.");
+  setStatus("Conteúdo atualizado.");
 }
 
 function formatCurrency(value) {
-  if (value === null || value === undefined || value === "") return "-";
+  if (value === null || value === undefined || value === "") return "—";
   return Number(value).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
@@ -113,10 +113,10 @@ function renderIndicators() {
       createCell("Segurados", record.insured),
       createCell("Aposentados", record.retirees),
       createCell("Pensionistas", record.pensioners),
-      createCell("Patrim�nio l�quido", formatCurrency(record.net_assets))
+      createCell("Patrimônio líquido", formatCurrency(record.net_assets))
     );
     const actions = document.createElement("td");
-    actions.dataset.label = "A��es";
+    actions.dataset.label = "Ações";
     actions.className = "table-actions";
     actions.append(actionButton("Editar", "edit-indicator", String(record.reference_year)));
     row.append(actions);
@@ -137,13 +137,13 @@ function renderDocuments() {
     const row = document.createElement("tr");
     row.append(
       createCell("Categoria", CATEGORIES[record.category] ?? record.category),
-      createCell("T�tulo", record.title),
+      createCell("Título", record.title),
       createCell("Ano", record.reference_year),
-      createCell("Vers�o", record.status === "current" ? "Atual" : "Hist�rico"),
+      createCell("Versão", record.status === "current" ? "Atual" : "Histórico"),
       createCell("Portal", record.is_published ? "Publicado" : "Rascunho")
     );
     const actions = document.createElement("td");
-    actions.dataset.label = "A��es";
+    actions.dataset.label = "Ações";
     actions.className = "table-actions";
     actions.append(
       actionButton("Editar", "edit-document", record.id),
@@ -157,11 +157,11 @@ function renderDocuments() {
 
 function certificateSituation(record) {
   if (!record.is_published) return "Rascunho";
-  if (!record.valid_until) return "Validade n�o informada";
+  if (!record.valid_until) return "Validade não informada";
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const expiry = new Date(`${record.valid_until}T12:00:00`);
-  return expiry < today ? "Vencida" : "V�lida";
+  return expiry < today ? "Vencida" : "Válida";
 }
 
 function renderCertificates() {
@@ -173,14 +173,14 @@ function renderCertificates() {
   records.forEach((record) => {
     const row = document.createElement("tr");
     row.append(
-      createCell("T�tulo", record.title),
-      createCell("Emiss�o", formatDate(record.issued_at)),
+      createCell("Título", record.title),
+      createCell("Emissão", formatDate(record.issued_at)),
       createCell("Validade", formatDate(record.valid_until)),
-      createCell("Situa��o", certificateSituation(record)),
+      createCell("Situação", certificateSituation(record)),
       createCell("Portal", record.is_published ? "Publicado" : "Rascunho")
     );
     const actions = document.createElement("td");
-    actions.dataset.label = "A��es";
+    actions.dataset.label = "Ações";
     actions.className = "table-actions";
     actions.append(
       actionButton("Editar", "edit-certificate", record.id),
@@ -207,7 +207,7 @@ function renderBodies() {
     const title = document.createElement("strong");
     title.textContent = bodyRecord.name;
     const detail = document.createElement("span");
-    detail.textContent = `${bodyRecord.periodicity} � ${bodyRecord.status === "pending" ? "n�o constitu�do" : "ativo"} � revis�o ${formatDate(bodyRecord.last_reviewed_on)}`;
+    detail.textContent = `${bodyRecord.periodicity} · ${bodyRecord.status === "pending" ? "não constituído" : "ativo"} · revisão ${formatDate(bodyRecord.last_reviewed_on)}`;
     const button = actionButton("Configurar", "edit-body", bodyRecord.code);
     article.append(title, detail, button);
     cards.append(article);
@@ -224,11 +224,11 @@ function renderMembers() {
     row.append(
       createCell("Colegiado", BODY_LABELS[record.body_code]),
       createCell("Nome", record.name),
-      createCell("Fun��o", record.role),
-      createCell("Situa��o", record.is_active ? "Composi��o atual" : "Hist�rico")
+      createCell("Função", record.role),
+      createCell("Situação", record.is_active ? "Composição atual" : "Histórico")
     );
     const actions = document.createElement("td");
-    actions.dataset.label = "A��es";
+    actions.dataset.label = "Ações";
     actions.className = "table-actions";
     actions.append(actionButton("Editar", "edit-member", record.id));
     row.append(actions);
@@ -257,7 +257,7 @@ function renderMeetings() {
       createCell("Portal", record.is_published ? "Publicado" : "Rascunho")
     );
     const actions = document.createElement("td");
-    actions.dataset.label = "A��es";
+    actions.dataset.label = "Ações";
     actions.className = "table-actions";
     actions.append(actionButton("Editar", "edit-meeting", record.id));
     if (!record.is_published) actions.append(actionButton("Excluir", "delete-meeting", record.id, true));
@@ -281,7 +281,7 @@ function updateMeetingFilters() {
   const selectedYear = yearFilter.value;
   const years = [...new Set(snapshot.meetings.map((record) =>
     String(record.meeting_date ?? "").slice(0, 4)
-  ))].filter((year) => /^\d{4}$/.test(year)).sort((a, b) => Number(b) - Number(a));
+  ))].filter((year) => /^\\d{4}$/.test(year)).sort((a, b) => Number(b) - Number(a));
   fillSelect(yearFilter, years.map((year) => [year, year]), "Todos os anos");
   yearFilter.value = years.includes(selectedYear) ? selectedYear : "";
 }
@@ -295,12 +295,12 @@ function renderAudiences() {
     const row = document.createElement("tr");
     row.append(
       createCell("Ano", record.reference_year),
-      createCell("T�tulo", record.title),
+      createCell("Título", record.title),
       createCell("Data", formatDate(record.event_date)),
       createCell("Portal", record.is_published ? "Publicado" : "Rascunho")
     );
     const actions = document.createElement("td");
-    actions.dataset.label = "A��es";
+    actions.dataset.label = "Ações";
     actions.className = "table-actions";
     actions.append(actionButton("Editar", "edit-audience", record.id));
     if (!record.is_published) actions.append(actionButton("Excluir", "delete-audience", record.id, true));
@@ -322,13 +322,13 @@ function renderTrainings() {
     const row = document.createElement("tr");
     row.append(
       createCell("Ano", record.reference_year),
-      createCell("Curso ou a��o", record.course_title),
-      createCell("Per�odo", `${record.planned_start} a ${record.planned_end}`),
-      createCell("Situa��o", record.status),
+      createCell("Curso ou ação", record.course_title),
+      createCell("Período", `${record.planned_start} a ${record.planned_end}`),
+      createCell("Situação", record.status),
       createCell("Portal", record.is_published ? "Publicado" : "Rascunho")
     );
     const actions = document.createElement("td");
-    actions.dataset.label = "A��es";
+    actions.dataset.label = "Ações";
     actions.className = "table-actions";
     actions.append(
       actionButton("Editar", "edit-training", record.id),
@@ -394,7 +394,7 @@ function openDialog(kind, record = null, options = {}) {
     form.elements.category.value = category;
     form.elements.category.disabled = category === "certificate";
     dialog.querySelector("h2").textContent = category === "certificate"
-      ? (record ? "Editar certid�o" : "Cadastrar certid�o")
+      ? (record ? "Editar certidão" : "Cadastrar certidão")
       : (record ? "Editar documento" : "Cadastrar documento");
     form.elements.title.value = record?.title ?? "";
     form.elements.series_key.value = record?.series_key ?? "";
@@ -425,7 +425,7 @@ function openDialog(kind, record = null, options = {}) {
   } else if (kind === "meeting") {
     form.elements.body_code.value = record?.body_code ?? "conselho";
     form.elements.meeting_date.value = record?.meeting_date ?? "";
-    form.elements.meeting_type.value = record?.meeting_type ?? "Ordin�ria";
+    form.elements.meeting_type.value = record?.meeting_type ?? "Ordinária";
     form.elements.agenda.value = record?.agenda ?? "";
     form.elements.expected_result.value = record?.expected_result ?? "";
     form.elements.is_published.checked = record?.is_published ?? false;
@@ -485,7 +485,7 @@ async function uploadDocument(file, category, year) {
   if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
     throw new Error("Selecione um arquivo PDF.");
   }
-  if (file.size > MAX_FILE_SIZE) throw new Error("O PDF deve ter no m�ximo 20 MB.");
+  if (file.size > MAX_FILE_SIZE) throw new Error("O PDF deve ter no máximo 20 MB.");
   const safeName = slugify(file.name.replace(/\.pdf$/i, "")) || "documento";
   const path = `${category}/${year}/${safeName}-${crypto.randomUUID().slice(0, 8)}.pdf`;
   const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
@@ -516,7 +516,7 @@ async function submitDocument(form) {
     ? slugify(form.elements.series_key.value.trim() || title)
     : "";
   if (category === "guidance_booklet" && seriesKey.length < 3) {
-    throw new Error("Informe um t�tulo com pelo menos 3 caracteres para identificar a cartilha.");
+    throw new Error("Informe um título com pelo menos 3 caracteres para identificar a cartilha.");
   }
   form.elements.series_key.value = seriesKey;
   const payload = {
@@ -537,7 +537,7 @@ async function submitDocument(form) {
   const previousPath = form.dataset.currentFile || "";
   if (previousPath && previousPath !== filePath) {
     const { error: storageError } = await supabase.storage.from(BUCKET).remove([previousPath]);
-    if (storageError) console.warn("O registro foi salvo, mas o PDF substitu�do n�o p�de ser removido.", storageError);
+    if (storageError) console.warn("O registro foi salvo, mas o PDF substituído não pôde ser removido.", storageError);
   }
 }
 
@@ -638,7 +638,7 @@ async function submitBody(form) {
 }
 
 async function deleteRecord(entity, id) {
-  if (!window.confirm("Excluir este rascunho? A opera��o n�o poder� ser desfeita.")) return;
+  if (!window.confirm("Excluir este rascunho? A operação não poderá ser desfeita.")) return;
   const filePath = entity === "document"
     ? snapshot.documents.find((item) => item.id === id)?.file_path
     : null;
@@ -646,7 +646,7 @@ async function deleteRecord(entity, id) {
   if (error) throw error;
   if (filePath) {
     const { error: storageError } = await supabase.storage.from(BUCKET).remove([filePath]);
-    if (storageError) console.warn("O rascunho foi exclu�do, mas o PDF n�o p�de ser removido.", storageError);
+    if (storageError) console.warn("O rascunho foi excluído, mas o PDF não pôde ser removido.", storageError);
   }
   await loadSnapshot("Atualizando listagem...");
 }
@@ -654,13 +654,13 @@ async function deleteRecord(entity, id) {
 async function deleteTraining(id) {
   const record = snapshot.trainings.find((item) => item.id === id);
   if (!record || !window.confirm(
-    `Excluir "${record.course_title}"? A informa��o deixar� de aparecer no portal.`
+    `Excluir “${record.course_title}”? A informação deixará de aparecer no portal.`
   )) return;
   const { error } = await supabase.rpc("education_admin_delete_training", {
     p_id: id
   });
   if (error) throw error;
-  await loadSnapshot("Atualizando capacita��es...");
+  await loadSnapshot("Atualizando capacitações...");
 }
 
 function bindEvents() {
@@ -738,24 +738,24 @@ function bindEvents() {
         if (window.confirm(`Deseja ${verb} este documento?`)) {
           const { error } = await supabase.rpc("publications_admin_set_document_publication", { p_id: id, p_publish: !record.is_published });
           if (error) throw error;
-          await loadSnapshot("Atualizando publica��o...");
+          await loadSnapshot("Atualizando publicação...");
         }
       }
       if (button.dataset.action === "toggle-training") {
         const record = find(snapshot.trainings);
         const verb = record.is_published ? "despublicar" : "publicar";
-        if (window.confirm(`Deseja ${verb} esta capacita��o?`)) {
+        if (window.confirm(`Deseja ${verb} esta capacitação?`)) {
           const { error } = await supabase.rpc(
             "education_admin_set_training_publication",
             { p_id: id, p_publish: !record.is_published }
           );
           if (error) throw error;
-          await loadSnapshot("Atualizando capacita��es...");
+          await loadSnapshot("Atualizando capacitações...");
         }
       }
     } catch (error) {
       console.error(error);
-      setStatus(error.message ?? "N�o foi poss�vel concluir a opera��o.", "error");
+      setStatus(error.message ?? "Não foi possível concluir a operação.", "error");
     }
   });
 
@@ -770,10 +770,10 @@ function bindEvents() {
         else if (kind === "body") await submitBody(form);
         else await submitSimple(kind, form);
         closeDialog(form);
-        await loadSnapshot("Salvando altera��es...");
+        await loadSnapshot("Salvando alterações...");
       } catch (error) {
         console.error(error);
-        setStatus(error.message ?? "N�o foi poss�vel salvar o registro.", "error");
+        setStatus(error.message ?? "Não foi possível salvar o registro.", "error");
       } finally {
         submit.disabled = false;
       }
@@ -786,80 +786,80 @@ function dialogMarkup() {
   const categoryOptions = Object.entries(CATEGORIES).map(([value, label]) => `<option value="${value}">${label}</option>`).join("");
   return `
     <dialog id="document-dialog" class="document-dialog"><form method="dialog" class="document-form" data-kind="document">
-      <div class="dialog-heading"><div><p class="eyebrow">Publica��es</p><h2>Cadastrar documento</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">�</button></div>
+      <div class="dialog-heading"><div><p class="eyebrow">Publicações</p><h2>Cadastrar documento</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">×</button></div>
       <input type="hidden" name="record_id"><div class="document-form-grid">
         <div class="form-field"><label>Categoria</label><select name="category" required><option value="">Selecione</option>${categoryOptions}</select></div>
-        <div class="form-field"><label>Ano de refer�ncia</label><input name="reference_year" type="number" min="2000" max="2200"></div>
-        <div class="form-field form-field-wide"><label>T�tulo</label><input name="title" required minlength="3"></div>
-        <div class="form-field form-field-wide" data-series-field hidden><label>Grupo de vers�es da cartilha</label><input name="series_key" maxlength="120" placeholder="Ex.: cartilha-previdenciaria"><small>Use o mesmo grupo ao cadastrar uma nova vers�o da mesma cartilha. Para uma cartilha diferente, informe outro grupo. O SIGPREVI ajustar� esse identificador automaticamente ao salvar.</small></div>
-        <div class="form-field form-field-wide"><label>Descri��o</label><textarea name="description"></textarea></div>
-        <div class="form-field"><label>Data de publica��o</label><input name="publication_date" type="date"></div>
-        <div class="form-field"><label>Vers�o / identifica��o</label><input name="version_label"></div>
-        <div class="form-field" data-status-field><label>Situa��o da vers�o</label><select name="status"><option value="current">Atual</option><option value="historical">Hist�rico</option></select></div>
+        <div class="form-field"><label>Ano de referência</label><input name="reference_year" type="number" min="2000" max="2200"></div>
+        <div class="form-field form-field-wide"><label>Título</label><input name="title" required minlength="3"></div>
+        <div class="form-field form-field-wide" data-series-field hidden><label>Grupo de versões da cartilha</label><input name="series_key" maxlength="120" placeholder="Ex.: cartilha-previdenciaria"><small>Use o mesmo grupo ao cadastrar uma nova versão da mesma cartilha. Para uma cartilha diferente, informe outro grupo. O SIGPREVI ajustará esse identificador automaticamente ao salvar.</small></div>
+        <div class="form-field form-field-wide"><label>Descrição</label><textarea name="description"></textarea></div>
+        <div class="form-field"><label>Data de publicação</label><input name="publication_date" type="date"></div>
+        <div class="form-field"><label>Versão / identificação</label><input name="version_label"></div>
+        <div class="form-field" data-status-field><label>Situação da versão</label><select name="status"><option value="current">Atual</option><option value="historical">Histórico</option></select></div>
         <div class="form-field"><label>Ordem</label><input name="display_order" type="number" value="10"></div>
-        <div class="form-field"><label>Emiss�o</label><input name="issued_at" type="date"></div>
+        <div class="form-field"><label>Emissão</label><input name="issued_at" type="date"></div>
         <div class="form-field"><label>Validade</label><input name="valid_until" type="date"></div>
-        <div class="form-field form-field-wide"><label>Enviar PDF (m�x. 20 MB)</label><input name="pdf_file" type="file" accept="application/pdf,.pdf"></div>
+        <div class="form-field form-field-wide"><label>Enviar PDF (máx. 20 MB)</label><input name="pdf_file" type="file" accept="application/pdf,.pdf"></div>
         <div class="form-field form-field-wide"><label>Ou link HTTPS / Google Drive</label><input name="external_url" type="url" pattern="https://.*" placeholder="https://..."></div>
         <p class="current-file form-field-wide"></p>
       </div><div class="dialog-actions"><button type="button" class="button button-secondary" data-close-dialog>Cancelar</button><button type="submit" class="button button-primary button-auto">Salvar</button></div>
     </form></dialog>
     <dialog id="member-dialog" class="document-dialog"><form method="dialog" class="document-form" data-kind="member">
-      <div class="dialog-heading"><div><p class="eyebrow">Composi��o</p><h2>Cadastrar membro</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">�</button></div>
+      <div class="dialog-heading"><div><p class="eyebrow">Composição</p><h2>Cadastrar membro</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">×</button></div>
       <input type="hidden" name="record_id"><div class="document-form-grid">
         <div class="form-field"><label>Colegiado</label><select name="body_code" required>${bodyOptions}</select></div><div class="form-field"><label>Ordem</label><input name="display_order" type="number" value="10"></div>
-        <div class="form-field"><label>Nome</label><input name="name" required></div><div class="form-field"><label>Fun��o</label><input name="role" required></div>
+        <div class="form-field"><label>Nome</label><input name="name" required></div><div class="form-field"><label>Função</label><input name="role" required></div>
         <div class="form-field form-field-wide"><label>Imagem no site (caminho existente)</label><input name="image_path" placeholder="imagens/nome.jpg"></div>
-        <div class="form-field"><label>In�cio</label><input name="start_date" type="date"></div><div class="form-field"><label>T�rmino</label><input name="end_date" type="date"></div>
-        <label class="checkbox-field form-field-wide"><input name="is_active" type="checkbox" checked> Exibir na composi��o atual</label>
+        <div class="form-field"><label>Início</label><input name="start_date" type="date"></div><div class="form-field"><label>Término</label><input name="end_date" type="date"></div>
+        <label class="checkbox-field form-field-wide"><input name="is_active" type="checkbox" checked> Exibir na composição atual</label>
       </div><div class="dialog-actions"><button type="button" class="button button-secondary" data-close-dialog>Cancelar</button><button type="submit" class="button button-primary button-auto">Salvar</button></div>
     </form></dialog>
     <dialog id="meeting-dialog" class="document-dialog"><form method="dialog" class="document-form" data-kind="meeting">
-      <div class="dialog-heading"><div><p class="eyebrow">Agenda</p><h2>Cadastrar reuni�o</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">�</button></div>
+      <div class="dialog-heading"><div><p class="eyebrow">Agenda</p><h2>Cadastrar reunião</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">×</button></div>
       <input type="hidden" name="record_id"><div class="document-form-grid">
         <div class="form-field"><label>Colegiado</label><select name="body_code" required>${bodyOptions}</select></div><div class="form-field"><label>Data</label><input name="meeting_date" type="date" required></div>
-        <div class="form-field"><label>Tipo</label><select name="meeting_type"><option>Ordin�ria</option><option>Extraordin�ria</option></select></div><label class="checkbox-field"><input name="is_published" type="checkbox"> Publicar no portal</label>
+        <div class="form-field"><label>Tipo</label><select name="meeting_type"><option>Ordinária</option><option>Extraordinária</option></select></div><label class="checkbox-field"><input name="is_published" type="checkbox"> Publicar no portal</label>
         <div class="form-field form-field-wide"><label>Pauta</label><textarea name="agenda" required></textarea></div><div class="form-field form-field-wide"><label>Resultado esperado</label><textarea name="expected_result"></textarea></div>
       </div><div class="dialog-actions"><button type="button" class="button button-secondary" data-close-dialog>Cancelar</button><button type="submit" class="button button-primary button-auto">Salvar</button></div>
     </form></dialog>
     <dialog id="audience-dialog" class="document-dialog"><form method="dialog" class="document-form" data-kind="audience">
-      <div class="dialog-heading"><div><p class="eyebrow">Audi�ncias</p><h2>Cadastrar audi�ncia</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">�</button></div>
+      <div class="dialog-heading"><div><p class="eyebrow">Audiências</p><h2>Cadastrar audiência</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">×</button></div>
       <input type="hidden" name="record_id"><div class="document-form-grid">
-        <div class="form-field"><label>Ano de refer�ncia</label><input name="reference_year" type="number" min="2000" max="2200" required></div><div class="form-field"><label>Data da audi�ncia</label><input name="event_date" type="date"></div>
-        <div class="form-field form-field-wide"><label>T�tulo</label><input name="title" required></div><div class="form-field form-field-wide"><label>Descri��o</label><textarea name="description"></textarea></div>
+        <div class="form-field"><label>Ano de referência</label><input name="reference_year" type="number" min="2000" max="2200" required></div><div class="form-field"><label>Data da audiência</label><input name="event_date" type="date"></div>
+        <div class="form-field form-field-wide"><label>Título</label><input name="title" required></div><div class="form-field form-field-wide"><label>Descrição</label><textarea name="description"></textarea></div>
         <div class="form-field form-field-wide"><label>Link do YouTube</label><input name="youtube_url" type="url" pattern="https://(www\.)?(youtube\.com|youtu\.be)/.*" required></div><label class="checkbox-field form-field-wide"><input name="is_published" type="checkbox"> Publicar no portal</label>
       </div><div class="dialog-actions"><button type="button" class="button button-secondary" data-close-dialog>Cancelar</button><button type="submit" class="button button-primary button-auto">Salvar</button></div>
     </form></dialog>
     <dialog id="training-dialog" class="document-dialog"><form method="dialog" class="document-form" data-kind="training">
-      <div class="dialog-heading"><div><p class="eyebrow">Educa��o Previdenci�ria</p><h2>Cadastrar capacita��o</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">�</button></div>
+      <div class="dialog-heading"><div><p class="eyebrow">Educação Previdenciária</p><h2>Cadastrar capacitação</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">×</button></div>
       <input type="hidden" name="record_id"><div class="document-form-grid">
-        <div class="form-field"><label>Ano</label><input name="reference_year" type="number" min="2020" max="2200" required></div><div class="form-field"><label>Ordem de exibi��o</label><input name="display_order" type="number" min="0" max="10000" required></div>
-        <div class="form-field form-field-wide"><label>Curso ou a��o</label><input name="course_title" minlength="3" maxlength="300" required></div>
+        <div class="form-field"><label>Ano</label><input name="reference_year" type="number" min="2020" max="2200" required></div><div class="form-field"><label>Ordem de exibição</label><input name="display_order" type="number" min="0" max="10000" required></div>
+        <div class="form-field form-field-wide"><label>Curso ou ação</label><input name="course_title" minlength="3" maxlength="300" required></div>
         <div class="form-field form-field-wide"><label>Local / modalidade</label><input name="location" minlength="2" maxlength="200" required></div>
-        <div class="form-field"><label>In�cio previsto</label><input name="planned_start" maxlength="80" required></div><div class="form-field"><label>Fim previsto</label><input name="planned_end" maxlength="80" required></div>
-        <div class="form-field"><label>Carga hor�ria</label><input name="workload" maxlength="80" required></div><div class="form-field"><label>Situa��o</label><select name="status" required><option value="A AGENDAR">A AGENDAR</option><option value="EM ANDAMENTO">EM ANDAMENTO</option><option value="REALIZADO">REALIZADO</option><option value="N�O REALIZADO">N�O REALIZADO</option><option value="CANCELADO">CANCELADO</option></select></div>
+        <div class="form-field"><label>Início previsto</label><input name="planned_start" maxlength="80" required></div><div class="form-field"><label>Fim previsto</label><input name="planned_end" maxlength="80" required></div>
+        <div class="form-field"><label>Carga horária</label><input name="workload" maxlength="80" required></div><div class="form-field"><label>Situação</label><select name="status" required><option value="A AGENDAR">A AGENDAR</option><option value="EM ANDAMENTO">EM ANDAMENTO</option><option value="REALIZADO">REALIZADO</option><option value="NÃO REALIZADO">NÃO REALIZADO</option><option value="CANCELADO">CANCELADO</option></select></div>
         <div class="form-field form-field-wide"><label>Participantes</label><textarea name="participants" minlength="2" maxlength="500" required></textarea></div>
         <div class="form-field form-field-wide"><label>Objetivo</label><textarea name="objective" minlength="3" maxlength="1500" required></textarea></div>
         <div class="form-field form-field-wide"><label>Custo estimado (opcional)</label><input name="estimated_cost" maxlength="100" placeholder="Ex.: R$ 4.560,00"></div>
       </div><div class="dialog-actions"><button type="button" class="button button-secondary" data-close-dialog>Cancelar</button><button type="submit" class="button button-primary button-auto">Salvar</button></div>
     </form></dialog>
     <dialog id="indicator-dialog" class="document-dialog"><form method="dialog" class="document-form" data-kind="indicator">
-      <div class="dialog-heading"><div><p class="eyebrow">P�gina inicial</p><h2>Cadastrar indicadores anuais</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">�</button></div>
+      <div class="dialog-heading"><div><p class="eyebrow">Página inicial</p><h2>Cadastrar indicadores anuais</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">×</button></div>
       <input type="hidden" name="record_id">
       <div class="document-form-grid">
-        <div class="form-field"><label>Ano de refer�ncia</label><input name="reference_year" type="number" min="2000" max="2200" required></div>
+        <div class="form-field"><label>Ano de referência</label><input name="reference_year" type="number" min="2000" max="2200" required></div>
         <div class="form-field"><label>Segurados ativos</label><input name="insured" type="number" min="0" step="1"></div>
         <div class="form-field"><label>Aposentados</label><input name="retirees" type="number" min="0" step="1"></div>
         <div class="form-field"><label>Pensionistas</label><input name="pensioners" type="number" min="0" step="1"></div>
-        <div class="form-field form-field-wide"><label>Patrim�nio l�quido (R$)</label><input name="net_assets" type="number" min="0" step="0.01" placeholder="Ex.: 78160227.17"></div>
-        <p class="form-field-wide">Use n�meros sem separador de milhar. Para centavos, utilize ponto ou a formata��o aceita pelo navegador.</p>
+        <div class="form-field form-field-wide"><label>Patrimônio líquido (R$)</label><input name="net_assets" type="number" min="0" step="0.01" placeholder="Ex.: 78160227.17"></div>
+        <p class="form-field-wide">Use números sem separador de milhar. Para centavos, utilize ponto ou a formatação aceita pelo navegador.</p>
       </div><div class="dialog-actions"><button type="button" class="button button-secondary" data-close-dialog>Cancelar</button><button type="submit" class="button button-primary button-auto">Salvar</button></div>
     </form></dialog>
     <dialog id="body-dialog" class="document-dialog"><form method="dialog" class="document-form" data-kind="body">
-      <div class="dialog-heading"><div><p class="eyebrow">Colegiado</p><h2>Configurar colegiado</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">�</button></div>
+      <div class="dialog-heading"><div><p class="eyebrow">Colegiado</p><h2>Configurar colegiado</h2></div><button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">×</button></div>
       <input type="hidden" name="record_id"><input type="hidden" name="body_code"><div class="document-form-grid">
-        <div class="form-field form-field-wide"><label>Nome</label><input name="body_name" readonly></div><div class="form-field"><label>Situa��o</label><select name="body_status"><option value="active">Ativo</option><option value="pending">N�o constitu�do</option></select></div><div class="form-field"><label>�ltima revis�o</label><input name="last_reviewed_on" type="date" required></div>
-        <div class="form-field form-field-wide"><label>Link oficial na Transpar�ncia externa</label><input name="official_url" type="url" pattern="https://.*"></div>
+        <div class="form-field form-field-wide"><label>Nome</label><input name="body_name" readonly></div><div class="form-field"><label>Situação</label><select name="body_status"><option value="active">Ativo</option><option value="pending">Não constituído</option></select></div><div class="form-field"><label>Última revisão</label><input name="last_reviewed_on" type="date" required></div>
+        <div class="form-field form-field-wide"><label>Link oficial na Transparência externa</label><input name="official_url" type="url" pattern="https://.*"></div>
       </div><div class="dialog-actions"><button type="button" class="button button-secondary" data-close-dialog>Cancelar</button><button type="submit" class="button button-primary button-auto">Salvar</button></div>
     </form></dialog>`;
 }
@@ -871,18 +871,18 @@ export async function initializePublicationsModule() {
   document.querySelectorAll(".sidebar-link").forEach((link) => link.classList.remove("active"));
   document.querySelector('#publications-link')?.classList.add("active");
   moduleView.innerHTML = `
-    <div class="module-heading"><div><p class="eyebrow">M�dulo administrativo</p><h1>Publica��es do portal</h1><p class="page-description">Gerencie indicadores, documentos, certid�es, composi��o dos colegiados, agenda, audi�ncias e capacita��es em um �nico local.</p></div><a class="button button-secondary button-auto admin-portal-link" href="../transparencia.html" target="_blank" rel="noopener">Ver Transpar�ncia</a></div>
+    <div class="module-heading"><div><p class="eyebrow">Módulo administrativo</p><h1>Publicações do portal</h1><p class="page-description">Gerencie indicadores, documentos, certidões, composição dos colegiados, agenda, audiências e capacitações em um único local.</p></div><a class="button button-secondary button-auto admin-portal-link" href="../transparencia.html" target="_blank" rel="noopener">Ver Transparência</a></div>
     <div id="publication-tabs" class="publication-tabs" role="tablist">
-      <button type="button" class="active" data-publication-tab="documents" role="tab" aria-selected="true">Documentos</button><button type="button" data-publication-tab="certificates" role="tab" aria-selected="false">Certid�es</button><button type="button" data-publication-tab="indicators" role="tab" aria-selected="false">Indicadores</button><button type="button" data-publication-tab="members" role="tab" aria-selected="false">Composi��o</button><button type="button" data-publication-tab="meetings" role="tab" aria-selected="false">Agenda</button><button type="button" data-publication-tab="audiences" role="tab" aria-selected="false">Audi�ncias</button><button type="button" data-publication-tab="trainings" role="tab" aria-selected="false">Capacita��es</button>
+      <button type="button" class="active" data-publication-tab="documents" role="tab" aria-selected="true">Documentos</button><button type="button" data-publication-tab="certificates" role="tab" aria-selected="false">Certidões</button><button type="button" data-publication-tab="indicators" role="tab" aria-selected="false">Indicadores</button><button type="button" data-publication-tab="members" role="tab" aria-selected="false">Composição</button><button type="button" data-publication-tab="meetings" role="tab" aria-selected="false">Agenda</button><button type="button" data-publication-tab="audiences" role="tab" aria-selected="false">Audiências</button><button type="button" data-publication-tab="trainings" role="tab" aria-selected="false">Capacitações</button>
     </div>
-    <p id="publications-status" class="form-status" role="status" aria-live="polite">Carregando m�dulo...</p>
-    <section data-publication-panel="documents"><div class="publication-panel-heading"><div class="form-field"><label for="publication-category-filter">Filtrar categoria</label><select id="publication-category-filter"></select></div><button class="button button-primary button-auto" type="button" data-create-kind="document">Cadastrar documento</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Categoria</th><th>T�tulo</th><th>Ano</th><th>Vers�o</th><th>Portal</th><th>A��es</th></tr></thead><tbody id="publication-document-records"></tbody></table></div><p id="publication-document-empty" class="empty-state" hidden>Nenhum documento encontrado.</p></section></section>
-    <section data-publication-panel="certificates" hidden><div class="publication-panel-heading"><div><h2>Certid�es e certificados de regularidade</h2><p>Cadastre o PDF ou link oficial e informe emiss�o e validade para atualiza��o autom�tica da situa��o no portal.</p></div><button class="button button-primary button-auto" type="button" data-create-kind="document" data-document-category="certificate">Cadastrar certid�o</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>T�tulo</th><th>Emiss�o</th><th>Validade</th><th>Situa��o</th><th>Portal</th><th>A��es</th></tr></thead><tbody id="publication-certificate-records"></tbody></table></div><p id="publication-certificate-empty" class="empty-state" hidden>Nenhuma certid�o encontrada.</p></section></section>
-    <section data-publication-panel="indicators" hidden><div class="publication-panel-heading"><div><h2>Indicadores da p�gina inicial</h2><p>Atualize anualmente as quantidades e o patrim�nio l�quido. O ano mais recente alimenta os cart�es de destaque; todo o hist�rico permanece nos gr�ficos e na tabela.</p></div><button class="button button-primary button-auto" type="button" data-create-kind="indicator">Cadastrar ano</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Ano</th><th>Segurados</th><th>Aposentados</th><th>Pensionistas</th><th>Patrim�nio l�quido</th><th>A��es</th></tr></thead><tbody id="publication-indicator-records"></tbody></table></div><p id="publication-indicator-empty" class="empty-state" hidden>Nenhum indicador encontrado.</p></section></section>
-    <section data-publication-panel="members" hidden><div id="publication-body-cards" class="publication-body-grid"></div><div class="publication-panel-heading"><h2>Composi��o e hist�rico</h2><button class="button button-primary button-auto" type="button" data-create-kind="member">Cadastrar membro</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Colegiado</th><th>Nome</th><th>Fun��o</th><th>Situa��o</th><th>A��es</th></tr></thead><tbody id="publication-member-records"></tbody></table></div><p id="publication-member-empty" class="empty-state" hidden>Nenhum membro encontrado.</p></section></section>
-    <section data-publication-panel="meetings" hidden><div class="publication-panel-heading"><h2>Agenda de reuni�es por ano</h2><button class="button button-primary button-auto" type="button" data-create-kind="meeting">Cadastrar reuni�o</button></div><div class="filter-card"><div class="form-field"><label for="publication-meeting-body-filter">Filtrar colegiado</label><select id="publication-meeting-body-filter"><option value="">Todos os colegiados</option></select></div><div class="form-field"><label for="publication-meeting-year-filter">Filtrar ano</label><select id="publication-meeting-year-filter"><option value="">Todos os anos</option></select></div><div class="filter-actions"><button id="publication-meeting-clear-filters" class="button button-secondary button-auto" type="button">Limpar pesquisa</button></div></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Colegiado</th><th>Data</th><th>Tipo</th><th>Pauta</th><th>Portal</th><th>A��es</th></tr></thead><tbody id="publication-meeting-records"></tbody></table></div><p id="publication-meeting-empty" class="empty-state" hidden>Nenhuma reuni�o encontrada.</p></section></section>
-    <section data-publication-panel="audiences" hidden><div class="publication-panel-heading"><h2>Audi�ncias p�blicas</h2><button class="button button-primary button-auto" type="button" data-create-kind="audience">Cadastrar audi�ncia</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Ano</th><th>T�tulo</th><th>Data</th><th>Portal</th><th>A��es</th></tr></thead><tbody id="publication-audience-records"></tbody></table></div><p id="publication-audience-empty" class="empty-state" hidden>Nenhuma audi�ncia encontrada.</p></section></section>
-    <section data-publication-panel="trainings" hidden><div class="publication-panel-heading"><div class="form-field"><label for="publication-training-year-filter">Filtrar ano</label><select id="publication-training-year-filter"><option value="">Todos os anos</option></select></div><button class="button button-primary button-auto" type="button" data-create-kind="training">Cadastrar capacita��o</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Ano</th><th>Curso ou a��o</th><th>Per�odo</th><th>Situa��o</th><th>Portal</th><th>A��es</th></tr></thead><tbody id="publication-training-records"></tbody></table></div><p id="publication-training-empty" class="empty-state" hidden>Nenhuma capacita��o encontrada.</p></section></section>
+    <p id="publications-status" class="form-status" role="status" aria-live="polite">Carregando módulo...</p>
+    <section data-publication-panel="documents"><div class="publication-panel-heading"><div class="form-field"><label for="publication-category-filter">Filtrar categoria</label><select id="publication-category-filter"></select></div><button class="button button-primary button-auto" type="button" data-create-kind="document">Cadastrar documento</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Categoria</th><th>Título</th><th>Ano</th><th>Versão</th><th>Portal</th><th>Ações</th></tr></thead><tbody id="publication-document-records"></tbody></table></div><p id="publication-document-empty" class="empty-state" hidden>Nenhum documento encontrado.</p></section></section>
+    <section data-publication-panel="certificates" hidden><div class="publication-panel-heading"><div><h2>Certidões e certificados de regularidade</h2><p>Cadastre o PDF ou link oficial e informe emissão e validade para atualização automática da situação no portal.</p></div><button class="button button-primary button-auto" type="button" data-create-kind="document" data-document-category="certificate">Cadastrar certidão</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Título</th><th>Emissão</th><th>Validade</th><th>Situação</th><th>Portal</th><th>Ações</th></tr></thead><tbody id="publication-certificate-records"></tbody></table></div><p id="publication-certificate-empty" class="empty-state" hidden>Nenhuma certidão encontrada.</p></section></section>
+    <section data-publication-panel="indicators" hidden><div class="publication-panel-heading"><div><h2>Indicadores da página inicial</h2><p>Atualize anualmente as quantidades e o patrimônio líquido. O ano mais recente alimenta os cartões de destaque; todo o histórico permanece nos gráficos e na tabela.</p></div><button class="button button-primary button-auto" type="button" data-create-kind="indicator">Cadastrar ano</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Ano</th><th>Segurados</th><th>Aposentados</th><th>Pensionistas</th><th>Patrimônio líquido</th><th>Ações</th></tr></thead><tbody id="publication-indicator-records"></tbody></table></div><p id="publication-indicator-empty" class="empty-state" hidden>Nenhum indicador encontrado.</p></section></section>
+    <section data-publication-panel="members" hidden><div id="publication-body-cards" class="publication-body-grid"></div><div class="publication-panel-heading"><h2>Composição e histórico</h2><button class="button button-primary button-auto" type="button" data-create-kind="member">Cadastrar membro</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Colegiado</th><th>Nome</th><th>Função</th><th>Situação</th><th>Ações</th></tr></thead><tbody id="publication-member-records"></tbody></table></div><p id="publication-member-empty" class="empty-state" hidden>Nenhum membro encontrado.</p></section></section>
+    <section data-publication-panel="meetings" hidden><div class="publication-panel-heading"><h2>Agenda de reuniões por ano</h2><button class="button button-primary button-auto" type="button" data-create-kind="meeting">Cadastrar reunião</button></div><div class="filter-card"><div class="form-field"><label for="publication-meeting-body-filter">Filtrar colegiado</label><select id="publication-meeting-body-filter"><option value="">Todos os colegiados</option></select></div><div class="form-field"><label for="publication-meeting-year-filter">Filtrar ano</label><select id="publication-meeting-year-filter"><option value="">Todos os anos</option></select></div><div class="filter-actions"><button id="publication-meeting-clear-filters" class="button button-secondary button-auto" type="button">Limpar pesquisa</button></div></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Colegiado</th><th>Data</th><th>Tipo</th><th>Pauta</th><th>Portal</th><th>Ações</th></tr></thead><tbody id="publication-meeting-records"></tbody></table></div><p id="publication-meeting-empty" class="empty-state" hidden>Nenhuma reunião encontrada.</p></section></section>
+    <section data-publication-panel="audiences" hidden><div class="publication-panel-heading"><h2>Audiências públicas</h2><button class="button button-primary button-auto" type="button" data-create-kind="audience">Cadastrar audiência</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Ano</th><th>Título</th><th>Data</th><th>Portal</th><th>Ações</th></tr></thead><tbody id="publication-audience-records"></tbody></table></div><p id="publication-audience-empty" class="empty-state" hidden>Nenhuma audiência encontrada.</p></section></section>
+    <section data-publication-panel="trainings" hidden><div class="publication-panel-heading"><div class="form-field"><label for="publication-training-year-filter">Filtrar ano</label><select id="publication-training-year-filter"><option value="">Todos os anos</option></select></div><button class="button button-primary button-auto" type="button" data-create-kind="training">Cadastrar capacitação</button></div><section class="data-card"><div class="table-wrapper"><table><thead><tr><th>Ano</th><th>Curso ou ação</th><th>Período</th><th>Situação</th><th>Portal</th><th>Ações</th></tr></thead><tbody id="publication-training-records"></tbody></table></div><p id="publication-training-empty" class="empty-state" hidden>Nenhuma capacitação encontrada.</p></section></section>
     ${dialogMarkup()}`;
   fillSelect(
     document.querySelector("#publication-category-filter"),
@@ -892,4 +892,3 @@ export async function initializePublicationsModule() {
   bindEvents();
   await loadSnapshot();
 }
-
