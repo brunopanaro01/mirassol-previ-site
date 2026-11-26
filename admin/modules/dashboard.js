@@ -194,7 +194,7 @@ async function initializeDashboard() {
       }
 
       const { initializePublicationsModule } = await import(
-        "./publicacoes.js?v=20261126-filtro-agenda-1"
+        "./publicacoes.js?v=20261126-filtro-agenda-2"
       );
 
       await initializePublicationsModule();
